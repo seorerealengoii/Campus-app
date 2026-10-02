@@ -247,7 +247,6 @@
         <button class="btn-tile day-btn" onclick="setDay('QUA', this)">Qua</button>
         <button class="btn-tile day-btn active" onclick="setDay('QUI', this)">Qui</button>
         <button class="btn-tile day-btn" onclick="setDay('SEX', this)">Sex</button>
-        <button class="btn-tile day-btn" onclick="setDay('SAB', this)">Sáb</button>
       </div>
 
       <!-- Tempo de Aula -->
@@ -256,7 +255,7 @@
         <div id="time-pills-container" style="display:flex; gap:6px;"></div>
       </div>
 
-      <!-- Probabilidade -->
+      <!-- Filtro -->
       <div class="control-row">
         <span class="row-label">Filtro:</span>
         <button class="btn-tile filter-btn active" onclick="setFilter('ALL', this)">Todas</button>
@@ -293,7 +292,6 @@
   </div>
 
   <script>
-    // URL configurada do seu Apps Script
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyMh66nq8XPvoFTKVYHS_40ad3dLF4E4iwbLG1DrFrPRpPjxUyUVPpXFtPixxMRv2yU/exec";
 
     const TIMES = {
@@ -308,94 +306,20 @@
     let currentFilter = "ALL";
 
     const LIBERADAS = ["efi", "ed. fisica", "educacao fisica", "art", "artes", "mus", "musica", "info", "informatica", "des", "desenho"];
-    const IDIOMAS = ["ing", "ingles", "fra", "frances", "esp", "espanhol", "f/e", "e/i", "edmar/fr"];
+    const IDIOMAS = ["ing", "ingles", "fra", "frances", "esp", "espanhol", "f/e", "e/i", "edmar/fr", "ap"];
 
-    let CAMPUS_DATA = [
-      { id: "A1", bloco: "A", nome: "Sala 1", turma: "Turma 602", shift: "TARDE", grade: {
-          SEG: { T1:"MAT", T2:"MAT", T3:"MUS", T4:"MUS", T5:"CIE", T6:"CIE", T7:"HIST" },
-          TER: { T1:"EFI", T2:"EFI", T3:"HIST", T4:"HIST", T5:"CIE", T6:"DES", T7:"DES" },
-          QUA: { T1:"ING", T2:"ING", T3:"PORT", T4:"PORT", T5:"PORT", T6:"ESP", T7:"ESP" },
-          QUI: { T1:"INFO", T2:"INFO", T3:"ART", T4:"ART", T5:"GEO", T6:"GEO", T7:"GEO" },
-          SEX: { T1:"PORT", T2:"PORT", T3:"MAT", T4:"MAT", T5:"ING", T6:"ESP", T7:"" }
-      }},
-      { id: "A2", bloco: "A", nome: "Sala 2", turma: "Turma 604", shift: "TARDE", grade: {
-          SEG: { T1:"DES", T2:"DES", T3:"HIST", T4:"HIST", T5:"MUS", T6:"MUS", T7:"ING" },
-          TER: { T1:"GEO", T2:"GEO", T3:"EFI", T4:"EFI", T5:"HIST", T6:"ING", T7:"GEO" },
-          QUA: { T1:"MAT", T2:"MAT", T3:"PORT", T4:"PORT", T5:"ING", T6:"CIE", T7:"FRA" },
-          QUI: { T1:"FRA", T2:"FRA", T3:"INFO", T4:"INFO", T5:"CIE", T6:"CIE", T7:"CIE" },
-          SEX: { T1:"MAT", T2:"MAT", T3:"ART", T4:"ART", T5:"PORT", T6:"PORT", T7:"PORT" }
-      }},
-      { id: "A3", bloco: "A", nome: "Sala 3", turma: "Turma 606", shift: "TARDE", grade: {
-          SEG: { T1:"MUS", T2:"MUS", T3:"MAT", T4:"MAT", T5:"ING", T6:"ING", T7:"CIE" },
-          TER: { T1:"CIE", T2:"CIE", T3:"DES", T4:"DES", T5:"GEO", T6:"EFI", T7:"EFI" },
-          QUA: { T1:"PORT", T2:"PORT", T3:"F/E", T4:"F/E", T5:"PORT", T6:"FRA", T7:"ING" },
-          QUI: { T1:"HIST", T2:"HIST", T3:"GEO", T4:"GEO", T5:"INFO", T6:"INFO", T7:"HIST" },
-          SEX: { T1:"ART", T2:"ART", T3:"PORT", T4:"PORT", T5:"ESP", T6:"MAT", T7:"MAT" }
-      }},
-      { id: "A4", bloco: "A", nome: "Sala 4", turma: "Turma 702", shift: "TARDE", grade: {
-          SEG: { T1:"", T2:"ING", T3:"DES", T4:"DES", T5:"DES", T6:"PORT", T7:"PORT" },
-          TER: { T1:"EFI", T2:"EFI", T3:"HIST", T4:"HIST", T5:"CIE", T6:"CIE", T7:"CIE" },
-          QUA: { T1:"MUS", T2:"MUS", T3:"ING", T4:"ING", T5:"ESP", T6:"MAT", T7:"MAT" },
-          QUI: { T1:"C.SOC", T2:"C.SOC", T3:"GEO", T4:"GEO", T5:"ART", T6:"ART", T7:"HIST" },
-          SEX: { T1:"ESP", T2:"ESP", T3:"PORT", T4:"PORT", T5:"MAT", T6:"MAT", T7:"GEO" }
-      }},
-      { id: "A5", bloco: "A", nome: "Sala 5", turma: "Turma 704", shift: "TARDE", grade: {
-          SEG: { T1:"ING", T2:"ING", T3:"PORT", T4:"PORT", T5:"ING", T6:"DES", T7:"DES" },
-          TER: { T1:"", T2:"CIE", T3:"HIST", T4:"HIST", T5:"HIST", T6:"GEO", T7:"GEO" },
-          QUA: { T1:"MAT", T2:"MAT", T3:"PORT", T4:"PORT", T5:"PORT", T6:"MUS", T7:"MUS" },
-          QUI: { T1:"EFI", T2:"EFI", T3:"CIE", T4:"CIE", T5:"FRA", T6:"FRA", T7:"FRA" },
-          SEX: { T1:"MAT", T2:"MAT", T3:"C.SOC", T4:"C.SOC", T5:"GEO", T6:"ART", T7:"ART" }
-      }},
-      { id: "A6", bloco: "A", nome: "Sala 6", turma: "Turma 802", shift: "TARDE", grade: {
-          SEG: { T1:"PORT", T2:"PORT", T3:"ART", T4:"ART", T5:"ING", T6:"ING", T7:"ING" },
-          TER: { T1:"GEO", T2:"GEO", T3:"DES", T4:"DES", T5:"HIST", T6:"CIE", T7:"CIE" },
-          QUA: { T1:"EFI", T2:"EFI", T3:"MUS", T4:"MUS", T5:"MAT", T6:"MAT", T7:"ESP" },
-          QUI: { T1:"C.SOC", T2:"C.SOC", T3:"HIST", T4:"HIST", T5:"GEO", T6:"CIE", T7:"" },
-          SEX: { T1:"ESP", T2:"ESP", T3:"MAT", T4:"MAT", T5:"PORT", T6:"PORT", T7:"PORT" }
-      }},
-      { id: "A7", bloco: "A", nome: "Sala 7", turma: "Turma 804", shift: "TARDE", grade: {
-          SEG: { T1:"CIE", T2:"CIE", T3:"PORT", T4:"PORT", T5:"PORT", T6:"ART", T7:"ART" },
-          TER: { T1:"GEO", T2:"GEO", T3:"CIE", T4:"HIST", T5:"GEO", T6:"DES", T7:"DES" },
-          QUA: { T1:"MAT", T2:"MAT", T3:"PORT", T4:"PORT", T5:"FRA", T6:"EFI", T7:"EFI" },
-          QUI: { T1:"FRA", T2:"FRA", T3:"C.SOC", T4:"C.SOC", T5:"HIST", T6:"HIST", T7:"" },
-          SEX: { T1:"ING", T2:"ING", T3:"MUS", T4:"MUS", T5:"ING", T6:"MAT", T7:"MAT" }
-      }},
-      { id: "A8", bloco: "A", nome: "Sala 8", turma: "Turma 902", shift: "TARDE", grade: {
-          SEG: { T1:"EFI", T2:"EFI", T3:"PORT", T4:"PORT", T5:"PORT", T6:"C.SOC", T7:"C.SOC" },
-          TER: { T1:"CIE", T2:"CIE", T3:"HIST", T4:"", T5:"ART", T6:"ART", T7:"GEO" },
-          QUA: { T1:"PORT", T2:"PORT", T3:"ING", T4:"ING", T5:"ING", T6:"MAT", T7:"MAT" },
-          QUI: { T1:"MAT", T2:"MAT", T3:"GEO", T4:"GEO", T5:"CIE", T6:"DES", T7:"DES" },
-          SEX: { T1:"HIST", T2:"HIST", T3:"MUS", T4:"MUS", T5:"ESP", T6:"ESP", T7:"ESP" }
-      }},
-      { id: "A9", bloco: "A", nome: "Sala 9", turma: "Reserva / Apoio", shift: "TARDE", grade: {
-          SEG: { T1:"", T2:"", T3:"", T4:"", T5:"", T6:"", T7:"" },
-          TER: { T1:"", T2:"", T3:"", T4:"", T5:"", T6:"", T7:"" },
-          QUA: { T1:"", T2:"", T3:"", T4:"", T5:"", T6:"", T7:"" },
-          QUI: { T1:"", T2:"", T3:"", T4:"", T5:"", T6:"", T7:"" },
-          SEX: { T1:"", T2:"", T3:"", T4:"", T5:"", T6:"", T7:"" }
-      }},
-      { id: "A10", bloco: "A", nome: "Sala 10", turma: "Turma 904", shift: "TARDE", grade: {
-          SEG: { T1:"PORT", T2:"PORT", T3:"C.SOC", T4:"C.SOC", T5:"ING", T6:"ING", T7:"ING" },
-          TER: { T1:"GEO", T2:"GEO", T3:"DES", T4:"DES", T5:"CIE", T6:"CIE", T7:"CIE" },
-          QUA: { T1:"EFI", T2:"EFI", T3:"MAT", T4:"MAT", T5:"PORT", T6:"PORT", T7:"FRA" },
-          QUI: { T1:"ART", T2:"ART", T3:"MAT", T4:"MAT", T5:"HIST", T6:"GEO", T7:"" },
-          SEX: { T1:"FRA", T2:"FRA", T3:"HIST", T4:"HIST", T5:"MUS", T6:"MUS", T7:"PORT" }
-      }},
-      { id: "A11", bloco: "A", nome: "Sala 11", turma: "Turma 906", shift: "TARDE", grade: {
-          SEG: { T1:"C.SOC", T2:"C.SOC", T3:"EFI", T4:"EFI", T5:"ING", T6:"PORT", T7:"PORT" },
-          TER: { T1:"CIE", T2:"ART", T3:"ART", T4:"HIST", T5:"GEO", T6:"GEO", T7:"" },
-          QUA: { T1:"MAT", T2:"MAT", T3:"F/E", T4:"F/E", T5:"F/E", T6:"PORT", T7:"PORT" },
-          QUI: { T1:"CIE", T2:"CIE", T3:"DES", T4:"DES", T5:"MAT", T6:"MAT", T7:"GEO" },
-          SEX: { T1:"MAT", T2:"MAT", T3:"ING", T4:"ING", T5:"PORT", T6:"HIST", T7:"HIST" }
-      }},
-      { id: "A12", bloco: "A", nome: "Sala 12", turma: "Reserva / Apoio", shift: "TARDE", grade: {
-          SEG: { T1:"", T2:"", T3:"", T4:"", T5:"", T6:"", T7:"" },
-          TER: { T1:"", T2:"", T3:"", T4:"", T5:"", T6:"", T7:"" },
-          QUA: { T1:"", T2:"", T3:"", T4:"", T5:"", T6:"", T7:"" },
-          QUI: { T1:"", T2:"", T3:"", T4:"", T5:"", T6:"", T7:"" },
-          SEX: { T1:"", T2:"", T3:"", T4:"", T5:"", T6:"", T7:"" }
-      }}
-    ];
+    // Estrutura padrão de Salas
+    let CAMPUS_DATA = [];
+    for(let i = 1; i <= 12; i++) {
+      CAMPUS_DATA.push({
+        id: "A" + i,
+        bloco: "A",
+        nome: "Sala " + i,
+        turma: "Sala " + i,
+        shift: "TARDE",
+        grade: { SEG:{}, TER:{}, QUA:{}, QUI:{}, SEX:{} }
+      });
+    }
 
     function normalizeText(txt) {
       return (txt || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
@@ -418,16 +342,33 @@
         if (res.ok) {
           const data = await res.json();
           
-          ["A9", "A12"].forEach(roomId => {
-            const roomObj = CAMPUS_DATA.find(r => r.id === roomId);
-            if (roomObj && data[roomId]) {
-              Object.keys(data[roomId]).forEach(day => {
-                const val = data[roomId][day];
-                ["T1","T2","T3","T4","T5","T6","T7"].forEach(t => {
-                  roomObj.grade[day][t] = val;
-                });
-              });
+          // Mapeia os dados do Apps Script para a grade das salas
+          Object.keys(data).forEach(roomId => {
+            let roomObj = CAMPUS_DATA.find(r => r.id === roomId);
+            if (!roomObj) {
+              roomObj = {
+                id: roomId,
+                bloco: roomId.charAt(0),
+                nome: "Sala " + roomId.substring(1),
+                turma: "Reserva / Apoio",
+                shift: "TARDE",
+                grade: { SEG:{}, TER:{}, QUA:{}, QUI:{}, SEX:{} }
+              };
+              CAMPUS_DATA.push(roomObj);
             }
+
+            const roomData = data[roomId];
+            Object.keys(roomData).forEach(day => {
+              if (typeof roomData[day] === 'object') {
+                Object.keys(roomData[day]).forEach(slot => {
+                  roomObj.grade[day][slot] = roomData[day][slot];
+                });
+              } else {
+                TIMES.TARDE.forEach(slot => {
+                  roomObj.grade[day][slot] = roomData[day];
+                });
+              }
+            });
           });
 
           statusEl.innerText = "🟢 Sincronizado ao vivo com Google Docs";
