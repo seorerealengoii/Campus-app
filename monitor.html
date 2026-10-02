@@ -1,4 +1,314 @@
-// Base de Salas Estáticas Pré-Carregadas (Bloco A - Turno da Tarde)
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Campus Monitor — Metro UI</title>
+  <style>
+    :root {
+      --bg-dark: #000000;
+      --card-bg: #1f1f1f;
+      --border-color: #2a2a2a;
+      --text-main: #ffffff;
+      --text-muted: #aaaaaa;
+      --accent-blue: #0078d7;
+      
+      --metro-green: #107c10;
+      --metro-yellow: #d8b012;
+      --metro-red: #e81123;
+      
+      --font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-family);
+      min-height: 100vh;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1100px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 12px;
+    }
+
+    .brand {
+      font-size: 1.4rem;
+      font-weight: 300;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--accent-blue);
+      text-decoration: none;
+    }
+
+    .back-btn {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 6px 14px;
+      font-size: 0.85rem;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .status-bar {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .controls-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .control-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .row-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      min-width: 60px;
+    }
+
+    .btn-tile {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 8px 14px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .btn-tile.active {
+      background: var(--accent-blue);
+      border-color: var(--accent-blue);
+      color: #ffffff;
+    }
+
+    .btn-tile.filter-green.active { background: var(--metro-green); }
+    .btn-tile.filter-yellow.active { background: var(--metro-yellow); color: #000; }
+    .btn-tile.filter-red.active { background: var(--metro-red); }
+
+    .matrix-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 10px;
+    }
+
+    .room-tile {
+      aspect-ratio: 1 / 1;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      color: #ffffff;
+      cursor: pointer;
+      overflow: hidden;
+      transition: transform 0.1s ease;
+    }
+
+    .room-tile:active { transform: scale(0.96); }
+
+    .room-tile.status-green { background-color: var(--metro-green); }
+    .room-tile.status-yellow { background-color: var(--metro-yellow); color: #000000; }
+    .room-tile.status-red { background-color: var(--metro-red); }
+
+    .empty-msg {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 40px;
+      background: var(--card-bg);
+      border: 1px dashed var(--border-color);
+      color: var(--text-muted);
+    }
+
+    .tile-top { display: flex; justify-content: space-between; align-items: flex-start; }
+    .room-number { font-size: 1.2rem; font-weight: 700; }
+    .room-turma { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; opacity: 0.9; }
+    .room-subject { font-size: 0.85rem; font-weight: 600; margin-top: 4px; line-height: 1.2; word-break: break-word; }
+
+    .drawer-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.75);
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+      z-index: 1000;
+    }
+
+    .drawer-overlay.open { opacity: 1; pointer-events: auto; }
+
+    .drawer {
+      background: var(--card-bg);
+      border-top: 3px solid var(--accent-blue);
+      width: 100%;
+      max-width: 600px;
+      padding: 20px;
+      transform: translateY(100%);
+      transition: transform 0.25s cubic-bezier(0.1, 0.9, 0.2, 1);
+    }
+
+    .drawer-overlay.open .drawer { transform: translateY(0); }
+
+    .drawer-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 8px;
+    }
+
+    .close-btn { background: transparent; border: none; font-size: 1.5rem; color: var(--text-main); cursor: pointer; }
+
+    .info-box {
+      background: var(--bg-dark);
+      padding: 12px;
+      border-left: 3px solid var(--accent-blue);
+      margin-bottom: 12px;
+    }
+
+    .info-box h4 { font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted); }
+    .info-box p { font-size: 0.95rem; font-weight: 600; margin-top: 2px; }
+
+    .timeline { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-top: 8px; }
+    .timeline-slot { display: flex; flex-direction: column; align-items: center; padding: 6px 2px; background: var(--bg-dark); border: 1px solid var(--border-color); font-size: 0.7rem; }
+    .timeline-slot.current { border: 2px solid var(--text-main); font-weight: bold; }
+    .slot-dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 4px; }
+    .dot-green { background: var(--metro-green); }
+    .dot-yellow { background: var(--metro-yellow); }
+    .dot-red { background: var(--metro-red); }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <div>
+        <a href="index.html" class="brand">Campus Monitor</a>
+        <div class="status-bar" id="sync-status">🔄 Lendo dados em tempo real...</div>
+      </div>
+      <a href="index.html" class="back-btn">← Início</a>
+    </header>
+
+    <section class="controls-panel">
+      <!-- Bloco -->
+      <div class="control-row">
+        <span class="row-label">Bloco:</span>
+        <button class="btn-tile block-btn active" onclick="setBlock('A', this)">Bloco A (EF II)</button>
+        <button class="btn-tile block-btn" onclick="setBlock('B', this)">Bloco B (1º/2º Ano)</button>
+        <button class="btn-tile block-btn" onclick="setBlock('C', this)">Bloco C (3º/Técnico)</button>
+      </div>
+
+      <!-- Turno -->
+      <div class="control-row">
+        <span class="row-label">Turno:</span>
+        <button class="btn-tile shift-btn" onclick="setShift('MANHA', this)">Manhã</button>
+        <button class="btn-tile shift-btn active" onclick="setShift('TARDE', this)">Tarde</button>
+      </div>
+
+      <!-- Dia -->
+      <div class="control-row">
+        <span class="row-label">Dia:</span>
+        <button class="btn-tile day-btn" onclick="setDay('SEG', this)">Seg</button>
+        <button class="btn-tile day-btn" onclick="setDay('TER', this)">Ter</button>
+        <button class="btn-tile day-btn" onclick="setDay('QUA', this)">Qua</button>
+        <button class="btn-tile day-btn active" onclick="setDay('QUI', this)">Qui</button>
+        <button class="btn-tile day-btn" onclick="setDay('SEX', this)">Sex</button>
+      </div>
+
+      <!-- Tempo de Aula -->
+      <div class="control-row">
+        <span class="row-label">Tempo:</span>
+        <div id="time-pills-container" style="display:flex; gap:6px;"></div>
+      </div>
+
+      <!-- Filtro -->
+      <div class="control-row">
+        <span class="row-label">Filtro:</span>
+        <button class="btn-tile filter-btn active" onclick="setFilter('ALL', this)">Todas</button>
+        <button class="btn-tile filter-btn filter-green" onclick="setFilter('GREEN', this)">Alta Prob. 🟢</button>
+        <button class="btn-tile filter-btn filter-yellow" onclick="setFilter('YELLOW', this)">Média Prob. 🟡</button>
+        <button class="btn-tile filter-btn filter-red" onclick="setFilter('RED', this)">Ocupadas 🔴</button>
+      </div>
+    </section>
+
+    <section class="matrix-grid" id="matrix-container"></section>
+  </div>
+
+  <!-- DRAWER -->
+  <div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer(event)">
+    <div class="drawer" onclick="event.stopPropagation()">
+      <div class="drawer-header">
+        <div>
+          <h2 id="dw-title">Sala ---</h2>
+          <p id="dw-sub" style="font-size:0.8rem; color:var(--text-muted);">---</p>
+        </div>
+        <button class="close-btn" onclick="toggleDrawer(false)">&times;</button>
+      </div>
+
+      <div class="info-box">
+        <h4>Status do Horário Selecionado</h4>
+        <p id="dw-status">---</p>
+      </div>
+
+      <div>
+        <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted);">Linha do Tempo (Dia Selecionado)</div>
+        <div class="timeline" id="dw-timeline"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyMh66nq8XPvoFTKVYHS_40ad3dLF4E4iwbLG1DrFrPRpPjxUyUVPpXFtPixxMRv2yU/exec";
+
+    const TIMES = {
+      MANHA: ["M1", "M2", "M3", "M4", "M5", "M6", "M7"],
+      TARDE: ["T1", "T2", "T3", "T4", "T5", "T6", "T7"]
+    };
+
+    let currentBlock = "A";
+    let currentShift = "TARDE";
+    let currentDay = "QUI";
+    let currentTimeSlot = "T1";
+    let currentFilter = "ALL";
+
+    const LIBERADAS = ["efi", "ed. fisica", "educacao fisica", "art", "artes", "mus", "musica", "info", "informatica", "des", "desenho"];
+    const IDIOMAS = ["ing", "ingles", "fra", "frances", "esp", "espanhol", "f/e", "e/i", "edmar/fr", "ap"];
+
+    // Base de Salas Estáticas (Turno da Tarde - Bloco A)
     let CAMPUS_DATA = [
       { id: "A1", bloco: "A", nome: "Sala 1", turma: "Turma 602", shift: "TARDE", grade: {
         SEG: { T1:"MAT", T2:"MAT", T3:"MUS", T4:"MUS", T5:"CIE", T6:"CIE", T7:"HIST" },
@@ -73,3 +383,205 @@
       }},
       { id: "A12", bloco: "A", nome: "Sala 12", turma: "Reserva / Apoio", shift: "TARDE", grade: { SEG:{}, TER:{}, QUA:{}, QUI:{}, SEX:{} } }
     ];
+
+    // Preenche os outros Blocos (B e C) de forma limpa
+    ["A", "B", "C"].forEach(block => {
+      for(let i = 1; i <= 12; i++) {
+        let roomId = block + i;
+        if (!CAMPUS_DATA.some(r => r.id === roomId)) {
+          CAMPUS_DATA.push({
+            id: roomId,
+            bloco: block,
+            nome: "Sala " + i,
+            turma: "Bloco " + block,
+            shift: "TARDE",
+            grade: { SEG:{}, TER:{}, QUA:{}, QUI:{}, SEX:{} }
+          });
+        }
+      }
+    });
+
+    function normalizeText(txt) {
+      return (txt || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+    }
+
+    function calculateStatus(val) {
+      if (!val || val.trim() === "" || val.toUpperCase() === "LIVRE") return { status: "GREEN", text: "LIVRE / Sem Aula", badge: "🟢" };
+      const str = normalizeText(val);
+      if (str.includes("indisponivel") || str.includes("ocupada")) return { status: "RED", text: "INDISPONÍVEL / Ocupada", badge: "🔴" };
+      if (LIBERADAS.some(d => str === d || str.includes(d))) return { status: "GREEN", text: "ALTA PROB. VAGA (Prática/Deslocamento)", badge: "🟢" };
+      if (IDIOMAS.some(d => str === d || str.includes(d))) return { status: "YELLOW", text: "MÉDIA PROB. (Idiomas/Divisão)", badge: "🟡" };
+      return { status: "RED", text: "OCUPADA (Aula Teórica / Reserva)", badge: "🔴" };
+    }
+
+    async function fetchOnlineDocData() {
+      const statusEl = document.getElementById("sync-status");
+
+      try {
+        const res = await fetch(APPS_SCRIPT_URL);
+        if (res.ok) {
+          const data = await res.json();
+          
+          Object.keys(data).forEach(roomId => {
+            let roomObj = CAMPUS_DATA.find(r => r.id === roomId);
+            if (!roomObj) {
+              const blockLetter = roomId.charAt(0);
+              const roomNum = roomId.substring(1);
+              roomObj = {
+                id: roomId,
+                bloco: blockLetter,
+                nome: "Sala " + roomNum,
+                turma: "Bloco " + blockLetter,
+                shift: "TARDE",
+                grade: { SEG:{}, TER:{}, QUA:{}, QUI:{}, SEX:{} }
+              };
+              CAMPUS_DATA.push(roomObj);
+            }
+
+            const roomData = data[roomId];
+            Object.keys(roomData).forEach(day => {
+              if (typeof roomData[day] === 'object') {
+                Object.keys(roomData[day]).forEach(slot => {
+                  roomObj.grade[day][slot] = roomData[day][slot];
+                });
+              } else {
+                TIMES.TARDE.forEach(slot => {
+                  roomObj.grade[day][slot] = roomData[day];
+                });
+              }
+            });
+          });
+
+          statusEl.innerText = "🟢 Sincronizado ao vivo com Google Docs";
+          statusEl.style.color = "#107c10";
+          renderMatrix();
+          return;
+        }
+      } catch (err) {
+        console.error("Erro ao sincronizar via Apps Script:", err);
+      }
+
+      statusEl.innerText = "⚡ Atualizando via cache local...";
+      statusEl.style.color = "#d8b012";
+    }
+
+    function renderTimePills() {
+      const container = document.getElementById("time-pills-container");
+      container.innerHTML = "";
+      TIMES[currentShift].forEach(time => {
+        const btn = document.createElement("button");
+        btn.className = `btn-tile ${time === currentTimeSlot ? "active" : ""}`;
+        btn.onclick = () => { currentTimeSlot = time; renderTimePills(); renderMatrix(); };
+        btn.innerText = time;
+        container.appendChild(btn);
+      });
+    }
+
+    function setBlock(b, el) {
+      currentBlock = b;
+      document.querySelectorAll(".block-btn").forEach(btn => btn.classList.remove("active"));
+      el.classList.add("active");
+      renderMatrix();
+    }
+
+    function setShift(s, el) {
+      currentShift = s;
+      currentTimeSlot = TIMES[s][0];
+      document.querySelectorAll(".shift-btn").forEach(btn => btn.classList.remove("active"));
+      el.classList.add("active");
+      renderTimePills();
+      renderMatrix();
+    }
+
+    function setDay(d, el) {
+      currentDay = d;
+      document.querySelectorAll(".day-btn").forEach(btn => btn.classList.remove("active"));
+      el.classList.add("active");
+      renderMatrix();
+    }
+
+    function setFilter(f, el) {
+      currentFilter = f;
+      document.querySelectorAll(".filter-btn").forEach(btn => btn.classList.remove("active"));
+      el.classList.add("active");
+      renderMatrix();
+    }
+
+    function renderMatrix() {
+      const container = document.getElementById("matrix-container");
+      container.innerHTML = "";
+
+      if (currentShift === "MANHA") {
+        container.innerHTML = `<div class="empty-msg">🌅 Salas do turno da manhã em mapeamento.<br>Selecione o turno da <b>Tarde</b> para visualizar o monitor.</div>`;
+        return;
+      }
+
+      const rooms = CAMPUS_DATA.filter(r => r.bloco === currentBlock && r.shift === currentShift);
+
+      rooms.forEach(room => {
+        const val = (room.grade[currentDay] || {})[currentTimeSlot] || "";
+        const st = calculateStatus(val);
+
+        if (currentFilter !== "ALL" && st.status !== currentFilter) return;
+
+        const tile = document.createElement("div");
+        tile.className = `room-tile status-${st.status.toLowerCase()}`;
+        tile.onclick = () => openDrawer(room);
+
+        tile.innerHTML = `
+          <div class="tile-top">
+            <span class="room-number">${room.nome}</span>
+            <span>${st.badge}</span>
+          </div>
+          <div>
+            <div class="room-turma">${room.turma}</div>
+            <div class="room-subject">${val || "LIVRE"}</div>
+          </div>
+        `;
+        container.appendChild(tile);
+      });
+    }
+
+    function openDrawer(room) {
+      const val = (room.grade[currentDay] || {})[currentTimeSlot] || "";
+      const st = calculateStatus(val);
+
+      document.getElementById("dw-title").innerText = `${room.nome} (${room.turma})`;
+      document.getElementById("dw-sub").innerText = `Bloco ${room.bloco} | ${currentDay} | Tempo ${currentTimeSlot}`;
+      document.getElementById("dw-status").innerText = `${st.badge} ${st.text}`;
+
+      const timeline = document.getElementById("dw-timeline");
+      timeline.innerHTML = "";
+
+      TIMES[currentShift].forEach(t => {
+        const slotVal = (room.grade[currentDay] || {})[t] || "";
+        const slotSt = calculateStatus(slotVal);
+
+        const cell = document.createElement("div");
+        cell.className = `timeline-slot ${t === currentTimeSlot ? "current" : ""}`;
+        cell.innerHTML = `
+          <div>${t}</div>
+          <div class="slot-dot dot-${slotSt.status.toLowerCase()}"></div>
+        `;
+        timeline.appendChild(cell);
+      });
+
+      toggleDrawer(true);
+    }
+
+    function toggleDrawer(open) {
+      document.getElementById("drawer-overlay").classList.toggle("open", open);
+    }
+
+    function closeDrawer(e) {
+      if (e.target.id === "drawer-overlay") toggleDrawer(false);
+    }
+
+    window.onload = () => {
+      renderTimePills();
+      renderMatrix();
+      fetchOnlineDocData();
+    };
+  </script>
+</body>
+</html>
