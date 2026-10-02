@@ -140,6 +140,15 @@
     .room-tile.status-yellow { background-color: var(--metro-yellow); color: #000000; }
     .room-tile.status-red { background-color: var(--metro-red); }
 
+    .empty-msg {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 40px;
+      background: var(--card-bg);
+      border: 1px dashed var(--border-color);
+      color: var(--text-muted);
+    }
+
     .tile-top { display: flex; justify-content: space-between; align-items: flex-start; }
     .room-number { font-size: 1.2rem; font-weight: 700; }
     .room-turma { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; opacity: 0.9; }
@@ -208,7 +217,7 @@
     <header>
       <div>
         <a href="index.html" class="brand">Campus Monitor</a>
-        <div class="status-bar" id="sync-status">🔄 Conectando ao Google Docs...</div>
+        <div class="status-bar" id="sync-status">🔄 Lendo dados em tempo real do Google Docs...</div>
       </div>
       <a href="index.html" class="back-btn">← Início</a>
     </header>
@@ -225,8 +234,8 @@
       <!-- Turno -->
       <div class="control-row">
         <span class="row-label">Turno:</span>
-        <button class="btn-tile shift-btn" onclick="setShift('MANHA', this)">Manhã (Ímpares)</button>
-        <button class="btn-tile shift-btn active" onclick="setShift('TARDE', this)">Tarde (Pares)</button>
+        <button class="btn-tile shift-btn" onclick="setShift('MANHA', this)">Manhã</button>
+        <button class="btn-tile shift-btn active" onclick="setShift('TARDE', this)">Tarde</button>
       </div>
 
       <!-- Dia -->
@@ -297,11 +306,9 @@
     let currentFilter = "ALL";
 
     const LIBERADAS = ["efi", "ed. fisica", "educacao fisica", "art", "artes", "mus", "musica", "info", "informatica", "des", "desenho"];
-    const IDIOMAS = ["ing", "ingles", "fra", "frances", "esp", "espanhol", "f/e", "e/i"];
+    const IDIOMAS = ["ing", "ingles", "fra", "frances", "esp", "espanhol", "f/e", "e/i", "edmar/fr"];
 
-    // BANCO DE DADOS INTEGRADO COM BASE NOS PDFS OFICIAIS
     let CAMPUS_DATA = [
-      // BLOCO A (EF II)
       { id: "A1", bloco: "A", nome: "Sala 1", turma: "Turma 602", shift: "TARDE", grade: {
           SEG: { T1:"MAT", T2:"MAT", T3:"MUS", T4:"MUS", T5:"CIE", T6:"CIE", T7:"HIST" },
           TER: { T1:"EFI", T2:"EFI", T3:"HIST", T4:"HIST", T5:"CIE", T6:"DES", T7:"DES" },
@@ -358,12 +365,12 @@
           QUI: { T1:"MAT", T2:"MAT", T3:"GEO", T4:"GEO", T5:"CIE", T6:"DES", T7:"DES" },
           SEX: { T1:"HIST", T2:"HIST", T3:"MUS", T4:"MUS", T5:"ESP", T6:"ESP", T7:"ESP" }
       }},
-      { id: "A9", bloco: "A", nome: "Sala 9 (Espaço Reserva)", turma: "LIVRE / DOCS", shift: "TARDE", grade: {
-          SEG: { T1:"LIVRE", T2:"LIVRE", T3:"LIVRE", T4:"LIVRE", T5:"LIVRE", T6:"LIVRE", T7:"LIVRE" },
-          TER: { T1:"LIVRE", T2:"LIVRE", T3:"LIVRE", T4:"LIVRE", T5:"LIVRE", T6:"LIVRE", T7:"LIVRE" },
-          QUA: { T1:"LIVRE", T2:"LIVRE", T3:"LIVRE", T4:"LIVRE", T5:"LIVRE", T6:"LIVRE", T7:"LIVRE" },
-          QUI: { T1:"LIVRE", T2:"LIVRE", T3:"LIVRE", T4:"LIVRE", T5:"LIVRE", T6:"LIVRE", T7:"LIVRE" },
-          SEX: { T1:"LIVRE", T2:"LIVRE", T3:"LIVRE", T4:"LIVRE", T5:"LIVRE", T6:"LIVRE", T7:"LIVRE" }
+      { id: "A9", bloco: "A", nome: "Sala 9", turma: "Reserva / Apoio", shift: "TARDE", grade: {
+          SEG: { T1:"", T2:"", T3:"", T4:"", T5:"", T6:"", T7:"" },
+          TER: { T1:"", T2:"", T3:"", T4:"", T5:"", T6:"", T7:"" },
+          QUA: { T1:"", T2:"", T3:"", T4:"", T5:"", T6:"", T7:"" },
+          QUI: { T1:"", T2:"", T3:"", T4:"", T5:"", T6:"", T7:"" },
+          SEX: { T1:"", T2:"", T3:"", T4:"", T5:"", T6:"", T7:"" }
       }},
       { id: "A10", bloco: "A", nome: "Sala 10", turma: "Turma 904", shift: "TARDE", grade: {
           SEG: { T1:"PORT", T2:"PORT", T3:"C.SOC", T4:"C.SOC", T5:"ING", T6:"ING", T7:"ING" },
@@ -379,46 +386,12 @@
           QUI: { T1:"CIE", T2:"CIE", T3:"DES", T4:"DES", T5:"MAT", T6:"MAT", T7:"GEO" },
           SEX: { T1:"MAT", T2:"MAT", T3:"ING", T4:"ING", T5:"PORT", T6:"HIST", T7:"HIST" }
       }},
-      { id: "A12", bloco: "A", nome: "Sala 12 (Espaço Reserva)", turma: "LIVRE / DOCS", shift: "TARDE", grade: {
-          SEG: { T1:"LIVRE", T2:"LIVRE", T3:"LIVRE", T4:"LIVRE", T5:"LIVRE", T6:"LIVRE", T7:"LIVRE" },
-          TER: { T1:"LIVRE", T2:"LIVRE", T3:"LIVRE", T4:"LIVRE", T5:"LIVRE", T6:"LIVRE", T7:"LIVRE" },
-          QUA: { T1:"LIVRE", T2:"LIVRE", T3:"LIVRE", T4:"LIVRE", T5:"LIVRE", T6:"LIVRE", T7:"LIVRE" },
-          QUI: { T1:"LIVRE", T2:"LIVRE", T3:"LIVRE", T4:"LIVRE", T5:"LIVRE", T6:"LIVRE", T7:"LIVRE" },
-          SEX: { T1:"LIVRE", T2:"LIVRE", T3:"LIVRE", T4:"LIVRE", T5:"LIVRE", T6:"LIVRE", T7:"LIVRE" }
-      }},
-
-      // BLOCO B (1º/2º Ano Médio)
-      { id: "B101", bloco: "B", nome: "Sala B01", turma: "Turma 1101", shift: "MANHA", grade: {
-          SEG: { M1:"MAT", M2:"MAT", M3:"PORT", M4:"PORT", M5:"DES", M6:"DES", M7:"" },
-          TER: { M1:"GEO", M2:"GEO", M3:"A/M", M4:"A/M", M5:"FIS", M6:"FIS", M7:"" },
-          QUA: { M1:"MAT", M2:"MAT", M3:"QUI", M4:"QUI", M5:"FILO", M6:"FILO", M7:"PORT" },
-          QUI: { M1:"HIST", M2:"HIST", M3:"EFI", M4:"EFI", M5:"BIO", M6:"BIO", M7:"FIS" },
-          SEX: { M1:"FRA", M2:"FRA", M3:"PORT", M4:"PORT", M5:"FRA", M6:"QUI", M7:"QUI" },
-          SAB: { M1:"GEO", M2:"GEO", M3:"FIS", M4:"FIS", M5:"HIST", M6:"HIST", M7:"" }
-      }},
-      { id: "B103", bloco: "B", nome: "Sala B03", turma: "Turma 1103", shift: "MANHA", grade: {
-          SEG: { M1:"BIO", M2:"BIO", M3:"EFI", M4:"EFI", M5:"ESP", M6:"ESP", M7:"" },
-          TER: { M1:"FIS", M2:"FIS", M3:"GEO", M4:"GEO", M5:"PORT", M6:"PORT", M7:"PORT" },
-          QUA: { M1:"QUI", M2:"QUI", M3:"MAT", M4:"MAT", M5:"FILO", M6:"FILO", M7:"ESP" },
-          QUI: { M1:"DES", M2:"DES", M3:"C.SOC", M4:"C.SOC", M5:"FIS", M6:"A/M", M7:"A/M" },
-          SEX: { M1:"PORT", M2:"PORT", M3:"QUI", M4:"QUI", M5:"MAT", M6:"MAT", M7:"" },
-          SAB: { M1:"HIST", M2:"HIST", M3:"GEO", M4:"GEO", M5:"FIS", M6:"FIS", M7:"" }
-      }},
-
-      // BLOCO C (3º Ano / Integrado / Música)
-      { id: "C301", bloco: "C", nome: "Sala C01", turma: "Turma 1301", shift: "MANHA", grade: {
-          SEG: { M1:"HIST", M2:"HIST", M3:"MAT", M4:"MAT", M5:"PORT", M6:"PORT", M7:"HIST" },
-          TER: { M1:"GEO", M2:"GEO", M3:"BIO", M4:"BIO", M5:"GEO", M6:"FIS", M7:"FIS" },
-          QUA: { M1:"EFI", M2:"EFI", M3:"PORT", M4:"PORT", M5:"PORT", M6:"QUI", M7:"QUI" },
-          QUI: { M1:"FIS", M2:"FIS", M3:"BIO", M4:"BIO", M5:"SOC", M6:"SOC", M7:"" },
-          SEX: { M1:"MAT", M2:"MAT", M3:"QUI", M4:"QUI", M5:"FILO", M6:"FILO", M7:"" }
-      }},
-      { id: "C303", bloco: "C", nome: "Sala C03", turma: "Turma 1303", shift: "MANHA", grade: {
-          SEG: { M1:"PORT", M2:"PORT", M3:"E/I", M4:"E/I", M5:"PORT", M6:"MAT", M7:"MAT" },
-          TER: { M1:"FIS", M2:"FIS", M3:"HIST", M4:"HIST", M5:"DES", M6:"DES", M7:"BIO" },
-          QUA: { M1:"QUI", M2:"QUI", M3:"MAT", M4:"MAT", M5:"EFI", M6:"EFI", M7:"E/I" },
-          QUI: { M1:"BIO", M2:"BIO", M3:"SOC", M4:"SOC", M5:"FIS", M6:"FIS", M7:"" },
-          SEX: { M1:"FILO", M2:"FILO", M3:"SOC", M4:"SOC", M5:"PORT", M6:"PORT", M7:"ING" }
+      { id: "A12", bloco: "A", nome: "Sala 12", turma: "Reserva / Apoio", shift: "TARDE", grade: {
+          SEG: { T1:"", T2:"", T3:"", T4:"", T5:"", T6:"", T7:"" },
+          TER: { T1:"", T2:"", T3:"", T4:"", T5:"", T6:"", T7:"" },
+          QUA: { T1:"", T2:"", T3:"", T4:"", T5:"", T6:"", T7:"" },
+          QUI: { T1:"", T2:"", T3:"", T4:"", T5:"", T6:"", T7:"" },
+          SEX: { T1:"", T2:"", T3:"", T4:"", T5:"", T6:"", T7:"" }
       }}
     ];
 
@@ -427,28 +400,72 @@
     }
 
     function calculateStatus(val) {
-      if (!val || val === "" || val === "LIVRE") return { status: "GREEN", text: "LIVRE / Sem Aula", badge: "🟢" };
+      if (!val || val.trim() === "" || val.toUpperCase() === "LIVRE") return { status: "GREEN", text: "LIVRE / Sem Aula", badge: "🟢" };
       const str = normalizeText(val);
       if (str.includes("indisponivel") || str.includes("ocupada")) return { status: "RED", text: "INDISPONÍVEL / Ocupada", badge: "🔴" };
       if (LIBERADAS.some(d => str === d || str.includes(d))) return { status: "GREEN", text: "ALTA PROB. VAGA (Prática/Deslocamento)", badge: "🟢" };
       if (IDIOMAS.some(d => str === d || str.includes(d))) return { status: "YELLOW", text: "MÉDIA PROB. (Idiomas/Divisão)", badge: "🟡" };
-      return { status: "RED", text: "OCUPADA (Aula Teórica)", badge: "🔴" };
+      return { status: "RED", text: "OCUPADA (Aula Teórica / Reserva)", badge: "🔴" };
     }
 
+    // PARSER DINÂMICO PARA EXTRAIR TABELAS DO GOOGLE DOCS
     async function fetchOnlineDocData() {
       const statusEl = document.getElementById("sync-status");
       try {
         const proxyUrl = "https://corsproxy.io/?" + encodeURIComponent(DOC_PUB_URL);
         const res = await fetch(proxyUrl);
-        if (res.ok) {
+        if (!res.ok) throw new Error("Falha na requisição Proxy");
+
+        const htmlText = await res.text();
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(htmlText, 'text/html');
+
+        // Procura tabelas no HTML do Docs publicado
+        const tables = doc.querySelectorAll("table");
+        if (tables.length > 0) {
+          parseDocsHTML(doc);
           statusEl.innerText = "🟢 Sincronizado ao vivo com Google Docs";
           statusEl.style.color = "#107c10";
           renderMatrix();
         }
       } catch (err) {
-        statusEl.innerText = "⚡ Modo offline (dados da grade oficial)";
+        statusEl.innerText = "⚡ Atualizando via cache local...";
         statusEl.style.color = "#d8b012";
       }
+    }
+
+    function parseDocsHTML(doc) {
+      const rows = doc.querySelectorAll("tr");
+      let currentParsedRoom = null;
+
+      rows.forEach(row => {
+        const text = row.innerText || row.textContent || "";
+        
+        // Identifica a sala que está sendo lida no Docs
+        if (text.includes("SALA 9") || text.includes("Sala 9")) currentParsedRoom = "A9";
+        else if (text.includes("SALA 12") || text.includes("Sala 12")) currentParsedRoom = "A12";
+
+        // Se for uma linha válida de dados e encontrou uma sala mapeada
+        if (currentParsedRoom) {
+          const roomObj = CAMPUS_DATA.find(r => r.id === currentParsedRoom);
+          if (roomObj) {
+            const cells = Array.from(row.querySelectorAll("td")).map(c => c.innerText.trim());
+            // Se a linha tem células de dias (Seg a Sex)
+            if (cells.length >= 5) {
+              const days = ["SEG", "TER", "QUA", "QUI", "SEX"];
+              days.forEach((day, idx) => {
+                const cellVal = cells[idx + 1] || cells[idx] || "";
+                if (cellVal && cellVal.length > 1 && !cellVal.toUpperCase().includes("SALA")) {
+                  // Preenche os tempos com o contudo da célula do Docs
+                  ["T1","T2","T3","T4","T5","T6","T7"].forEach(t => {
+                    if (!roomObj.grade[day][t]) roomObj.grade[day][t] = cellVal;
+                  });
+                }
+              });
+            }
+          }
+        }
+      });
     }
 
     function renderTimePills() {
@@ -496,6 +513,11 @@
     function renderMatrix() {
       const container = document.getElementById("matrix-container");
       container.innerHTML = "";
+
+      if (currentShift === "MANHA") {
+        container.innerHTML = `<div class="empty-msg">🌅 Salas do turno da manhã em mapeamento.<br>Selecione o turno da <b>Tarde</b> para visualizar o monitor.</div>`;
+        return;
+      }
 
       const rooms = CAMPUS_DATA.filter(r => r.bloco === currentBlock && r.shift === currentShift);
 
