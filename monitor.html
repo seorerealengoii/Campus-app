@@ -308,18 +308,20 @@
     const LIBERADAS = ["efi", "ed. fisica", "educacao fisica", "art", "artes", "mus", "musica", "info", "informatica", "des", "desenho"];
     const IDIOMAS = ["ing", "ingles", "fra", "frances", "esp", "espanhol", "f/e", "e/i", "edmar/fr", "ap"];
 
-    // Estrutura padrão de Salas
+    // Cria as salas para os Blocos A, B e C (1 a 12 de cada bloco)
     let CAMPUS_DATA = [];
-    for(let i = 1; i <= 12; i++) {
-      CAMPUS_DATA.push({
-        id: "A" + i,
-        bloco: "A",
-        nome: "Sala " + i,
-        turma: "Sala " + i,
-        shift: "TARDE",
-        grade: { SEG:{}, TER:{}, QUA:{}, QUI:{}, SEX:{} }
-      });
-    }
+    ["A", "B", "C"].forEach(block => {
+      for(let i = 1; i <= 12; i++) {
+        CAMPUS_DATA.push({
+          id: block + i,
+          bloco: block,
+          nome: "Sala " + i,
+          turma: "Bloco " + block,
+          shift: "TARDE",
+          grade: { SEG:{}, TER:{}, QUA:{}, QUI:{}, SEX:{} }
+        });
+      }
+    });
 
     function normalizeText(txt) {
       return (txt || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
@@ -342,15 +344,16 @@
         if (res.ok) {
           const data = await res.json();
           
-          // Mapeia os dados do Apps Script para a grade das salas
           Object.keys(data).forEach(roomId => {
             let roomObj = CAMPUS_DATA.find(r => r.id === roomId);
             if (!roomObj) {
+              const blockLetter = roomId.charAt(0);
+              const roomNum = roomId.substring(1);
               roomObj = {
                 id: roomId,
-                bloco: roomId.charAt(0),
-                nome: "Sala " + roomId.substring(1),
-                turma: "Reserva / Apoio",
+                bloco: blockLetter,
+                nome: "Sala " + roomNum,
+                turma: "Bloco " + blockLetter,
                 shift: "TARDE",
                 grade: { SEG:{}, TER:{}, QUA:{}, QUI:{}, SEX:{} }
               };
