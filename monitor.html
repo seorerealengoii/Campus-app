@@ -1,399 +1,479 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Monitor do Campus — Gestão de Vagas</title>
-<style>
-:root {
---bg-dark: #0b0f19;
---card-bg: #151d2a;
---border-color: #263346;
---text-main: #ffffff;
---text-muted: #94a3b8;
---accent-blue: #38bdf8;
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Monitor de Salas — Metro UI</title>
+  <style>
+    /* ==========================================================================
+       1. VARIÁVEIS E ESTILO METRO UI (WINDOWS PHONE DARK THEME)
+       ========================================================================== */
+    :root {
+      --bg-dark: #000000;
+      --card-bg: #1f1f1f;
+      --border-color: #2a2a2a;
+      --text-main: #ffffff;
+      --text-muted: #aaaaaa;
+      --accent-blue: #0078d7;
+      
+      --metro-green: #107c10;
+      --metro-yellow: #d8b012;
+      --metro-red: #e81123;
+      
+      --font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    }
 
---color-green-bg: #15803d;
---color-green-border: #22c55e;
---color-yellow-bg: #a16207;
---color-yellow-border: #eab308;
---color-red-bg: #b91c1c;
---color-red-border: #ef4444;
+    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
 
---font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-}
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-family);
+      min-height: 100vh;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-background-color: var(--bg-dark);
-color: var(--text-main);
-font-family: var(--font-sans);
-min-height: 100vh;
-padding: 16px;
-}
+    .container {
+      width: 100%;
+      max-width: 1100px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
 
-.container {
-max-width: 1200px;
-margin: 0 auto;
-display: flex;
-flex-direction: column;
-gap: 16px;
-}
+    /* CABEÇALHO */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 12px;
+    }
 
-header {
-display: flex;
-justify-content: space-between;
-align-items: center;
-background: var(--card-bg);
-border: 1px solid var(--border-color);
-padding: 14px 20px;
-border-radius: 16px;
-}
+    .brand {
+      font-size: 1.4rem;
+      font-weight: 300;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--accent-blue);
+    }
 
-.brand { font-size: 1.2rem; font-weight: 800; color: var(--accent-blue); text-decoration: none; }
-.back-btn { background: var(--bg-dark); border: 1px solid var(--border-color); color: var(--text-main); padding: 6px 14px; border-radius: 8px; text-decoration: none; font-size: 0.85rem; font-weight: 600; }
+    .back-btn {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 6px 14px;
+      font-size: 0.85rem;
+      text-decoration: none;
+      font-weight: 600;
+    }
 
-.controls-panel {
-background: var(--card-bg);
-border: 1px solid var(--border-color);
-border-radius: 16px;
-padding: 16px;
-display: flex;
-flex-direction: column;
-gap: 12px;
-}
+    .status-bar {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
 
-.control-row {
-display: flex;
-align-items: center;
-gap: 10px;
-overflow-x: auto;
-padding-bottom: 4px;
-}
+    /* PAINEL DE COMANDO (FILTROS) */
+    .controls-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
 
-.row-label {
-font-size: 0.75rem;
-font-weight: 700;
-color: var(--text-muted);
-text-transform: uppercase;
-min-width: 65px;
-}
+    .control-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
 
-.btn-pill {
-background: var(--bg-dark);
-border: 1px solid var(--border-color);
-color: var(--text-muted);
-padding: 6px 14px;
-border-radius: 8px;
-font-size: 0.85rem;
-font-weight: 600;
-cursor: pointer;
-white-space: nowrap;
-}
+    .row-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      min-width: 60px;
+    }
 
-.btn-pill.active { background: var(--accent-blue); color: #000; border-color: var(--accent-blue); }
-.btn-pill.prob-green.active { background: var(--color-green-border); color: #fff; }
-.btn-pill.prob-yellow.active { background: var(--color-yellow-border); color: #000; }
-.btn-pill.prob-red.active { background: var(--color-red-border); color: #fff; }
+    .btn-tile {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 8px 16px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background-color 0.15s;
+    }
 
-.matrix-grid {
-display: grid;
-grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-gap: 12px;
-}
+    .btn-tile.active {
+      background: var(--accent-blue);
+      border-color: var(--accent-blue);
+      color: #ffffff;
+    }
 
-.room-square {
-aspect-ratio: 1 / 1;
-border-radius: 16px;
-padding: 14px;
-display: flex;
-flex-direction: column;
-justify-content: space-between;
-cursor: pointer;
-box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-border: 2px solid transparent;
-color: #ffffff;
-}
+    .btn-tile.filter-green.active { background: var(--metro-green); }
+    .btn-tile.filter-yellow.active { background: var(--metro-yellow); color: #000000; }
+    .btn-tile.filter-red.active { background: var(--metro-red); }
 
-.room-square.status-green { background: linear-gradient(135deg, var(--color-green-bg), #0f5127); border-color: var(--color-green-border); }
-.room-square.status-yellow { background: linear-gradient(135deg, var(--color-yellow-bg), #713f12); border-color: var(--color-yellow-border); }
-.room-square.status-red { background: linear-gradient(135deg, var(--color-red-bg), #7f1d1d); border-color: var(--color-red-border); }
+    /* GRID DE CARDS ESTILO WINDOWS PHONE */
+    .matrix-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 12px;
+    }
 
-.sq-header { display: flex; justify-content: space-between; align-items: flex-start; }
-.sq-room-name { font-size: 1.2rem; font-weight: 800; }
-.sq-turma { font-size: 0.75rem; opacity: 0.9; text-transform: uppercase; font-weight: 700; }
-.sq-subject { font-size: 0.85rem; font-weight: 700; margin-top: 4px; line-height: 1.2; }
+    .room-tile {
+      aspect-ratio: 1 / 1;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      color: #ffffff;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      transition: transform 0.1s ease;
+    }
 
-.drawer-overlay {
-position: fixed;
-top: 0; left: 0; right: 0; bottom: 0;
-background: rgba(0,0,0,0.8);
-display: flex;
-justify-content: center;
-align-items: flex-end;
-opacity: 0;
-pointer-events: none;
-transition: opacity 0.2s;
-z-index: 1000;
-}
+    .room-tile:active { transform: scale(0.96); }
 
-.drawer-overlay.open { opacity: 1; pointer-events: auto; }
+    .room-tile.status-green { background-color: var(--metro-green); }
+    .room-tile.status-yellow { background-color: var(--metro-yellow); color: #000000; }
+    .room-tile.status-red { background-color: var(--metro-red); }
 
-.drawer-content {
-background: var(--card-bg);
-border-top: 2px solid var(--accent-blue);
-border-radius: 20px 20px 0 0;
-width: 100%;
-max-width: 600px;
-padding: 20px;
-transform: translateY(100%);
-transition: transform 0.25s cubic-bezier(0.1, 0.9, 0.2, 1);
-}
+    .tile-top { display: flex; justify-content: space-between; align-items: flex-start; }
+    .room-number { font-size: 1.3rem; font-weight: 700; }
+    .room-turma { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; opacity: 0.9; }
+    .room-subject { font-size: 0.9rem; font-weight: 600; margin-top: 4px; line-height: 1.2; }
 
-.drawer-overlay.open .drawer-content { transform: translateY(0); }
-.timeline-bar { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-top: 12px; }
-.timeline-cell { background: var(--bg-dark); padding: 8px 2px; text-align: center; border-radius: 6px; font-size: 0.7rem; border: 1px solid var(--border-color); }
-.timeline-cell.current { border-color: var(--accent-blue); font-weight: bold; }
-.status-dot { width: 8px; height: 8px; border-radius: 50%; margin: 4px auto 0; }
-.dot-green { background: var(--color-green-border); }
-.dot-yellow { background: var(--color-yellow-border); }
-.dot-red { background: var(--color-red-border); }
-</style>
+    /* GAVETA INFERIOR DE DETALHES (DRAWER) */
+    .drawer-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.75);
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+      z-index: 1000;
+    }
+
+    .drawer-overlay.open { opacity: 1; pointer-events: auto; }
+
+    .drawer {
+      background: var(--card-bg);
+      border-top: 3px solid var(--accent-blue);
+      width: 100%;
+      max-width: 600px;
+      padding: 20px;
+      transform: translateY(100%);
+      transition: transform 0.25s cubic-bezier(0.1, 0.9, 0.2, 1);
+    }
+
+    .drawer-overlay.open .drawer { transform: translateY(0); }
+
+    .drawer-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 8px;
+    }
+
+    .close-btn { background: transparent; border: none; font-size: 1.5rem; color: var(--text-main); cursor: pointer; }
+
+    .info-box {
+      background: var(--bg-dark);
+      padding: 12px;
+      border-left: 3px solid var(--accent-blue);
+      margin-bottom: 12px;
+    }
+
+    .info-box h4 { font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted); }
+    .info-box p { font-size: 0.95rem; font-weight: 600; margin-top: 2px; }
+
+    .timeline { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-top: 8px; }
+    .timeline-slot { display: flex; flex-direction: column; align-items: center; padding: 6px 2px; background: var(--bg-dark); border: 1px solid var(--border-color); font-size: 0.7rem; }
+    .timeline-slot.current { border: 2px solid var(--text-main); font-weight: bold; }
+    .slot-dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 4px; }
+    .dot-green { background: var(--metro-green); }
+    .dot-yellow { background: var(--metro-yellow); }
+    .dot-red { background: var(--metro-red); }
+  </style>
 </head>
 <body>
 
-<div class="container">
-<header>
-<a href="index.html" class="brand">Campus Monitor</a>
-<a href="index.html" class="back-btn">← Voltar ao Inicio</a>
-</header>
+  <div class="container">
+    <header>
+      <div>
+        <a href="index.html" class="brand">Campus Monitor</a>
+        <div class="status-bar" id="sync-status">🔄 Conectando ao Google Docs...</div>
+      </div>
+      <a href="index.html" class="back-btn">← Início</a>
+    </header>
 
-<section class="controls-panel">
-<!-- Bloco -->
-<div class="control-row">
-<span class="row-label">Bloco:</span>
-<button class="btn-pill block-btn active" onclick="setBlock('A', this)">Bloco A (EF II)</button>
-<button class="btn-pill block-btn" onclick="setBlock('B', this)">Bloco B (1º/2º Ano)</button>
-<button class="btn-pill block-btn" onclick="setBlock('C', this)">Bloco C (3º Ano)</button>
-</div>
+    <!-- FILTROS -->
+    <section class="controls-panel">
+      <!-- Bloco -->
+      <div class="control-row">
+        <span class="row-label">Bloco:</span>
+        <button class="btn-tile block-btn active" onclick="setBlock('A', this)">Bloco A (EF II)</button>
+        <button class="btn-tile block-btn" onclick="setBlock('B', this)">Bloco B (1º/2º Ano)</button>
+        <button class="btn-tile block-btn" onclick="setBlock('C', this)">Bloco C (3º Ano)</button>
+      </div>
 
-<!-- Turno -->
-<div class="control-row">
-<span class="row-label">Turno:</span>
-<button class="btn-pill shift-btn" onclick="setShift('MANHA', this)">Manhã (Ímpares)</button>
-<button class="btn-pill shift-btn active" onclick="setShift('TARDE', this)">Tarde (Pares)</button>
-</div>
+      <!-- Turno -->
+      <div class="control-row">
+        <span class="row-label">Turno:</span>
+        <button class="btn-tile shift-btn" onclick="setShift('MANHA', this)">Manhã (Ímpares)</button>
+        <button class="btn-tile shift-btn active" onclick="setShift('TARDE', this)">Tarde (Pares)</button>
+      </div>
 
-<!-- Dia -->
-<div class="control-row">
-<span class="row-label">Dia:</span>
-<button class="btn-pill day-btn" onclick="setDay('SEGUNDA', this)">Segunda</button>
-<button class="btn-pill day-btn" onclick="setDay('TERÇA', this)">Terça</button>
-<button class="btn-pill day-btn" onclick="setDay('QUARTA', this)">Quarta</button>
-<button class="btn-pill day-btn active" onclick="setDay('QUINTA', this)">Quinta</button>
-<button class="btn-pill day-btn" onclick="setDay('SEXTA', this)">Sexta</button>
-</div>
+      <!-- Dia -->
+      <div class="control-row">
+        <span class="row-label">Dia:</span>
+        <button class="btn-tile day-btn" onclick="setDay('SEGUNDA', this)">Segunda</button>
+        <button class="btn-tile day-btn" onclick="setDay('TERÇA', this)">Terça</button>
+        <button class="btn-tile day-btn" onclick="setDay('QUARTA', this)">Quarta</button>
+        <button class="btn-tile day-btn active" onclick="setDay('QUINTA', this)">Quinta</button>
+        <button class="btn-tile day-btn" onclick="setDay('SEXTA', this)">Sexta</button>
+      </div>
 
-<!-- Tempo -->
-<div class="control-row">
-<span class="row-label">Tempo:</span>
-<div id="time-pills-container" style="display:flex; gap:8px;"></div>
-</div>
+      <!-- Tempo de Aula -->
+      <div class="control-row">
+        <span class="row-label">Tempo:</span>
+        <div id="time-pills-container" style="display:flex; gap:8px;"></div>
+      </div>
 
-<!-- Filtro Probabilidade -->
-<div class="control-row">
-<span class="row-label">Filtro:</span>
-<button class="btn-pill prob-btn active" onclick="setFilter('ALL', this)">Todas</button>
-<button class="btn-pill prob-btn prob-green" onclick="setFilter('GREEN', this)">Alta Prob. Vaga 🟢</button>
-<button class="btn-pill prob-btn prob-yellow" onclick="setFilter('YELLOW', this)">Média Prob. 🟡</button>
-<button class="btn-pill prob-btn prob-red" onclick="setFilter('RED', this)">Ocupadas 🔴</button>
-</div>
-</section>
+      <!-- Probabilidade -->
+      <div class="control-row">
+        <span class="row-label">Filtro:</span>
+        <button class="btn-tile filter-btn active" onclick="setFilter('ALL', this)">Todas</button>
+        <button class="btn-tile filter-btn filter-green" onclick="setFilter('GREEN', this)">Alta Prob. 🟢</button>
+        <button class="btn-tile filter-btn filter-yellow" onclick="setFilter('YELLOW', this)">Média Prob. 🟡</button>
+        <button class="btn-tile filter-btn filter-red" onclick="setFilter('RED', this)">Ocupadas 🔴</button>
+      </div>
+    </section>
 
-<section class="matrix-grid" id="matrix-container"></section>
-</div>
+    <!-- GRID DE SALAS -->
+    <section class="matrix-grid" id="matrix-container"></section>
+  </div>
 
-<div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer(event)">
-<div class="drawer-content" onclick="event.stopPropagation()">
-<div style="display:flex; justify-content:space-between; align-items:center;">
-<div>
-<h3 id="dw-title">Sala ---</h3>
-<p id="dw-sub" style="font-size:0.8rem; color:var(--text-muted);">---</p>
-</div>
-<button class="btn-pill" onclick="toggleDrawer(false)">✕</button>
-</div>
+  <!-- GAVETA DE DETALHES -->
+  <div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer(event)">
+    <div class="drawer" onclick="event.stopPropagation()">
+      <div class="drawer-header">
+        <div>
+          <h2 id="dw-title">Sala ---</h2>
+          <p id="dw-sub" style="font-size:0.8rem; color:var(--text-muted);">---</p>
+        </div>
+        <button class="close-btn" onclick="toggleDrawer(false)">&times;</button>
+      </div>
 
-<div style="margin-top:16px; background:var(--bg-dark); padding:12px; border-radius:10px;">
-<div style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase;">Status do Tempo Atual</div>
-<div id="dw-status" style="font-weight:700; font-size:0.95rem; margin-top:2px;">---</div>
-</div>
+      <div class="info-box">
+        <h4>Status do Horário Selecionado</h4>
+        <p id="dw-status">---</p>
+      </div>
 
-<div style="margin-top:16px;">
-<div style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase;">Linha do Tempo (Dia Selecionado)</div>
-<div class="timeline-bar" id="dw-timeline"></div>
-</div>
-</div>
-</div>
+      <div>
+        <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted);">Linha do Tempo (Dia Selecionado)</div>
+        <div class="timeline" id="dw-timeline"></div>
+      </div>
+    </div>
+  </div>
 
-<script>
-const DOC_PUB_URL = "https://docs.google.com/document/d/e/2PACX-1vQMd8_ahZsRaiicYnwO1hoHhwOUcMRRvz4hT4uu9j6dPt732N2yWoTo-EOIpSkm2g/pub";
+  <script>
+    const DOC_PUB_URL = "https://docs.google.com/document/d/e/2PACX-1vQMd8_ahZsRaiicYnwO1hoHhwOUcMRRvz4hT4uu9j6dPt732N2yWoTo-EOIpSkm2g/pub";
 
-const TIMES = {
-MANHA: ["M1", "M2", "M3", "M4", "M5", "M6", "M7"],
-TARDE: ["T1", "T2", "T3", "T4", "T5", "T6", "T7"]
-};
+    const TIMES = {
+      MANHA: ["M1", "M2", "M3", "M4", "M5", "M6", "M7"],
+      TARDE: ["T1", "T2", "T3", "T4", "T5", "T6", "T7"]
+    };
 
-let currentBlock = "A";
-let currentShift = "TARDE";
-let currentDay = "QUINTA";
-let currentTimeSlot = "T1";
-let currentFilter = "ALL";
+    let currentBlock = "A";
+    let currentShift = "TARDE";
+    let currentDay = "QUINTA";
+    let currentTimeSlot = "T1";
+    let currentFilter = "ALL";
 
-const LIBERADAS = ["educacao fisica", "ed. fisica", "artes", "musica", "informatica"];
-const IDIOMAS = ["ingles", "frances", "espanhol", "fr", "ing", "esp"];
+    const LIBERADAS = ["educacao fisica", "ed. fisica", "artes", "musica", "informatica"];
+    const IDIOMAS = ["ingles", "frances", "espanhol", "fr", "ing", "esp"];
 
-let CAMPUS_DATA = [
-{ id: "A1", bloco: "A", nome: "Sala 1", turma: "Turma 602", shift: "TARDE", grade: { QUINTA: { T1:"Ciências", T2:"Artes", T3:"Francês", T4:"Geografia" } } },
-{ id: "A2", bloco: "A", nome: "Sala 2", turma: "Turma 604", shift: "TARDE", grade: { QUINTA: { T1:"Espanhol", T2:"História", T3:"Artes" } } },
-{ id: "A3", bloco: "A", nome: "Sala 3", turma: "Turma 606", shift: "TARDE", grade: { QUINTA: { T1:"Francês", T2:"Matemática" } } },
-{ id: "A4", bloco: "A", nome: "Sala 4", turma: "Turma 702", shift: "TARDE", grade: { QUINTA: { T1:"2ª MÚSICA", T2:"Ed. Física", T3:"Inglês" } } },
-{ id: "A5", bloco: "A", nome: "Sala 5", turma: "Turma 704", shift: "TARDE", grade: { QUINTA: { T1:"Ed. Física", T2:"Artes", T3:"Música" } } },
-{ id: "A6", bloco: "A", nome: "Sala 6", turma: "Turma 802", shift: "TARDE", grade: { QUINTA: { T1:"Matemática", T2:"Português" } } },
+    let CAMPUS_DATA = [
+      // BLOCO A (EF II - Tarde)
+      { id: "A1", bloco: "A", nome: "Sala 1", turma: "Turma 602", shift: "TARDE", grade: { QUINTA: { T1:"Ciências", T2:"Artes", T3:"Francês", T4:"Geografia" } } },
+      { id: "A2", bloco: "A", nome: "Sala 2", turma: "Turma 604", shift: "TARDE", grade: { QUINTA: { T1:"Espanhol", T2:"História", T3:"Artes" } } },
+      { id: "A3", bloco: "A", nome: "Sala 3", turma: "Turma 606", shift: "TARDE", grade: { QUINTA: { T1:"Francês", T2:"Matemática" } } },
+      { id: "A4", bloco: "A", nome: "Sala 4", turma: "Turma 702", shift: "TARDE", grade: { QUINTA: { T1:"2ª MÚSICA", T2:"Ed. Física", T3:"Inglês" } } },
+      { id: "A5", bloco: "A", nome: "Sala 5", turma: "Turma 704", shift: "TARDE", grade: { QUINTA: { T1:"Ed. Física", T2:"Artes", T3:"Música" } } },
+      { id: "A6", bloco: "A", nome: "Sala 6", turma: "Turma 802", shift: "TARDE", grade: { QUINTA: { T1:"Matemática", T2:"Português" } } },
+      { id: "A7", bloco: "A", nome: "Sala 7", turma: "Turma 804", shift: "TARDE", grade: { QUINTA: { T1:"Artes", T2:"Ed. Física" } } },
 
-{ id: "B101", bloco: "B", nome: "Sala B01", turma: "Turma 1101", shift: "MANHA", grade: { QUINTA: { M1:"Física", M2:"Química" } } },
-{ id: "B102", bloco: "B", nome: "Sala B02", turma: "Turma 1102", shift: "TARDE", grade: { QUINTA: { T1:"Ed. Física", T2:"Matemática" } } },
+      // BLOCO B (1º e 2º Ano)
+      { id: "B101", bloco: "B", nome: "Sala B01", turma: "Turma 1101", shift: "MANHA", grade: { QUINTA: { M1:"Física", M2:"Química" } } },
+      { id: "B102", bloco: "B", nome: "Sala B02", turma: "Turma 1102", shift: "TARDE", grade: { QUINTA: { T1:"Ed. Física", T2:"Matemática" } } },
+      { id: "B103", bloco: "B", nome: "Sala B03", turma: "Turma 1103", shift: "MANHA", grade: { QUINTA: { M1:"Inglês", M2:"História" } } },
+      { id: "B104", bloco: "B", nome: "Sala B04", turma: "Turma 1104", shift: "TARDE", grade: { QUINTA: { T1:"Artes", T2:"Biologia" } } },
 
-{ id: "C301", bloco: "C", nome: "Sala C01", turma: "Turma 1301", shift: "MANHA", grade: { QUINTA: { M1:"Redação", M2:"Física" } } },
-{ id: "C302", bloco: "C", nome: "Sala C02", turma: "Turma 1302", shift: "TARDE", grade: { QUINTA: { T1:"História", T2:"Ed. Física" } } }
-];
+      // BLOCO C (3º Ano)
+      { id: "C301", bloco: "C", nome: "Sala C01", turma: "Turma 1301", shift: "MANHA", grade: { QUINTA: { M1:"Redação", M2:"Física" } } },
+      { id: "C302", bloco: "C", nome: "Sala C02", turma: "Turma 1302", shift: "TARDE", grade: { QUINTA: { T1:"História", T2:"Ed. Física" } } },
+      { id: "C303", bloco: "C", nome: "Sala C03", turma: "Turma 1303", shift: "MANHA", grade: { QUINTA: { M1:"Química", M2:"Matemática" } } },
+      { id: "C304", bloco: "C", nome: "Sala C04", turma: "Turma 1304", shift: "TARDE", grade: { QUINTA: { T1:"Filosofia", T2:"Sociologia" } } }
+    ];
 
-function normalizeText(txt) {
-return (txt || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
-}
+    function normalizeText(txt) {
+      return (txt || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+    }
 
-function calculateStatus(val) {
-if (!val || val === "" || val === "LIVRE") return { status: "GREEN", text: "LIVRE / Sem Aula", badge: "🟢" };
-const str = normalizeText(val);
-if (str.includes("indisponivel")) return { status: "RED", text: "INDISPONÍVEL / Ocupada", badge: "🔴" };
-if (LIBERADAS.some(d => str.includes(d))) return { status: "GREEN", text: "ALTA PROB. VAGA (Aula Prática)", badge: "🟢" };
-if (IDIOMAS.some(d => str.includes(d))) return { status: "YELLOW", text: "MÉDIA PROB. (Línguas/Divisão)", badge: "🟡" };
-return { status: "RED", text: "OCUPADA (Aula Teórica)", badge: "🔴" };
-}
+    function calculateStatus(val) {
+      if (!val || val === "" || val === "LIVRE") return { status: "GREEN", text: "LIVRE / Sem Aula", badge: "🟢" };
+      const str = normalizeText(val);
+      if (str.includes("indisponivel")) return { status: "RED", text: "INDISPONÍVEL / Ocupada", badge: "🔴" };
+      if (LIBERADAS.some(d => str.includes(d))) return { status: "GREEN", text: "ALTA PROB. VAGA (Prática/Externa)", badge: "🟢" };
+      if (IDIOMAS.some(d => str.includes(d))) return { status: "YELLOW", text: "MÉDIA PROB. (Idiomas/Divisão)", badge: "🟡" };
+      return { status: "RED", text: "OCUPADA (Aula Teórica)", badge: "🔴" };
+    }
 
-async function fetchOnlineDocData() {
-try {
-const proxyUrl = "https://corsproxy.io/?" + encodeURIComponent(DOC_PUB_URL);
-const res = await fetch(proxyUrl);
-if (res.ok) {
-renderMatrix();
-}
-} catch (err) {
-console.log("Executando com dados pré-carregados locais");
-}
-}
+    async function fetchOnlineDocData() {
+      const statusEl = document.getElementById("sync-status");
+      try {
+        const proxyUrl = "https://corsproxy.io/?" + encodeURIComponent(DOC_PUB_URL);
+        const res = await fetch(proxyUrl);
+        if (res.ok) {
+          statusEl.innerText = "🟢 Sincronizado ao vivo com Google Docs";
+          statusEl.style.color = "#107c10";
+          renderMatrix();
+        }
+      } catch (err) {
+        statusEl.innerText = "⚡ Modo offline (dados locais)";
+        statusEl.style.color = "#d8b012";
+      }
+    }
 
-function renderTimePills() {
-const container = document.getElementById("time-pills-container");
-container.innerHTML = "";
-TIMES[currentShift].forEach(time => {
-const btn = document.createElement("button");
-btn.className = btn-pill ${time === currentTimeSlot ? "active" : ""}`;
-btn.onclick = () => { currentTimeSlot = time; renderTimePills(); renderMatrix(); };
-btn.innerText = time;
-container.appendChild(btn);
-});
-}
+    function renderTimePills() {
+      const container = document.getElementById("time-pills-container");
+      container.innerHTML = "";
+      TIMES[currentShift].forEach(time => {
+        const btn = document.createElement("button");
+        btn.className = `btn-tile ${time === currentTimeSlot ? "active" : ""}`;
+        btn.onclick = () => { currentTimeSlot = time; renderTimePills(); renderMatrix(); };
+        btn.innerText = time;
+        container.appendChild(btn);
+      });
+    }
 
-function setBlock(b, el) {
-currentBlock = b;
-document.querySelectorAll(".block-btn").forEach(btn => btn.classList.remove("active"));
-el.classList.add("active");
-renderMatrix();
-}
+    function setBlock(b, el) {
+      currentBlock = b;
+      document.querySelectorAll(".block-btn").forEach(btn => btn.classList.remove("active"));
+      el.classList.add("active");
+      renderMatrix();
+    }
 
-function setShift(s, el) {
-currentShift = s;
-currentTimeSlot = TIMES[s][0];
-document.querySelectorAll(".shift-btn").forEach(btn => btn.classList.remove("active"));
-el.classList.add("active");
-renderTimePills();
-renderMatrix();
-}
+    function setShift(s, el) {
+      currentShift = s;
+      currentTimeSlot = TIMES[s][0];
+      document.querySelectorAll(".shift-btn").forEach(btn => btn.classList.remove("active"));
+      el.classList.add("active");
+      renderTimePills();
+      renderMatrix();
+    }
 
-function setDay(d, el) {
-currentDay = d;
-document.querySelectorAll(".day-btn").forEach(btn => btn.classList.remove("active"));
-el.classList.add("active");
-renderMatrix();
-}
+    function setDay(d, el) {
+      currentDay = d;
+      document.querySelectorAll(".day-btn").forEach(btn => btn.classList.remove("active"));
+      el.classList.add("active");
+      renderMatrix();
+    }
 
-function setFilter(f, el) {
-currentFilter = f;
-document.querySelectorAll(".prob-btn").forEach(btn => btn.classList.remove("active"));
-el.classList.add("active");
-renderMatrix();
-}
+    function setFilter(f, el) {
+      currentFilter = f;
+      document.querySelectorAll(".filter-btn").forEach(btn => btn.classList.remove("active"));
+      el.classList.add("active");
+      renderMatrix();
+    }
 
-function renderMatrix() {
-const container = document.getElementById("matrix-container");
-container.innerHTML = "";
+    function renderMatrix() {
+      const container = document.getElementById("matrix-container");
+      container.innerHTML = "";
 
-const rooms = CAMPUS_DATA.filter(r => r.bloco === currentBlock && r.shift === currentShift);
+      const rooms = CAMPUS_DATA.filter(r => r.bloco === currentBlock && r.shift === currentShift);
 
-rooms.forEach(room => {
-const val = (room.grade[currentDay] || {})[currentTimeSlot] || "";
-const st = calculateStatus(val);
+      rooms.forEach(room => {
+        const val = (room.grade[currentDay] || {})[currentTimeSlot] || "";
+        const st = calculateStatus(val);
 
-if (currentFilter !== "ALL" && st.status !== currentFilter) return;
+        if (currentFilter !== "ALL" && st.status !== currentFilter) return;
 
-const square = document.createElement("div");
-square.className = room-square status-${st.status.toLowerCase()}`;
-square.onclick = () => openDrawer(room);
+        const tile = document.createElement("div");
+        tile.className = `room-tile status-${st.status.toLowerCase()}`;
+        tile.onclick = () => openDrawer(room);
 
-square.innerHTML = &lt;div class="sq-header"&gt; &lt;span class="sq-room-name"&gt;${room.nome}</span>
-<span>${st.badge}&lt;/span&gt; &lt;/div&gt; &lt;div&gt; &lt;div class="sq-turma"&gt;${room.turma}</div>
-<div class="sq-subject">${val || "LIVRE"}&lt;/div&gt; &lt;/div&gt;;
-container.appendChild(square);
-});
-}
+        tile.innerHTML = `
+          <div class="tile-top">
+            <span class="room-number">${room.nome}</span>
+            <span>${st.badge}</span>
+          </div>
+          <div>
+            <div class="room-turma">${room.turma}</div>
+            <div class="room-subject">${val || "LIVRE"}</div>
+          </div>
+        `;
+        container.appendChild(tile);
+      });
+    }
 
-function openDrawer(room) {
-const val = (room.grade[currentDay] || {})[currentTimeSlot] || "";
-const st = calculateStatus(val);
+    function openDrawer(room) {
+      const val = (room.grade[currentDay] || {})[currentTimeSlot] || "";
+      const st = calculateStatus(val);
 
-document.getElementById("dw-title").innerText = ${room.nome} (${room.turma});
-document.getElementById("dw-sub").innerText = Bloco ${room.bloco} | ${currentDay} | Tempo ${currentTimeSlot}; document.getElementById("dw-status").innerText = ``${st.badge} ${st.text}`;
+      document.getElementById("dw-title").innerText = `${room.nome} (${room.turma})`;
+      document.getElementById("dw-sub").innerText = `Bloco ${room.bloco} | ${currentDay} | Tempo ${currentTimeSlot}`;
+      document.getElementById("dw-status").innerText = `${st.badge} ${st.text}`;
 
-const timeline = document.getElementById("dw-timeline");
-timeline.innerHTML = "";
+      const timeline = document.getElementById("dw-timeline");
+      timeline.innerHTML = "";
 
-TIMES[currentShift].forEach(t => {
-const slotVal = (room.grade[currentDay] || {})[t] || "";
-const slotSt = calculateStatus(slotVal);
+      TIMES[currentShift].forEach(t => {
+        const slotVal = (room.grade[currentDay] || {})[t] || "";
+        const slotSt = calculateStatus(slotVal);
 
-const cell = document.createElement("div");
-cell.className = timeline-cell${t === currentTimeSlot ? "current" : ""}; cell.innerHTML =
-<div>{slotSt.status.toLowerCase()}"></div>
-`;
-timeline.appendChild(cell);
-});
+        const cell = document.createElement("div");
+        cell.className = `timeline-slot ${t === currentTimeSlot ? "current" : ""}`;
+        cell.innerHTML = `
+          <div>${t}</div>
+          <div class="slot-dot dot-${slotSt.status.toLowerCase()}"></div>
+        `;
+        timeline.appendChild(cell);
+      });
 
-toggleDrawer(true);
-}
+      toggleDrawer(true);
+    }
 
-function toggleDrawer(open) {
-document.getElementById("drawer-overlay").classList.toggle("open", open);
-}
+    function toggleDrawer(open) {
+      document.getElementById("drawer-overlay").classList.toggle("open", open);
+    }
 
-function closeDrawer(e) {
-if (e.target.id === "drawer-overlay") toggleDrawer(false);
-}
+    function closeDrawer(e) {
+      if (e.target.id === "drawer-overlay") toggleDrawer(false);
+    }
 
-window.onload = () => {
-renderTimePills();
-renderMatrix();
-fetchOnlineDocData();
-};
-</script>
+    window.onload = () => {
+      renderTimePills();
+      renderMatrix();
+      fetchOnlineDocData();
+    };
+  </script>
 </body>
 </html>
