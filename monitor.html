@@ -131,6 +131,7 @@
       justify-content: space-between;
       color: #ffffff;
       cursor: pointer;
+      overflow: hidden;
       transition: transform 0.1s ease;
     }
 
@@ -152,7 +153,7 @@
     .tile-top { display: flex; justify-content: space-between; align-items: flex-start; }
     .room-number { font-size: 1.2rem; font-weight: 700; }
     .room-turma { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; opacity: 0.9; }
-    .room-subject { font-size: 0.85rem; font-weight: 600; margin-top: 4px; line-height: 1.2; }
+    .room-subject { font-size: 0.85rem; font-weight: 600; margin-top: 4px; line-height: 1.2; word-break: break-word; }
 
     .drawer-overlay {
       position: fixed;
@@ -217,7 +218,7 @@
     <header>
       <div>
         <a href="index.html" class="brand">Campus Monitor</a>
-        <div class="status-bar" id="sync-status">🔄 Lendo dados em tempo real do Google Docs...</div>
+        <div class="status-bar" id="sync-status">🔄 Lendo dados em tempo real...</div>
       </div>
       <a href="index.html" class="back-btn">← Início</a>
     </header>
@@ -410,35 +411,20 @@
 
     async function fetchOnlineDocData() {
       const statusEl = document.getElementById("sync-status");
-      
-      // Tenta a exportação direta em formato TXT (sem bloqueio de CORS)
-      const directTxtUrl = DOC_PUB_URL.replace(/\/pub$/, '/pub?output=txt');
+      const proxyUrl = "https://api.allorigins.win/raw?url=" + encodeURIComponent(DOC_PUB_URL);
 
       try {
-        const res = await fetch(directTxtUrl);
-        if (res.ok) {
-          const txtData = await res.text();
-          parseDocsText(txtData);
-          
-          statusEl.innerText = "🟢 Sincronizado ao vivo com Google Docs";
-          statusEl.style.color = "#107c10";
-          renderMatrix();
-          return;
-        }
-      } catch (err) {
-        console.warn("Leitura direta TXT falhou, tentando fallback proxy...", err);
-      }
-
-      // Fallback via proxy
-      try {
-        const proxyUrl = "https://api.allorigins.win/raw?url=" + encodeURIComponent(DOC_PUB_URL);
         const res = await fetch(proxyUrl);
         if (res.ok) {
           const htmlText = await res.text();
           const parser = new DOMParser();
           const doc = parser.parseFromString(htmlText, 'text/html');
 
-          parseDocsHTML(doc);
+          // Remove elementos indesejados do Google (rodapés e scripts)
+          const trash = doc.querySelectorAll("script, style, #footer, .doc-footer");
+          trash.forEach(el => el.remove());
+
+          parseSanitizedDocsHTML(doc);
           
           statusEl.innerText = "🟢 Sincronizado ao vivo com Google Docs";
           statusEl.style.color = "#107c10";
@@ -453,49 +439,33 @@
       statusEl.style.color = "#d8b012";
     }
 
-    function parseDocsText(text) {
-      const lines = text.split('\n');
-      let currentParsedRoom = null;
+    function parseSanitizedDocsHTML(doc) {
+      const tables = doc.querySelectorAll("table");
+      
+      tables.forEach(table => {
+        const rows = table.querySelectorAll("tr");
+        let currentRoomId = null;
 
-      lines.forEach(line => {
-        const cleanLine = line.trim();
-        if (cleanLine.toUpperCase().includes("SALA 9")) currentParsedRoom = "A9";
-        else if (cleanLine.toUpperCase().includes("SALA 12")) currentParsedRoom = "A12";
+        rows.forEach(row => {
+          const cells = Array.from(row.querySelectorAll("td, th")).map(c => c.innerText.trim());
+          const rowText = cells.join(" ").toUpperCase();
 
-        if (currentParsedRoom && cleanLine.length > 2) {
-          const roomObj = CAMPUS_DATA.find(r => r.id === currentParsedRoom);
-          if (roomObj) {
-            const days = ["SEG", "TER", "QUA", "QUI", "SEX"];
-            days.forEach(day => {
-              if (cleanLine.toUpperCase().includes(day)) {
-                ["T1","T2","T3","T4","T5","T6","T7"].forEach(t => {
-                  if (!roomObj.grade[day][t]) roomObj.grade[day][t] = cleanLine;
-                });
-              }
-            });
-          }
-        }
-      });
-    }
+          // Filtra ruídos de rodapé do Google Docs
+          if (rowText.includes("PUBLICADA USANDO O GOOGLE DOCS") || rowText.includes("DENUNCIAR ABUSO")) return;
 
-    function parseDocsHTML(doc) {
-      const rows = doc.querySelectorAll("tr");
-      let currentParsedRoom = null;
+          if (rowText.includes("SALA 9")) currentRoomId = "A9";
+          else if (rowText.includes("SALA 12")) currentRoomId = "A12";
 
-      rows.forEach(row => {
-        const text = row.innerText || row.textContent || "";
-        
-        if (text.includes("SALA 9") || text.includes("Sala 9")) currentParsedRoom = "A9";
-        else if (text.includes("SALA 12") || text.includes("Sala 12")) currentParsedRoom = "A12";
-
-        if (currentParsedRoom) {
-          const roomObj = CAMPUS_DATA.find(r => r.id === currentParsedRoom);
-          if (roomObj) {
-            const cells = Array.from(row.querySelectorAll("td")).map(c => c.innerText.trim());
-            if (cells.length >= 5) {
+          if (currentRoomId && cells.length >= 5) {
+            const roomObj = CAMPUS_DATA.find(r => r.id === currentRoomId);
+            if (roomObj) {
               const days = ["SEG", "TER", "QUA", "QUI", "SEX"];
               days.forEach((day, idx) => {
-                const cellVal = cells[idx + 1] || cells[idx] || "";
+                let cellVal = cells[idx + 1] || cells[idx] || "";
+                
+                // Limpa textos de aviso do Google se caírem dentro de uma célula
+                if (cellVal.includes("Google Docs") || cellVal.includes("Denunciar")) cellVal = "";
+
                 if (cellVal && cellVal.length > 1 && !cellVal.toUpperCase().includes("SALA")) {
                   ["T1","T2","T3","T4","T5","T6","T7"].forEach(t => {
                     if (!roomObj.grade[day][t]) roomObj.grade[day][t] = cellVal;
@@ -504,7 +474,7 @@
               });
             }
           }
-        }
+        });
       });
     }
 
