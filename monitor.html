@@ -408,27 +408,38 @@
       return { status: "RED", text: "OCUPADA (Aula Teórica / Reserva)", badge: "🔴" };
     }
 
-    // PARSER DINÂMICO PARA EXTRAIR TABELAS DO GOOGLE DOCS
     async function fetchOnlineDocData() {
       const statusEl = document.getElementById("sync-status");
-      try {
-        const proxyUrl = "https://corsproxy.io/?" + encodeURIComponent(DOC_PUB_URL);
-        const res = await fetch(proxyUrl);
-        if (!res.ok) throw new Error("Falha na requisição Proxy");
+      
+      const proxies = [
+        "https://api.allorigins.win/raw?url=",
+        "https://corsproxy.io/?"
+      ];
 
-        const htmlText = await res.text();
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(htmlText, 'text/html');
+      let success = false;
 
-        // Procura tabelas no HTML do Docs publicado
-        const tables = doc.querySelectorAll("table");
-        if (tables.length > 0) {
-          parseDocsHTML(doc);
-          statusEl.innerText = "🟢 Sincronizado ao vivo com Google Docs";
-          statusEl.style.color = "#107c10";
-          renderMatrix();
+      for (let proxy of proxies) {
+        try {
+          const res = await fetch(proxy + encodeURIComponent(DOC_PUB_URL));
+          if (res.ok) {
+            const htmlText = await res.text();
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(htmlText, 'text/html');
+
+            parseDocsHTML(doc);
+            
+            statusEl.innerText = "🟢 Sincronizado ao vivo com Google Docs";
+            statusEl.style.color = "#107c10";
+            renderMatrix();
+            success = true;
+            break;
+          }
+        } catch (err) {
+          console.warn("Tentativa de proxy falhou:", proxy, err);
         }
-      } catch (err) {
+      }
+
+      if (!success) {
         statusEl.innerText = "⚡ Atualizando via cache local...";
         statusEl.style.color = "#d8b012";
       }
@@ -441,22 +452,18 @@
       rows.forEach(row => {
         const text = row.innerText || row.textContent || "";
         
-        // Identifica a sala que está sendo lida no Docs
         if (text.includes("SALA 9") || text.includes("Sala 9")) currentParsedRoom = "A9";
         else if (text.includes("SALA 12") || text.includes("Sala 12")) currentParsedRoom = "A12";
 
-        // Se for uma linha válida de dados e encontrou uma sala mapeada
         if (currentParsedRoom) {
           const roomObj = CAMPUS_DATA.find(r => r.id === currentParsedRoom);
           if (roomObj) {
             const cells = Array.from(row.querySelectorAll("td")).map(c => c.innerText.trim());
-            // Se a linha tem células de dias (Seg a Sex)
             if (cells.length >= 5) {
               const days = ["SEG", "TER", "QUA", "QUI", "SEX"];
               days.forEach((day, idx) => {
                 const cellVal = cells[idx + 1] || cells[idx] || "";
                 if (cellVal && cellVal.length > 1 && !cellVal.toUpperCase().includes("SALA")) {
-                  // Preenche os tempos com o contudo da célula do Docs
                   ["T1","T2","T3","T4","T5","T6","T7"].forEach(t => {
                     if (!roomObj.grade[day][t]) roomObj.grade[day][t] = cellVal;
                   });
