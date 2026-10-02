@@ -218,7 +218,7 @@
     <header>
       <div>
         <a href="index.html" class="brand">Campus Monitor</a>
-        <div class="status-bar" id="sync-status">🔄 Lendo dados em tempo real...</div>
+        <div class="status-bar" id="sync-status">🔄 Lendo dados do Google Docs...</div>
       </div>
       <a href="index.html" class="back-btn">← Início</a>
     </header>
@@ -417,14 +417,9 @@
         const res = await fetch(proxyUrl);
         if (res.ok) {
           const htmlText = await res.text();
-          const parser = new DOMParser();
-          const doc = parser.parseFromString(htmlText, 'text/html');
-
-          // Remove elementos indesejados do Google (rodapés e scripts)
-          const trash = doc.querySelectorAll("script, style, #footer, .doc-footer");
-          trash.forEach(el => el.remove());
-
-          parseSanitizedDocsHTML(doc);
+          
+          // Extrai o texto limpo das células HTML sem depender do DOM rígido do Google
+          parseDocsWithRegex(htmlText);
           
           statusEl.innerText = "🟢 Sincronizado ao vivo com Google Docs";
           statusEl.style.color = "#107c10";
@@ -439,39 +434,42 @@
       statusEl.style.color = "#d8b012";
     }
 
-    function parseSanitizedDocsHTML(doc) {
-      const tables = doc.querySelectorAll("table");
-      
+    function parseDocsWithRegex(htmlContent) {
+      // Cria um container temporário sem renderizar na tela
+      const tempDiv = document.createElement("div");
+      tempDiv.innerHTML = htmlContent;
+
+      const tables = tempDiv.querySelectorAll("table");
       tables.forEach(table => {
-        const rows = table.querySelectorAll("tr");
-        let currentRoomId = null;
+        const rows = Array.from(table.querySelectorAll("tr"));
+        let targetRoomId = null;
 
         rows.forEach(row => {
-          const cells = Array.from(row.querySelectorAll("td, th")).map(c => c.innerText.trim());
-          const rowText = cells.join(" ").toUpperCase();
+          const text = row.innerText || row.textContent || "";
+          const cleanUpper = text.toUpperCase();
 
-          // Filtra ruídos de rodapé do Google Docs
-          if (rowText.includes("PUBLICADA USANDO O GOOGLE DOCS") || rowText.includes("DENUNCIAR ABUSO")) return;
+          if (cleanUpper.includes("SALA 9")) targetRoomId = "A9";
+          else if (cleanUpper.includes("SALA 12")) targetRoomId = "A12";
 
-          if (rowText.includes("SALA 9")) currentRoomId = "A9";
-          else if (rowText.includes("SALA 12")) currentRoomId = "A12";
-
-          if (currentRoomId && cells.length >= 5) {
-            const roomObj = CAMPUS_DATA.find(r => r.id === currentRoomId);
+          if (targetRoomId) {
+            const roomObj = CAMPUS_DATA.find(r => r.id === targetRoomId);
             if (roomObj) {
-              const days = ["SEG", "TER", "QUA", "QUI", "SEX"];
-              days.forEach((day, idx) => {
-                let cellVal = cells[idx + 1] || cells[idx] || "";
-                
-                // Limpa textos de aviso do Google se caírem dentro de uma célula
-                if (cellVal.includes("Google Docs") || cellVal.includes("Denunciar")) cellVal = "";
+              const cells = Array.from(row.querySelectorAll("td, th")).map(c => c.innerText.trim());
+              
+              // Se a linha contém colunas com reservas
+              if (cells.length >= 5) {
+                const days = ["SEG", "TER", "QUA", "QUI", "SEX"];
+                days.forEach((day, idx) => {
+                  let val = cells[idx + 1] || cells[idx] || "";
+                  val = val.replace(/Publicada usando.*|Denunciar.*|Saiba mais.*/gi, "").trim();
 
-                if (cellVal && cellVal.length > 1 && !cellVal.toUpperCase().includes("SALA")) {
-                  ["T1","T2","T3","T4","T5","T6","T7"].forEach(t => {
-                    if (!roomObj.grade[day][t]) roomObj.grade[day][t] = cellVal;
-                  });
-                }
-              });
+                  if (val && val.length > 1 && !val.toUpperCase().includes("SALA")) {
+                    ["T1","T2","T3","T4","T5","T6","T7"].forEach(t => {
+                      roomObj.grade[day][t] = val;
+                    });
+                  }
+                });
+              }
             }
           }
         });
