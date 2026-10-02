@@ -3,21 +3,26 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Campus Monitor — Metro UI</title>
+  <title>Campus Monitor — Modern UI</title>
   <style>
     :root {
-      --bg-dark: #000000;
-      --card-bg: #1f1f1f;
-      --border-color: #2a2a2a;
-      --text-main: #ffffff;
-      --text-muted: #aaaaaa;
-      --accent-blue: #0078d7;
+      --bg-dark: #0f172a;
+      --card-bg: #1e293b;
+      --card-hover: #334155;
+      --border-color: #334155;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent: #38bdf8;
+      --accent-bg: rgba(56, 189, 248, 0.1);
       
-      --metro-green: #107c10;
-      --metro-yellow: #d8b012;
-      --metro-red: #e81123;
+      --status-green: #10b981;
+      --status-green-bg: rgba(16, 185, 129, 0.15);
+      --status-yellow: #f59e0b;
+      --status-yellow-bg: rgba(245, 158, 11, 0.15);
+      --status-red: #ef4444;
+      --status-red-bg: rgba(239, 68, 68, 0.15);
       
-      --font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+      --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
@@ -35,49 +40,119 @@
 
     .container {
       width: 100%;
-      max-width: 1100px;
+      max-width: 1000px;
       display: flex;
       flex-direction: column;
       gap: 16px;
     }
 
+    /* HEADER */
     header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 1px solid var(--border-color);
-      padding-bottom: 12px;
+      padding-bottom: 8px;
     }
 
-    .brand {
-      font-size: 1.4rem;
-      font-weight: 300;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: var(--accent-blue);
-      text-decoration: none;
+    .brand-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text-main);
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .dot-sync {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background-color: var(--status-yellow);
     }
 
     .back-btn {
       background: var(--card-bg);
       border: 1px solid var(--border-color);
       color: var(--text-main);
-      padding: 6px 14px;
+      padding: 8px 16px;
+      border-radius: 8px;
       font-size: 0.85rem;
       text-decoration: none;
-      font-weight: 600;
+      font-weight: 500;
+      transition: all 0.2s;
     }
 
-    .status-bar {
-      font-size: 0.8rem;
+    .back-btn:hover { background: var(--card-hover); }
+
+    /* BLOCOS - NAVEGAÇÃO PRINCIPAL */
+    .block-selector {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      background: var(--card-bg);
+      padding: 6px;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+    }
+
+    .btn-block {
+      background: transparent;
+      border: none;
       color: var(--text-muted);
-      margin-top: 4px;
+      padding: 10px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
     }
 
-    .controls-panel {
+    .btn-block.active {
+      background: var(--accent);
+      color: #0f172a;
+    }
+
+    /* FILTROS E SUBMENU DESDOBRÁVEL */
+    .filter-toggle-btn {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
       display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background 0.2s;
+    }
+
+    .filter-toggle-btn:hover { background: var(--card-hover); }
+
+    .subfilters-panel {
+      display: none;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      padding: 16px;
+      border-radius: 12px;
+      animation: fadeIn 0.2s ease-in-out;
+    }
+
+    .subfilters-panel.open { display: flex; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .control-row {
@@ -85,80 +160,106 @@
       align-items: center;
       gap: 8px;
       overflow-x: auto;
-      padding-bottom: 4px;
+      padding-bottom: 2px;
     }
 
     .row-label {
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       font-weight: 700;
       color: var(--text-muted);
       text-transform: uppercase;
-      min-width: 60px;
+      min-width: 55px;
     }
 
-    .btn-tile {
-      background: var(--card-bg);
+    .pill-btn {
+      background: var(--bg-dark);
       border: 1px solid var(--border-color);
-      color: var(--text-main);
-      padding: 8px 14px;
-      font-size: 0.85rem;
-      font-weight: 600;
+      color: var(--text-muted);
+      padding: 6px 12px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      border-radius: 6px;
       cursor: pointer;
       white-space: nowrap;
+      transition: all 0.2s;
     }
 
-    .btn-tile.active {
-      background: var(--accent-blue);
-      border-color: var(--accent-blue);
-      color: #ffffff;
+    .pill-btn.active {
+      background: var(--accent-bg);
+      border-color: var(--accent);
+      color: var(--accent);
+      font-weight: 600;
     }
 
-    .btn-tile.filter-green.active { background: var(--metro-green); }
-    .btn-tile.filter-yellow.active { background: var(--metro-yellow); color: #000; }
-    .btn-tile.filter-red.active { background: var(--metro-red); }
+    .pill-btn.filter-green.active { background: var(--status-green-bg); border-color: var(--status-green); color: var(--status-green); }
+    .pill-btn.filter-yellow.active { background: var(--status-yellow-bg); border-color: var(--status-yellow); color: var(--status-yellow); }
+    .pill-btn.filter-red.active { background: var(--status-red-bg); border-color: var(--status-red); color: var(--status-red); }
 
+    /* MATRIZ DE SALAS */
     .matrix-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-      gap: 10px;
+      grid-template-columns: repeat(auto-fill, minmax(135px, 1fr));
+      gap: 12px;
     }
 
-    .room-tile {
-      aspect-ratio: 1 / 1;
-      padding: 12px;
+    .room-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 14px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      color: #ffffff;
+      aspect-ratio: 1 / 1;
       cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
       overflow: hidden;
-      transition: transform 0.1s ease;
     }
 
-    .room-tile:active { transform: scale(0.96); }
+    .room-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--text-muted);
+    }
 
-    .room-tile.status-green { background-color: var(--metro-green); }
-    .room-tile.status-yellow { background-color: var(--metro-yellow); color: #000000; }
-    .room-tile.status-red { background-color: var(--metro-red); }
+    .room-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+    }
+
+    .room-card.status-green::before { background-color: var(--status-green); }
+    .room-card.status-yellow::before { background-color: var(--status-yellow); }
+    .room-card.status-red::before { background-color: var(--status-red); }
+
+    .card-header { display: flex; justify-content: space-between; align-items: flex-start; }
+    .room-title { font-size: 1.1rem; font-weight: 700; color: var(--text-main); }
+    .status-indicator { width: 8px; height: 8px; border-radius: 50%; }
+    .status-green .status-indicator { background: var(--status-green); box-shadow: 0 0 8px var(--status-green); }
+    .status-yellow .status-indicator { background: var(--status-yellow); box-shadow: 0 0 8px var(--status-yellow); }
+    .status-red .status-indicator { background: var(--status-red); box-shadow: 0 0 8px var(--status-red); }
+
+    .room-turma-tag { font-size: 0.7rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; margin-top: 2px; }
+    .room-subject-name { font-size: 0.85rem; font-weight: 600; color: var(--text-main); line-height: 1.2; word-break: break-word; }
 
     .empty-msg {
       grid-column: 1 / -1;
       text-align: center;
-      padding: 40px;
+      padding: 40px 20px;
       background: var(--card-bg);
       border: 1px dashed var(--border-color);
+      border-radius: 12px;
       color: var(--text-muted);
+      font-size: 0.9rem;
     }
 
-    .tile-top { display: flex; justify-content: space-between; align-items: flex-start; }
-    .room-number { font-size: 1.2rem; font-weight: 700; }
-    .room-turma { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; opacity: 0.9; }
-    .room-subject { font-size: 0.85rem; font-weight: 600; margin-top: 4px; line-height: 1.2; word-break: break-word; }
-
+    /* DRAWER / MODAL LATERAL */
     .drawer-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0, 0, 0, 0.75);
+      background: rgba(15, 23, 42, 0.8);
+      backdrop-filter: blur(4px);
       display: flex;
       justify-content: center;
       align-items: flex-end;
@@ -172,10 +273,11 @@
 
     .drawer {
       background: var(--card-bg);
-      border-top: 3px solid var(--accent-blue);
+      border-top: 1px solid var(--border-color);
+      border-radius: 20px 20px 0 0;
       width: 100%;
-      max-width: 600px;
-      padding: 20px;
+      max-width: 550px;
+      padding: 24px;
       transform: translateY(100%);
       transition: transform 0.25s cubic-bezier(0.1, 0.9, 0.2, 1);
     }
@@ -187,29 +289,30 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 16px;
+      padding-bottom: 12px;
       border-bottom: 1px solid var(--border-color);
-      padding-bottom: 8px;
     }
 
-    .close-btn { background: transparent; border: none; font-size: 1.5rem; color: var(--text-main); cursor: pointer; }
+    .close-btn { background: transparent; border: none; font-size: 1.4rem; color: var(--text-muted); cursor: pointer; }
 
-    .info-box {
+    .info-card {
       background: var(--bg-dark);
-      padding: 12px;
-      border-left: 3px solid var(--accent-blue);
-      margin-bottom: 12px;
+      padding: 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      margin-bottom: 16px;
     }
 
-    .info-box h4 { font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted); }
-    .info-box p { font-size: 0.95rem; font-weight: 600; margin-top: 2px; }
+    .info-card h4 { font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.05em; }
+    .info-card p { font-size: 0.95rem; font-weight: 600; margin-top: 4px; }
 
-    .timeline { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-top: 8px; }
-    .timeline-slot { display: flex; flex-direction: column; align-items: center; padding: 6px 2px; background: var(--bg-dark); border: 1px solid var(--border-color); font-size: 0.7rem; }
-    .timeline-slot.current { border: 2px solid var(--text-main); font-weight: bold; }
-    .slot-dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 4px; }
-    .dot-green { background: var(--metro-green); }
-    .dot-yellow { background: var(--metro-yellow); }
-    .dot-red { background: var(--metro-red); }
+    .timeline { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 10px; }
+    .timeline-slot { display: flex; flex-direction: column; align-items: center; padding: 8px 4px; background: var(--bg-dark); border-radius: 8px; border: 1px solid var(--border-color); font-size: 0.75rem; color: var(--text-muted); }
+    .timeline-slot.current { border-color: var(--accent); color: var(--accent); font-weight: 700; }
+    .slot-dot { width: 6px; height: 6px; border-radius: 50%; margin-top: 6px; }
+    .dot-green { background: var(--status-green); }
+    .dot-yellow { background: var(--status-yellow); }
+    .dot-red { background: var(--status-red); }
   </style>
 </head>
 <body>
@@ -217,75 +320,84 @@
   <div class="container">
     <header>
       <div>
-        <a href="index.html" class="brand">Campus Monitor</a>
-        <div class="status-bar" id="sync-status">🔄 Lendo dados em tempo real...</div>
+        <div class="brand-title">Campus Monitor</div>
+        <div class="status-badge">
+          <span class="dot-sync" id="sync-dot"></span>
+          <span id="sync-status">Sincronizando...</span>
+        </div>
       </div>
-      <a href="index.html" class="back-btn">← Início</a>
+      <a href="index.html" class="back-btn">← Voltar</a>
     </header>
 
-    <section class="controls-panel">
-      <!-- Bloco -->
-      <div class="control-row">
-        <span class="row-label">Bloco:</span>
-        <button class="btn-tile block-btn active" onclick="setBlock('A', this)">Bloco A (EF II)</button>
-        <button class="btn-tile block-btn" onclick="setBlock('B', this)">Bloco B (1º/2º Ano)</button>
-        <button class="btn-tile block-btn" onclick="setBlock('C', this)">Bloco C (3º/Técnico)</button>
-      </div>
+    <!-- NAVEGAÇÃO PRINCIPAL POR BLOCOS -->
+    <nav class="block-selector">
+      <button class="btn-block active" onclick="setBlock('A', this)">Bloco A</button>
+      <button class="btn-block" onclick="setBlock('B', this)">Bloco B</button>
+      <button class="btn-block" onclick="setBlock('C', this)">Bloco C</button>
+    </nav>
 
+    <!-- SUBMENU DESDOBRÁVEL DE FILTROS -->
+    <button class="filter-toggle-btn" onclick="toggleSubfilters()">
+      <span id="filter-summary-text">⚙️ Tarde • Qui • Tempo T1 (Todos)</span>
+      <span id="filter-arrow">▼</span>
+    </button>
+
+    <section class="subfilters-panel" id="subfilters-panel">
       <!-- Turno -->
       <div class="control-row">
-        <span class="row-label">Turno:</span>
-        <button class="btn-tile shift-btn" onclick="setShift('MANHA', this)">Manhã</button>
-        <button class="btn-tile shift-btn active" onclick="setShift('TARDE', this)">Tarde</button>
+        <span class="row-label">Turno</span>
+        <button class="pill-btn shift-btn" onclick="setShift('MANHA', this)">Manhã</button>
+        <button class="pill-btn shift-btn active" onclick="setShift('TARDE', this)">Tarde</button>
       </div>
 
       <!-- Dia -->
       <div class="control-row">
-        <span class="row-label">Dia:</span>
-        <button class="btn-tile day-btn" onclick="setDay('SEG', this)">Seg</button>
-        <button class="btn-tile day-btn" onclick="setDay('TER', this)">Ter</button>
-        <button class="btn-tile day-btn" onclick="setDay('QUA', this)">Qua</button>
-        <button class="btn-tile day-btn active" onclick="setDay('QUI', this)">Qui</button>
-        <button class="btn-tile day-btn" onclick="setDay('SEX', this)">Sex</button>
+        <span class="row-label">Dia</span>
+        <button class="pill-btn day-btn" onclick="setDay('SEG', this)">Seg</button>
+        <button class="pill-btn day-btn" onclick="setDay('TER', this)">Ter</button>
+        <button class="pill-btn day-btn" onclick="setDay('QUA', this)">Qua</button>
+        <button class="pill-btn day-btn active" onclick="setDay('QUI', this)">Qui</button>
+        <button class="pill-btn day-btn" onclick="setDay('SEX', this)">Sex</button>
       </div>
 
       <!-- Tempo de Aula -->
       <div class="control-row">
-        <span class="row-label">Tempo:</span>
+        <span class="row-label">Tempo</span>
         <div id="time-pills-container" style="display:flex; gap:6px;"></div>
       </div>
 
-      <!-- Filtro -->
+      <!-- Filtro de Probabilidade -->
       <div class="control-row">
-        <span class="row-label">Filtro:</span>
-        <button class="btn-tile filter-btn active" onclick="setFilter('ALL', this)">Todas</button>
-        <button class="btn-tile filter-btn filter-green" onclick="setFilter('GREEN', this)">Alta Prob. 🟢</button>
-        <button class="btn-tile filter-btn filter-yellow" onclick="setFilter('YELLOW', this)">Média Prob. 🟡</button>
-        <button class="btn-tile filter-btn filter-red" onclick="setFilter('RED', this)">Ocupadas 🔴</button>
+        <span class="row-label">Filtro</span>
+        <button class="pill-btn filter-btn active" onclick="setFilter('ALL', this)">Todas</button>
+        <button class="pill-btn filter-btn filter-green" onclick="setFilter('GREEN', this)">Alta Prob. 🟢</button>
+        <button class="pill-btn filter-btn filter-yellow" onclick="setFilter('YELLOW', this)">Média Prob. 🟡</button>
+        <button class="pill-btn filter-btn filter-red" onclick="setFilter('RED', this)">Ocupadas 🔴</button>
       </div>
     </section>
 
-    <section class="matrix-grid" id="matrix-container"></section>
+    <!-- MATRIZ DE SALAS -->
+    <main class="matrix-grid" id="matrix-container"></main>
   </div>
 
-  <!-- DRAWER -->
+  <!-- DRAWER / DETALHES DA SALA -->
   <div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer(event)">
     <div class="drawer" onclick="event.stopPropagation()">
       <div class="drawer-header">
         <div>
-          <h2 id="dw-title">Sala ---</h2>
+          <h3 id="dw-title" style="font-size:1.1rem; font-weight:700;">Sala ---</h3>
           <p id="dw-sub" style="font-size:0.8rem; color:var(--text-muted);">---</p>
         </div>
         <button class="close-btn" onclick="toggleDrawer(false)">&times;</button>
       </div>
 
-      <div class="info-box">
+      <div class="info-card">
         <h4>Status do Horário Selecionado</h4>
         <p id="dw-status">---</p>
       </div>
 
       <div>
-        <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted);">Linha do Tempo (Dia Selecionado)</div>
+        <div style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; color: var(--text-muted);">Visão do Dia Selecionado</div>
         <div class="timeline" id="dw-timeline"></div>
       </div>
     </div>
@@ -384,7 +496,7 @@
       { id: "A12", bloco: "A", nome: "Sala 12", turma: "Reserva / Apoio", shift: "TARDE", grade: { SEG:{}, TER:{}, QUA:{}, QUI:{}, SEX:{} } }
     ];
 
-    // Preenche os outros Blocos (B e C) de forma limpa
+    // Preenche Blocos B e C
     ["A", "B", "C"].forEach(block => {
       for(let i = 1; i <= 12; i++) {
         let roomId = block + i;
@@ -401,21 +513,35 @@
       }
     });
 
+    function toggleSubfilters() {
+      const panel = document.getElementById("subfilters-panel");
+      const arrow = document.getElementById("filter-arrow");
+      const isOpen = panel.classList.toggle("open");
+      arrow.innerText = isOpen ? "▲" : "▼";
+    }
+
+    function updateFilterSummary() {
+      const shiftText = currentShift === "TARDE" ? "Tarde" : "Manhã";
+      const filterText = currentFilter === "ALL" ? "Todos" : currentFilter === "GREEN" ? "🟢 Livres" : currentFilter === "YELLOW" ? "🟡 Média Prob." : "🔴 Ocupadas";
+      document.getElementById("filter-summary-text").innerText = `⚙️ ${shiftText} • ${currentDay} • Tempo ${currentTimeSlot} (${filterText})`;
+    }
+
     function normalizeText(txt) {
       return (txt || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
     }
 
     function calculateStatus(val) {
-      if (!val || val.trim() === "" || val.toUpperCase() === "LIVRE") return { status: "GREEN", text: "LIVRE / Sem Aula", badge: "🟢" };
+      if (!val || val.trim() === "" || val.toUpperCase() === "LIVRE") return { status: "GREEN", text: "LIVRE / Sem Aula" };
       const str = normalizeText(val);
-      if (str.includes("indisponivel") || str.includes("ocupada")) return { status: "RED", text: "INDISPONÍVEL / Ocupada", badge: "🔴" };
-      if (LIBERADAS.some(d => str === d || str.includes(d))) return { status: "GREEN", text: "ALTA PROB. VAGA (Prática/Deslocamento)", badge: "🟢" };
-      if (IDIOMAS.some(d => str === d || str.includes(d))) return { status: "YELLOW", text: "MÉDIA PROB. (Idiomas/Divisão)", badge: "🟡" };
-      return { status: "RED", text: "OCUPADA (Aula Teórica / Reserva)", badge: "🔴" };
+      if (str.includes("indisponivel") || str.includes("ocupada")) return { status: "RED", text: "INDISPONÍVEL / Ocupada" };
+      if (LIBERADAS.some(d => str === d || str.includes(d))) return { status: "GREEN", text: "ALTA PROB. VAGA (Prática/Deslocamento)" };
+      if (IDIOMAS.some(d => str === d || str.includes(d))) return { status: "YELLOW", text: "MÉDIA PROB. (Idiomas/Divisão)" };
+      return { status: "RED", text: "OCUPADA (Aula Teórica / Reserva)" };
     }
 
     async function fetchOnlineDocData() {
       const statusEl = document.getElementById("sync-status");
+      const syncDot = document.getElementById("sync-dot");
 
       try {
         const res = await fetch(APPS_SCRIPT_URL);
@@ -452,17 +578,17 @@
             });
           });
 
-          statusEl.innerText = "🟢 Sincronizado ao vivo com Google Docs";
-          statusEl.style.color = "#107c10";
+          statusEl.innerText = "Ao vivo";
+          syncDot.style.backgroundColor = "var(--status-green)";
           renderMatrix();
           return;
         }
       } catch (err) {
-        console.error("Erro ao sincronizar via Apps Script:", err);
+        console.error("Erro na sincronização:", err);
       }
 
-      statusEl.innerText = "⚡ Atualizando via cache local...";
-      statusEl.style.color = "#d8b012";
+      statusEl.innerText = "Cache Local";
+      syncDot.style.backgroundColor = "var(--status-yellow)";
     }
 
     function renderTimePills() {
@@ -470,8 +596,8 @@
       container.innerHTML = "";
       TIMES[currentShift].forEach(time => {
         const btn = document.createElement("button");
-        btn.className = `btn-tile ${time === currentTimeSlot ? "active" : ""}`;
-        btn.onclick = () => { currentTimeSlot = time; renderTimePills(); renderMatrix(); };
+        btn.className = `pill-btn ${time === currentTimeSlot ? "active" : ""}`;
+        btn.onclick = () => { currentTimeSlot = time; renderTimePills(); updateFilterSummary(); renderMatrix(); };
         btn.innerText = time;
         container.appendChild(btn);
       });
@@ -479,7 +605,7 @@
 
     function setBlock(b, el) {
       currentBlock = b;
-      document.querySelectorAll(".block-btn").forEach(btn => btn.classList.remove("active"));
+      document.querySelectorAll(".btn-block").forEach(btn => btn.classList.remove("active"));
       el.classList.add("active");
       renderMatrix();
     }
@@ -490,6 +616,7 @@
       document.querySelectorAll(".shift-btn").forEach(btn => btn.classList.remove("active"));
       el.classList.add("active");
       renderTimePills();
+      updateFilterSummary();
       renderMatrix();
     }
 
@@ -497,6 +624,7 @@
       currentDay = d;
       document.querySelectorAll(".day-btn").forEach(btn => btn.classList.remove("active"));
       el.classList.add("active");
+      updateFilterSummary();
       renderMatrix();
     }
 
@@ -504,6 +632,7 @@
       currentFilter = f;
       document.querySelectorAll(".filter-btn").forEach(btn => btn.classList.remove("active"));
       el.classList.add("active");
+      updateFilterSummary();
       renderMatrix();
     }
 
@@ -512,7 +641,7 @@
       container.innerHTML = "";
 
       if (currentShift === "MANHA") {
-        container.innerHTML = `<div class="empty-msg">🌅 Salas do turno da manhã em mapeamento.<br>Selecione o turno da <b>Tarde</b> para visualizar o monitor.</div>`;
+        container.innerHTML = `<div class="empty-msg">🌅 Salas do turno da manhã em mapeamento.<br>Selecione o turno da <b>Tarde</b> para navegar.</div>`;
         return;
       }
 
@@ -524,21 +653,21 @@
 
         if (currentFilter !== "ALL" && st.status !== currentFilter) return;
 
-        const tile = document.createElement("div");
-        tile.className = `room-tile status-${st.status.toLowerCase()}`;
-        tile.onclick = () => openDrawer(room);
+        const card = document.createElement("div");
+        card.className = `room-card status-${st.status.toLowerCase()}`;
+        card.onclick = () => openDrawer(room);
 
-        tile.innerHTML = `
-          <div class="tile-top">
-            <span class="room-number">${room.nome}</span>
-            <span>${st.badge}</span>
-          </div>
+        card.innerHTML = `
           <div>
-            <div class="room-turma">${room.turma}</div>
-            <div class="room-subject">${val || "LIVRE"}</div>
+            <div class="card-header">
+              <span class="room-title">${room.nome}</span>
+              <span class="status-indicator"></span>
+            </div>
+            <div class="room-turma-tag">${room.turma}</div>
           </div>
+          <div class="room-subject-name">${val || "LIVRE"}</div>
         `;
-        container.appendChild(tile);
+        container.appendChild(card);
       });
     }
 
@@ -547,8 +676,8 @@
       const st = calculateStatus(val);
 
       document.getElementById("dw-title").innerText = `${room.nome} (${room.turma})`;
-      document.getElementById("dw-sub").innerText = `Bloco ${room.bloco} | ${currentDay} | Tempo ${currentTimeSlot}`;
-      document.getElementById("dw-status").innerText = `${st.badge} ${st.text}`;
+      document.getElementById("dw-sub").innerText = `Bloco ${room.bloco} • ${currentDay} • Tempo ${currentTimeSlot}`;
+      document.getElementById("dw-status").innerText = st.text;
 
       const timeline = document.getElementById("dw-timeline");
       timeline.innerHTML = "";
@@ -579,6 +708,7 @@
 
     window.onload = () => {
       renderTimePills();
+      updateFilterSummary();
       renderMatrix();
       fetchOnlineDocData();
     };
