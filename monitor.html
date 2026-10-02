@@ -293,8 +293,8 @@
   </div>
 
   <script>
-    // Cole aqui a URL gerada na implantação do seu Google Apps Script:
-    const APPS_SCRIPT_URL = "SUA_URL_DO_APPS_SCRIPT_AQUI";
+    // URL gerada na implantação do teu Google Apps Script
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyMh66nq8XPvoFTKVYHS_40ad3dLF4E4iwbLG1DrFrPRpPjxUyUVPpXFtPixxMRv2yU/exec";
 
     const TIMES = {
       MANHA: ["M1", "M2", "M3", "M4", "M5", "M6", "M7"],
@@ -413,12 +413,6 @@
     async function fetchOnlineDocData() {
       const statusEl = document.getElementById("sync-status");
       
-      if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes("SUA_URL_DO_APPS_SCRIPT")) {
-        statusEl.innerText = "⚠️ Adicione a URL do Apps Script no código";
-        statusEl.style.color = "#d8b012";
-        return;
-      }
-
       try {
         const res = await fetch(APPS_SCRIPT_URL);
         if (res.ok) {
