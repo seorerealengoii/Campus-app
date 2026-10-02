@@ -218,7 +218,7 @@
     <header>
       <div>
         <a href="index.html" class="brand">Campus Monitor</a>
-        <div class="status-bar" id="sync-status">🔄 Lendo dados do Google Docs...</div>
+        <div class="status-bar" id="sync-status">🔄 Lendo dados em tempo real...</div>
       </div>
       <a href="index.html" class="back-btn">← Início</a>
     </header>
@@ -293,7 +293,8 @@
   </div>
 
   <script>
-    const DOC_PUB_URL = "https://docs.google.com/document/d/e/2PACX-1vQMd8_ahZsRaiicYnwO1hoHhwOUcMRRvz4hT4uu9j6dPt732N2yWoTo-EOIpSkm2g/pub";
+    // Cole aqui a URL gerada na implantação do seu Google Apps Script:
+    const APPS_SCRIPT_URL = "SUA_URL_DO_APPS_SCRIPT_AQUI";
 
     const TIMES = {
       MANHA: ["M1", "M2", "M3", "M4", "M5", "M6", "M7"],
@@ -411,69 +412,41 @@
 
     async function fetchOnlineDocData() {
       const statusEl = document.getElementById("sync-status");
-      const proxyUrl = "https://api.allorigins.win/raw?url=" + encodeURIComponent(DOC_PUB_URL);
+      
+      if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes("SUA_URL_DO_APPS_SCRIPT")) {
+        statusEl.innerText = "⚠️ Adicione a URL do Apps Script no código";
+        statusEl.style.color = "#d8b012";
+        return;
+      }
 
       try {
-        const res = await fetch(proxyUrl);
+        const res = await fetch(APPS_SCRIPT_URL);
         if (res.ok) {
-          const htmlText = await res.text();
+          const data = await res.json();
           
-          // Extrai o texto limpo das células HTML sem depender do DOM rígido do Google
-          parseDocsWithRegex(htmlText);
-          
+          ["A9", "A12"].forEach(roomId => {
+            const roomObj = CAMPUS_DATA.find(r => r.id === roomId);
+            if (roomObj && data[roomId]) {
+              Object.keys(data[roomId]).forEach(day => {
+                const val = data[roomId][day];
+                ["T1","T2","T3","T4","T5","T6","T7"].forEach(t => {
+                  roomObj.grade[day][t] = val;
+                });
+              });
+            }
+          });
+
           statusEl.innerText = "🟢 Sincronizado ao vivo com Google Docs";
           statusEl.style.color = "#107c10";
           renderMatrix();
           return;
         }
       } catch (err) {
-        console.error("Erro na sincronização:", err);
+        console.error("Erro ao sincronizar via Apps Script:", err);
       }
 
       statusEl.innerText = "⚡ Atualizando via cache local...";
       statusEl.style.color = "#d8b012";
-    }
-
-    function parseDocsWithRegex(htmlContent) {
-      // Cria um container temporário sem renderizar na tela
-      const tempDiv = document.createElement("div");
-      tempDiv.innerHTML = htmlContent;
-
-      const tables = tempDiv.querySelectorAll("table");
-      tables.forEach(table => {
-        const rows = Array.from(table.querySelectorAll("tr"));
-        let targetRoomId = null;
-
-        rows.forEach(row => {
-          const text = row.innerText || row.textContent || "";
-          const cleanUpper = text.toUpperCase();
-
-          if (cleanUpper.includes("SALA 9")) targetRoomId = "A9";
-          else if (cleanUpper.includes("SALA 12")) targetRoomId = "A12";
-
-          if (targetRoomId) {
-            const roomObj = CAMPUS_DATA.find(r => r.id === targetRoomId);
-            if (roomObj) {
-              const cells = Array.from(row.querySelectorAll("td, th")).map(c => c.innerText.trim());
-              
-              // Se a linha contém colunas com reservas
-              if (cells.length >= 5) {
-                const days = ["SEG", "TER", "QUA", "QUI", "SEX"];
-                days.forEach((day, idx) => {
-                  let val = cells[idx + 1] || cells[idx] || "";
-                  val = val.replace(/Publicada usando.*|Denunciar.*|Saiba mais.*/gi, "").trim();
-
-                  if (val && val.length > 1 && !val.toUpperCase().includes("SALA")) {
-                    ["T1","T2","T3","T4","T5","T6","T7"].forEach(t => {
-                      roomObj.grade[day][t] = val;
-                    });
-                  }
-                });
-              }
-            }
-          }
-        });
-      });
     }
 
     function renderTimePills() {
