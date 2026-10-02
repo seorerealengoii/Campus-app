@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Portal do Campus — Central do Servidor</title>
+<style>
+:root {
+--bg-dark: #0f172a;
+--card-bg: #1e293b;
+--border-color: #334155;
+--text-main: #f8fafc;
+--text-muted: #94a3b8;
+--accent-blue: #38bdf8;
+--accent-purple: #818cf8;
+--font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+background-color: var(--bg-dark);
+color: var(--text-main);
+font-family: var(--font-sans);
+min-height: 100vh;
+padding: 20px 16px;
+}
+
+.container {
+max-width: 1000px;
+margin: 0 auto;
+display: flex;
+flex-direction: column;
+gap: 24px;
+}
+
+header {
+background: var(--card-bg);
+border: 1px solid var(--border-color);
+padding: 20px;
+border-radius: 18px;
+}
+
+.brand {
+font-size: 1.5rem;
+font-weight: 800;
+background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+}
+
+.grid-hub {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+gap: 16px;
+}
+
+.hub-card {
+background: var(--card-bg);
+border: 1px solid var(--border-color);
+border-radius: 18px;
+padding: 24px;
+text-decoration: none;
+color: var(--text-main);
+display: flex;
+flex-direction: column;
+justify-content: space-between;
+transition: transform 0.2s, border-color 0.2s;
+}
+
+.hub-card:hover {
+transform: translateY(-4px);
+border-color: var(--accent-blue);
+}
+
+.card-icon { font-size: 2.2rem; margin-bottom: 12px; }
+.card-title { font-size: 1.25rem; font-weight: 700; }
+.card-desc { font-size: 0.85rem; color: var(--text-muted); margin-top: 6px; }
+.card-action { font-size: 0.85rem; font-weight: 600; color: var(--accent-blue); margin-top: 16px; }
+</style>
+</head>
+<body>
+
+<div class="container">
+<header>
+<div class="brand">Ecosystem Hub — Campus</div>
+<p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">Painel principal de gerenciamento e consulta de espaços</p>
+</header>
+
+<div class="grid-hub">
+<!-- Card para o Monitor de Salas -->
+<a href="monitor.html" class="hub-card">
+<div>
+<div class="card-icon">🏫</div>
+<div class="card-title">Monitor de Salas</div>
+<div class="card-desc">Visualização matricial das vagas no Bloco A, B e C em tempo real por tempo de aula (M1-M7 / T1-T7).</div>
+</div>
+<div class="card-action">Acessar Monitor →</div>
+</a>
+
+<!-- Card para abrir o Documento de Reserva Oficial do Docs -->
+<a href="https://docs.google.com/document/d/e/2PACX-1vQMd8_ahZsRaiicYnwO1hoHhwOUcMRRvz4hT4uu9j6dPt732N2yWoTo-EOIpSkm2g/pub" target="_blank" class="hub-card">
+<div>
+<div class="card-icon">📝</div>
+<div class="card-title">Reserva de Salas (Google Docs)</div>
+<div class="card-desc">Abrir a planilha oficial de reservas publicada na web para lançar ou verificar solicitações.</div>
+</div>
+<div class="card-action">Abrir Documento →</div>
+</a>
+
+<!-- Card da Grade Ensino Fundamental II -->
+<a href="https://blog.cp2.g12.br/re2/wp-content/uploads/sites/4/2026/03/Horario-Fundamental-atu.pdf" target="_blank" class="hub-card">
+<div>
+<div class="card-icon">📄</div>
+<div class="card-title">Grade EF II (PDF)</div>
+<div class="card-desc">Tabela de horários e disciplinas do Ensino Fundamental II atualizada.</div>
+</div>
+<div class="card-action">Baixar PDF →</div>
+</a>
+
+<!-- Card da Grade Ensino Médio -->
+<a href="https://blog.cp2.g12.br/re2/wp-content/uploads/sites/4/2026/03/Horario-Medio-atu.pdf" target="_blank" class="hub-card">
+<div>
+<div class="card-icon">📄</div>
+<div class="card-title">Grade Ensino Médio (PDF)</div>
+<div class="card-desc">Horários oficiais das turmas regulares do Ensino Médio.</div>
+</div>
+<div class="card-action">Baixar PDF →</div>
+</a>
+</div>
+</div>
+
+</body>
+</html>
