@@ -19,6 +19,9 @@
       --status-green-bg: #d1fae5;
       --status-red: #ef4444;
       --status-red-bg: #fee2e2;
+
+      --holiday-purple: #8b5cf6;
+      --holiday-purple-light: #f3e8ff;
       
       --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
@@ -92,7 +95,7 @@
       color: var(--text-muted);
     }
 
-    /* MENU HAMBÚRGUER LATERAL (DRAWER LEFT) */
+    /* MENU HAMBÚRGUER LATERAL */
     .menu-drawer-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -104,10 +107,7 @@
       z-index: 1000;
     }
 
-    .menu-drawer-overlay.open {
-      opacity: 1;
-      pointer-events: auto;
-    }
+    .menu-drawer-overlay.open { opacity: 1; pointer-events: auto; }
 
     .menu-drawer {
       position: fixed;
@@ -127,9 +127,7 @@
       overflow-y: auto;
     }
 
-    .menu-drawer-overlay.open .menu-drawer {
-      transform: translateX(0);
-    }
+    .menu-drawer-overlay.open .menu-drawer { transform: translateX(0); }
 
     .drawer-top {
       display: flex;
@@ -147,12 +145,7 @@
       cursor: pointer;
     }
 
-    /* LINKS DO MENU HAMBÚRGUER */
-    .links-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
+    .links-list { display: flex; flex-direction: column; gap: 8px; }
 
     .link-item-featured {
       display: flex;
@@ -166,10 +159,7 @@
       color: var(--brand-blue);
       font-size: 0.85rem;
       font-weight: 700;
-      transition: transform 0.15s ease;
     }
-
-    .link-item-featured:active { transform: scale(0.98); }
 
     .link-item {
       display: flex;
@@ -183,13 +173,6 @@
       color: var(--text-main);
       font-size: 0.85rem;
       font-weight: 600;
-      transition: all 0.2s ease;
-    }
-
-    .link-item:hover {
-      background: var(--brand-blue-light);
-      border-color: var(--brand-blue);
-      color: var(--brand-blue);
     }
 
     .portarias-group {
@@ -213,7 +196,7 @@
       font-weight: 600;
     }
 
-    /* TILE DINÂMICA DO BLOG DO CAMPUS */
+    /* TILE DINÂMICA DO BLOG */
     .blog-tile {
       background: var(--card-bg);
       border: 1px solid var(--border-color);
@@ -223,19 +206,13 @@
       display: flex;
       flex-direction: column;
       gap: 10px;
-      position: relative;
-      overflow: hidden;
       cursor: pointer;
       transition: transform 0.15s ease;
     }
 
     .blog-tile:active { transform: scale(0.98); }
 
-    .blog-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+    .blog-header { display: flex; justify-content: space-between; align-items: center; }
 
     .blog-badge {
       font-size: 0.68rem;
@@ -247,44 +224,61 @@
       border-radius: 6px;
     }
 
-    .blog-news-container {
-      min-height: 48px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-    }
+    .blog-news-container { min-height: 48px; display: flex; flex-direction: column; justify-content: center; }
+    .blog-title { font-size: 0.88rem; font-weight: 700; color: var(--text-main); line-height: 1.25; transition: opacity 0.3s ease; }
+    .blog-date { font-size: 0.7rem; color: var(--text-muted); margin-top: 4px; }
 
-    .blog-title {
-      font-size: 0.88rem;
-      font-weight: 700;
-      color: var(--text-main);
-      line-height: 1.25;
-      transition: opacity 0.3s ease;
-    }
-
-    .blog-date {
-      font-size: 0.7rem;
-      color: var(--text-muted);
-      margin-top: 4px;
-    }
-
-    .blog-indicators {
-      display: flex;
-      gap: 4px;
-      margin-top: 4px;
-    }
-
-    .blog-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: var(--border-color);
-      transition: background 0.3s;
-    }
-
+    .blog-indicators { display: flex; gap: 4px; margin-top: 4px; }
+    .blog-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border-color); transition: background 0.3s; }
     .blog-dot.active { background: var(--brand-blue); }
 
-    /* BOTÕES DE ACESSO PRINCIPAL */
+    /* CARD DE FERIADOS */
+    .holiday-tile {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      cursor: pointer;
+      transition: transform 0.15s ease;
+    }
+
+    .holiday-tile:active { transform: scale(0.98); }
+
+    .holiday-badge {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--holiday-purple);
+      background: var(--holiday-purple-light);
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+
+    .holiday-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .holiday-info h3 { font-size: 0.95rem; font-weight: 700; color: var(--text-main); }
+    .holiday-info p { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
+
+    .holiday-days-left {
+      background: var(--holiday-purple-light);
+      color: var(--holiday-purple);
+      padding: 8px 12px;
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    .holiday-days-left .num { font-size: 1.1rem; font-weight: 800; line-height: 1; }
+    .holiday-days-left .lbl { font-size: 0.6rem; font-weight: 700; text-transform: uppercase; }
+
+    /* BOTÕES DE ACESSO */
     .action-card {
       background: var(--card-bg);
       border: 1px solid var(--border-color);
@@ -338,17 +332,68 @@
     .status-card.free { background: var(--status-green-bg); border: 1px solid rgba(16, 185, 129, 0.2); }
     .status-card.busy { background: var(--status-red-bg); border: 1px solid rgba(239, 68, 68, 0.2); }
 
-    .status-tag {
-      font-size: 0.65rem;
-      font-weight: 700;
-      text-transform: uppercase;
-    }
-
+    .status-tag { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; }
     .status-card.free .status-tag { color: #047857; }
     .status-card.busy .status-tag { color: #b91c1c; }
 
     .room-name { font-size: 0.88rem; font-weight: 700; color: var(--text-main); }
     .room-desc { font-size: 0.7rem; color: var(--text-muted); }
+
+    /* DRAWER FERIADOS */
+    .drawer-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15, 23, 42, 0.4);
+      backdrop-filter: blur(4px);
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+      z-index: 1000;
+    }
+
+    .drawer-overlay.open { opacity: 1; pointer-events: auto; }
+
+    .drawer {
+      background: var(--card-bg);
+      border-radius: 20px 20px 0 0;
+      width: 100%;
+      max-width: 500px;
+      max-height: 80vh;
+      padding: 20px;
+      transform: translateY(100%);
+      transition: transform 0.25s cubic-bezier(0.1, 0.9, 0.2, 1);
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+      overflow-y: auto;
+    }
+
+    .drawer-overlay.open .drawer { transform: translateY(0); }
+
+    .drawer-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .close-btn { background: transparent; border: none; font-size: 1.3rem; color: var(--text-muted); cursor: pointer; }
+
+    .holiday-list-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 12px;
+      background: var(--bg-surface);
+      border-radius: 10px;
+      margin-bottom: 8px;
+      border: 1px solid var(--border-color);
+    }
+
+    .holiday-list-item.past { opacity: 0.5; filter: grayscale(1); }
 
     /* TAB BAR INFERIOR */
     .bottom-nav {
@@ -389,7 +434,7 @@
 
   <div class="app-container">
     
-    <!-- HEADER COM BOTÃO HAMBÚRGUER -->
+    <!-- HEADER -->
     <header>
       <div class="header-left">
         <button class="menu-hamburguer-btn" onclick="toggleMenuDrawer(true)">☰</button>
@@ -400,7 +445,26 @@
       </div>
     </header>
 
-    <!-- TILE DINÂMICA DO BLOG DO CAMPUS (API WP) -->
+    <!-- TILE DE PRÓXIMO FERIADO -->
+    <section class="holiday-tile" onclick="toggleHolidayDrawer(true)">
+      <div class="blog-header">
+        <span class="holiday-badge">🎉 Próximo Feriado / Folga</span>
+        <span style="font-size:0.75rem; color:var(--text-muted);">Ver todos ↗</span>
+      </div>
+
+      <div class="holiday-content">
+        <div class="holiday-info">
+          <h3 id="next-holiday-name">Carregando...</h3>
+          <p id="next-holiday-date">---</p>
+        </div>
+        <div class="holiday-days-left">
+          <div class="num" id="next-holiday-days">--</div>
+          <div class="lbl">dias</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TILE DINÂMICA DO BLOG DO CAMPUS -->
     <section class="blog-tile" onclick="goToNews()">
       <div class="blog-header">
         <span class="blog-badge">📰 Blog RE2 • Notícias</span>
@@ -408,7 +472,7 @@
       </div>
 
       <div class="blog-news-container">
-        <div class="blog-title" id="blog-title">Buscando atualizações reais do campus...</div>
+        <div class="blog-title" id="blog-title">Buscando atualizações do campus...</div>
         <div class="blog-date" id="blog-date">Conectando ao Blog RE2</div>
       </div>
 
@@ -440,7 +504,7 @@
       </div>
     </section>
 
-    <!-- TAB BAR INFERIOR -->
+    <!-- TAB BAR INFERIOR COM O LINK CORRIGIDO -->
     <nav class="bottom-nav">
       <a href="index.html" class="nav-item active">
         <span class="nav-icon">🏠</span>
@@ -450,7 +514,7 @@
         <span class="nav-icon">📊</span>
         <span>Monitor</span>
       </a>
-      <a href="https://disciplinar.falconvexicosfse.com.br" target="_blank" class="nav-item">
+      <a href="https://disciplinar.falconservicosfse.com.br" target="_blank" class="nav-item">
         <span class="nav-icon">📋</span>
         <span>Ocorrências</span>
       </a>
@@ -458,7 +522,22 @@
 
   </div>
 
-  <!-- DRAWER HAMBÚRGUER LATERAL (SISTEMA DISCIPLINAR NO TOPO + LINKS) -->
+  <!-- DRAWER FERIADOS -->
+  <div class="drawer-overlay" id="holiday-drawer-overlay" onclick="toggleHolidayDrawer(false)">
+    <div class="drawer" onclick="event.stopPropagation()">
+      <div class="drawer-header">
+        <div>
+          <h3 style="font-size:1rem; font-weight:700;">Calendário de Feriados</h3>
+          <p style="font-size:0.75rem; color:var(--text-muted);">Próximos dias sem aula / folgas estipuladas</p>
+        </div>
+        <button class="close-btn" onclick="toggleHolidayDrawer(false)">&times;</button>
+      </div>
+
+      <div id="full-holiday-list"></div>
+    </div>
+  </div>
+
+  <!-- DRAWER HAMBÚRGUER COM O LINK CORRIGIDO -->
   <div class="menu-drawer-overlay" id="menu-drawer-overlay" onclick="toggleMenuDrawer(false)">
     <div class="menu-drawer" onclick="event.stopPropagation()">
       <div class="drawer-top">
@@ -467,7 +546,6 @@
       </div>
 
       <div class="links-list">
-        <!-- DESTAQUE NO TOPO DO MENU -->
         <div class="section-title">Acesso Interno</div>
         
         <a href="https://disciplinar.falconservicosfse.com.br" target="_blank" class="link-item-featured">
@@ -502,25 +580,84 @@
   </div>
 
   <script>
+    const HOLIDAYS_2026 = [
+      { date: "2026-01-01", name: "Confraternização Universal", type: "Nacional" },
+      { date: "2026-02-16", name: "Carnaval", type: "Ponto Facultativo" },
+      { date: "2026-02-17", name: "Carnaval", type: "Ponto Facultativo" },
+      { date: "2026-04-03", name: "Sexta-feira Santa", type: "Nacional" },
+      { date: "2026-04-21", name: "Tiradentes", type: "Nacional" },
+      { date: "2026-04-23", name: "Dia de São Jorge (RJ)", type: "Estadual" },
+      { date: "2026-05-01", name: "Dia do Trabalhador", type: "Nacional" },
+      { date: "2026-06-04", name: "Corpus Christi", type: "Ponto Facultativo" },
+      { date: "2026-09-07", name: "Independência do Brasil", type: "Nacional" },
+      { date: "2026-10-12", name: "Nossa Sra. Aparecida", type: "Nacional" },
+      { date: "2026-10-15", name: "Dia do Professor / Escolar", type: "Escolar" },
+      { date: "2026-10-28", name: "Dia do Servidor Público", type: "Ponto Facultativo" },
+      { date: "2026-11-02", name: "Finados", type: "Nacional" },
+      { date: "2026-11-15", name: "Proclamação da República", type: "Nacional" },
+      { date: "2026-11-20", name: "Dia da Consciência Negra", type: "Nacional" },
+      { date: "2026-12-25", name: "Natal", type: "Nacional" }
+    ];
+
+    function setupHolidays() {
+      const today = new Date();
+      today.setHours(0,0,0,0);
+
+      const futureHolidays = HOLIDAYS_2026.map(h => {
+        const hDate = new Date(h.date + "T00:00:00");
+        const diffDays = Math.ceil((hDate - today) / (1000 * 60 * 60 * 24));
+        return { ...h, dateObj: hDate, daysLeft: diffDays };
+      });
+
+      const upcoming = futureHolidays.filter(h => h.daysLeft >= 0);
+
+      if (upcoming.length > 0) {
+        const next = upcoming[0];
+        const dayOfWeek = next.dateObj.toLocaleDateString('pt-BR', { weekday: 'long' });
+        const formattedDate = next.dateObj.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long' });
+
+        const isLongWeekend = [1, 2, 4, 5].includes(next.dateObj.getDay());
+        const tagText = isLongWeekend ? " 🏖️ (Feriadão!)" : "";
+
+        document.getElementById("next-holiday-name").innerText = next.name;
+        document.getElementById("next-holiday-date").innerText = `${formattedDate} • ${dayOfWeek}${tagText}`;
+        document.getElementById("next-holiday-days").innerText = next.daysLeft;
+      } else {
+        document.getElementById("next-holiday-name").innerText = "Fim do ano letivo!";
+        document.getElementById("next-holiday-date").innerText = "Sem mais feriados este ano";
+        document.getElementById("next-holiday-days").innerText = "0";
+      }
+
+      const listContainer = document.getElementById("full-holiday-list");
+      listContainer.innerHTML = "";
+
+      futureHolidays.forEach(h => {
+        const isPast = h.daysLeft < 0;
+        const formattedDate = h.dateObj.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+        const dayOfWeek = h.dateObj.toLocaleDateString('pt-BR', { weekday: 'short' });
+
+        const item = document.createElement("div");
+        item.className = `holiday-list-item ${isPast ? "past" : ""}`;
+        item.innerHTML = `
+          <div>
+            <div style="font-weight:700; font-size:0.85rem;">${h.name}</div>
+            <div style="font-size:0.7rem; color:var(--text-muted);">${h.type} • ${dayOfWeek}</div>
+          </div>
+          <div style="font-weight:700; font-size:0.85rem; color:var(--holiday-purple);">${formattedDate}</div>
+        `;
+        listContainer.appendChild(item);
+      });
+    }
+
     const WP_API_URL = "https://blog.cp2.g12.br/re2/wp-json/wp/v2/posts?per_page=5";
 
-    // NOTÍCIAS DE FALLBACK (Caso a API esteja fora do ar ou lenta)
     let BLOG_NEWS = [
-      {
-        title: "Avisos e Informativos Oficiais do Campus Realengo II",
-        date: "Blog Oficial RE2",
-        url: "https://blog.cp2.g12.br/re2/"
-      },
-      {
-        title: "Acompanhe as Publicações Acadêmicas e Comunicados",
-        date: "Campus Realengo II",
-        url: "https://blog.cp2.g12.br/re2/"
-      }
+      { title: "Avisos e Informativos Oficiais do Campus Realengo II", date: "Blog Oficial RE2", url: "https://blog.cp2.g12.br/re2/" },
+      { title: "Acompanhe as Publicações Acadêmicas e Comunicados", date: "Campus Realengo II", url: "https://blog.cp2.g12.br/re2/" }
     ];
 
     let currentNewsIndex = 0;
 
-    // BUSCA NOTÍCIAS REAL DA API DO WORDPRESS DO BLOG RE2
     async function fetchRealBlogPosts() {
       try {
         const res = await fetch(WP_API_URL);
@@ -528,27 +665,16 @@
           const posts = await res.json();
           if (posts && posts.length > 0) {
             BLOG_NEWS = posts.map(post => {
-              // Formata a data simples do WordPress
-              const postDate = new Date(post.date).toLocaleDateString('pt-BR', {
-                day: '2-digit', month: '2-digit', year: 'numeric'
-              });
-
-              // Decodifica entidades HTML no título
+              const postDate = new Date(post.date).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
               const tempDiv = document.createElement("div");
               tempDiv.innerHTML = post.title.rendered;
-              const cleanTitle = tempDiv.innerText || tempDiv.textContent;
-
-              return {
-                title: cleanTitle,
-                date: postDate,
-                url: post.link
-              };
+              return { title: tempDiv.innerText || tempDiv.textContent, date: postDate, url: post.link };
             });
             renderBlogTile();
           }
         }
       } catch (err) {
-        console.warn("Usando avisos em cache/fallback do blog:", err);
+        console.warn("Usando avisos em cache do blog:", err);
       }
     }
 
@@ -574,8 +700,7 @@
     }
 
     function goToNews() {
-      const news = BLOG_NEWS[currentNewsIndex];
-      window.open(news.url, "_blank");
+      window.open(BLOG_NEWS[currentNewsIndex].url, "_blank");
     }
 
     function rotateNews() {
@@ -589,10 +714,15 @@
       document.getElementById("menu-drawer-overlay").classList.toggle("open", open);
     }
 
+    function toggleHolidayDrawer(open) {
+      document.getElementById("holiday-drawer-overlay").classList.toggle("open", open);
+    }
+
     window.onload = () => {
+      setupHolidays();
       renderBlogTile();
       fetchRealBlogPosts();
-      setInterval(rotateNews, 4500); // Rotaciona a cada 4.5 segundos
+      setInterval(rotateNews, 4500);
     };
   </script>
 </body>
