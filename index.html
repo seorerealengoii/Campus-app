@@ -17,8 +17,12 @@
       
       --status-green: #10b981;
       --status-green-bg: #d1fae5;
-      --status-red: #ef4444;
-      --status-red-bg: #fee2e2;
+      --status-green-border: #a7f3d0;
+      --status-green-text: #065f46;
+
+      --status-yellow-bg: #fef3c7;
+      --status-yellow-border: #fde68a;
+      --status-yellow-text: #92400e;
 
       --holiday-purple: #8b5cf6;
       --holiday-purple-light: #f3e8ff;
@@ -232,7 +236,71 @@
     .blog-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border-color); transition: background 0.3s; }
     .blog-dot.active { background: var(--brand-blue); }
 
-    /* CARD DE FERIADOS */
+    /* BOTÕES DE ACESSO */
+    .action-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .section-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .main-button {
+      background: var(--brand-blue);
+      color: #ffffff;
+      border: none;
+      border-radius: 12px;
+      padding: 14px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.2);
+    }
+
+    /* PREVIEW TEMPO REAL DINÂMICO */
+    .preview-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .status-card {
+      border-radius: 12px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .status-card.free { background: var(--status-green-bg); border: 1px solid var(--status-green-border); }
+    .status-card.medium { background: var(--status-yellow-bg); border: 1px solid var(--status-yellow-border); }
+
+    .status-tag { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; }
+    .status-card.free .status-tag { color: var(--status-green-text); }
+    .status-card.medium .status-tag { color: var(--status-yellow-text); }
+
+    .room-name { font-size: 0.88rem; font-weight: 700; color: var(--text-main); }
+    .room-desc { font-size: 0.7rem; color: var(--text-muted); }
+
+    /* CARD DE FERIADOS (POSICIONADO NO FINAL) */
     .holiday-tile {
       background: var(--card-bg);
       border: 1px solid var(--border-color);
@@ -277,67 +345,6 @@
 
     .holiday-days-left .num { font-size: 1.1rem; font-weight: 800; line-height: 1; }
     .holiday-days-left .lbl { font-size: 0.6rem; font-weight: 700; text-transform: uppercase; }
-
-    /* BOTÕES DE ACESSO */
-    .action-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 16px;
-      padding: 16px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.03);
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .section-title {
-      font-size: 0.72rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      color: var(--text-muted);
-    }
-
-    .main-button {
-      background: var(--brand-blue);
-      color: #ffffff;
-      border: none;
-      border-radius: 12px;
-      padding: 14px;
-      font-size: 0.95rem;
-      font-weight: 600;
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.2);
-    }
-
-    /* PREVIEW TEMPO REAL */
-    .preview-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-
-    .status-card {
-      border-radius: 12px;
-      padding: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .status-card.free { background: var(--status-green-bg); border: 1px solid rgba(16, 185, 129, 0.2); }
-    .status-card.busy { background: var(--status-red-bg); border: 1px solid rgba(239, 68, 68, 0.2); }
-
-    .status-tag { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; }
-    .status-card.free .status-tag { color: #047857; }
-    .status-card.busy .status-tag { color: #b91c1c; }
-
-    .room-name { font-size: 0.88rem; font-weight: 700; color: var(--text-main); }
-    .room-desc { font-size: 0.7rem; color: var(--text-muted); }
 
     /* DRAWER FERIADOS */
     .drawer-overlay {
@@ -445,25 +452,6 @@
       </div>
     </header>
 
-    <!-- TILE DE PRÓXIMO FERIADO -->
-    <section class="holiday-tile" onclick="toggleHolidayDrawer(true)">
-      <div class="blog-header">
-        <span class="holiday-badge">🎉 Próximo Feriado / Folga</span>
-        <span style="font-size:0.75rem; color:var(--text-muted);">Ver todos ↗</span>
-      </div>
-
-      <div class="holiday-content">
-        <div class="holiday-info">
-          <h3 id="next-holiday-name">Carregando...</h3>
-          <p id="next-holiday-date">---</p>
-        </div>
-        <div class="holiday-days-left">
-          <div class="num" id="next-holiday-days">--</div>
-          <div class="lbl">dias</div>
-        </div>
-      </div>
-    </section>
-
     <!-- TILE DINÂMICA DO BLOG DO CAMPUS -->
     <section class="blog-tile" onclick="goToNews()">
       <div class="blog-header">
@@ -487,24 +475,42 @@
       </a>
     </section>
 
-    <!-- PREVIEW TEMPO REAL -->
+    <!-- PREVIEW DINÂMICO DO STATUS EM TEMPO REAL -->
     <section class="action-card">
-      <div class="section-title">Status do Campus (Exemplo)</div>
-      <div class="preview-grid">
+      <div class="section-title">
+        <span>🟢 Salas Vagas Agora</span>
+        <span id="live-time-tag" style="font-size:0.65rem; color:var(--brand-blue); font-weight:700;">---</span>
+      </div>
+      
+      <div class="preview-grid" id="live-rooms-grid">
         <div class="status-card free">
-          <span class="status-tag">🟢 Livre</span>
-          <span class="room-name">Sala 9 (Bloco A)</span>
-          <span class="room-desc">Sem aula / Reserva</span>
-        </div>
-        <div class="status-card busy">
-          <span class="status-tag">🔴 Ocupada</span>
-          <span class="room-name">Sala 1 (Bloco A)</span>
-          <span class="room-desc">Turma 602</span>
+          <span class="status-tag">🟢 Carregando...</span>
+          <span class="room-name">Consultando</span>
+          <span class="room-desc">Horário do campus</span>
         </div>
       </div>
     </section>
 
-    <!-- TAB BAR INFERIOR COM O LINK CORRIGIDO -->
+    <!-- CARD DE PRÓXIMO FERIADO (NO FINAL DA PÁGINA) -->
+    <section class="holiday-tile" onclick="toggleHolidayDrawer(true)">
+      <div class="blog-header">
+        <span class="holiday-badge">🎉 Próximo Feriado / Folga</span>
+        <span style="font-size:0.75rem; color:var(--text-muted);">Ver todos ↗</span>
+      </div>
+
+      <div class="holiday-content">
+        <div class="holiday-info">
+          <h3 id="next-holiday-name">Carregando...</h3>
+          <p id="next-holiday-date">---</p>
+        </div>
+        <div class="holiday-days-left">
+          <div class="num" id="next-holiday-days">--</div>
+          <div class="lbl">dias</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB BAR INFERIOR -->
     <nav class="bottom-nav">
       <a href="index.html" class="nav-item active">
         <span class="nav-icon">🏠</span>
@@ -514,7 +520,7 @@
         <span class="nav-icon">📊</span>
         <span>Monitor</span>
       </a>
-      <a href="https://disciplinar.falconservicosfse.com.br" target="_blank" class="nav-item">
+      <a href="https://disciplinar.falconvexicosfse.com.br" target="_blank" class="nav-item">
         <span class="nav-icon">📋</span>
         <span>Ocorrências</span>
       </a>
@@ -537,7 +543,7 @@
     </div>
   </div>
 
-  <!-- DRAWER HAMBÚRGUER COM O LINK CORRIGIDO -->
+  <!-- DRAWER HAMBÚRGUER -->
   <div class="menu-drawer-overlay" id="menu-drawer-overlay" onclick="toggleMenuDrawer(false)">
     <div class="menu-drawer" onclick="event.stopPropagation()">
       <div class="drawer-top">
@@ -548,7 +554,7 @@
       <div class="links-list">
         <div class="section-title">Acesso Interno</div>
         
-        <a href="https://disciplinar.falconservicosfse.com.br" target="_blank" class="link-item-featured">
+        <a href="https://disciplinar.falconvexicosfse.com.br" target="_blank" class="link-item-featured">
           <span>📋 Sistema Disciplinar / Ocorrências</span>
           <span>↗</span>
         </a>
@@ -580,6 +586,156 @@
   </div>
 
   <script>
+    // BASE DE DADOS DO BLOCO A PARA PREVIEW DINÂMICO
+    const BLOCO_A_PREVIEW = [
+      { id: "A1", nome: "Sala 1", turma: "Turma 602", grade: {
+        SEG: { T1:"MAT", T2:"MAT", T3:"MUS", T4:"MUS", T5:"CIE", T6:"CIE", T7:"HIST" },
+        TER: { T1:"LIVRE", T2:"LIVRE", T3:"LIVRE", T4:"LIVRE", T5:"CIE", T6:"CIE", T7:"HIST" },
+        QUA: { T1:"EFI", T2:"EFI", T3:"HIST", T4:"HIST", T5:"PORT", T6:"DES", T7:"DES" },
+        QUI: { T1:"ING", T2:"ING", T3:"PORT", T4:"PORT", T5:"GEO", T6:"ESP", T7:"ESP" },
+        SEX: { T1:"INFO", T2:"INFO", T3:"ART", T4:"ART", T5:"ING", T6:"ESP", T7:"GEO" }
+      }},
+      { id: "A2", nome: "Sala 2", turma: "Turma 604", grade: {
+        SEG: { T1:"DES", T2:"DES", T3:"HIST", T4:"HIST", T5:"MUS", T6:"MUS", T7:"ING" },
+        TER: { T1:"GEO", T2:"GEO", T3:"EFI", T4:"EFI", T5:"HIST", T6:"ING", T7:"GEO" },
+        QUA: { T1:"MAT", T2:"MAT", T3:"PORT", T4:"PORT", T5:"ING", T6:"CIE", T7:"FRA" },
+        QUI: { T1:"FRA", T2:"FRA", T3:"INFO", T4:"INFO", T5:"CIE", T6:"CIE", T7:"CIE" },
+        SEX: { T1:"MAT", T2:"MAT", T3:"ART", T4:"ART", T5:"PORT", T6:"PORT", T7:"PORT" }
+      }},
+      { id: "A3", nome: "Sala 3", turma: "Turma 606", grade: {
+        SEG: { T1:"MUS", T2:"MUS", T3:"MAT", T4:"MAT", T5:"ING", T6:"ING", T7:"CIE" },
+        TER: { T1:"CIE", T2:"CIE", T3:"DES", T4:"DES", T5:"GEO", T6:"EFI", T7:"EFI" },
+        QUA: { T1:"PORT", T2:"PORT", T3:"F/E", T4:"F/E", T5:"PORT", T6:"FRA", T7:"ING" },
+        QUI: { T1:"HIST", T2:"HIST", T3:"GEO", T4:"GEO", T5:"INFO", T6:"INFO", T7:"HIST" },
+        SEX: { T1:"ART", T2:"ART", T3:"PORT", T4:"PORT", T5:"ESP", T6:"MAT", T7:"MAT" }
+      }},
+      { id: "A4", nome: "Sala 4", turma: "Turma 702", grade: {
+        SEG: { T1:"LIVRE", T2:"ING", T3:"DES", T4:"DES", T5:"DES", T6:"PORT", T7:"PORT" },
+        TER: { T1:"EFI", T2:"EFI", T3:"HIST", T4:"HIST", T5:"CIE", T6:"CIE", T7:"CIE" },
+        QUA: { T1:"MUS", T2:"MUS", T3:"ING", T4:"ING", T5:"ESP", T6:"MAT", T7:"MAT" },
+        QUI: { T1:"C.SOC", T2:"C.SOC", T3:"GEO", T4:"GEO", T5:"ART", T6:"ART", T7:"HIST" },
+        SEX: { T1:"ESP", T2:"ESP", T3:"PORT", T4:"PORT", T5:"MAT", T6:"MAT", T7:"GEO" }
+      }},
+      { id: "A5", nome: "Sala 5", turma: "Turma 704", grade: {
+        SEG: { T1:"ING", T2:"ING", T3:"PORT", T4:"PORT", T5:"ING", T6:"DES", T7:"DES" },
+        TER: { T1:"LIVRE", T2:"CIE", T3:"HIST", T4:"HIST", T5:"HIST", T6:"GEO", T7:"GEO" },
+        QUA: { T1:"MAT", T2:"MAT", T3:"PORT", T4:"PORT", T5:"PORT", T6:"MUS", T7:"MUS" },
+        QUI: { T1:"EFI", T2:"EFI", T3:"CIE", T4:"CIE", T5:"FRA", T6:"FRA", T7:"FRA" },
+        SEX: { T1:"MAT", T2:"MAT", T3:"C.SOC", T4:"C.SOC", T5:"GEO", T6:"ART", T7:"ART" }
+      }},
+      { id: "A6", nome: "Sala 6", turma: "Turma 802", grade: {
+        SEG: { T1:"PORT", T2:"PORT", T3:"ART", T4:"ART", T5:"ING", T6:"ING", T7:"ING" },
+        TER: { T1:"GEO", T2:"GEO", T3:"DES", T4:"DES", T5:"HIST", T6:"CIE", T7:"CIE" },
+        QUA: { T1:"EFI", T2:"EFI", T3:"MUS", T4:"MUS", T5:"MAT", T6:"MAT", T7:"ESP" },
+        QUI: { T1:"C.SOC", T2:"C.SOC", T3:"HIST", T4:"HIST", T5:"GEO", T6:"CIE", T7:"LIVRE" },
+        SEX: { T1:"ESP", T2:"ESP", T3:"MAT", T4:"MAT", T5:"PORT", T6:"PORT", T7:"PORT" }
+      }},
+      { id: "A7", nome: "Sala 7", turma: "Turma 804", grade: {
+        SEG: { T1:"CIE", T2:"CIE", T3:"PORT", T4:"PORT", T5:"PORT", T6:"ART", T7:"ART" },
+        TER: { T1:"GEO", T2:"GEO", T3:"CIE", T4:"HIST", T5:"GEO", T6:"DES", T7:"DES" },
+        QUA: { T1:"MAT", T2:"MAT", T3:"PORT", T4:"PORT", T5:"FRA", T6:"EFI", T7:"EFI" },
+        QUI: { T1:"FRA", T2:"FRA", T3:"C.SOC", T4:"C.SOC", T5:"HIST", T6:"HIST", T7:"LIVRE" },
+        SEX: { T1:"ING", T2:"ING", T3:"MUS", T4:"MUS", T5:"ING", T6:"MAT", T7:"MAT" }
+      }},
+      { id: "A8", nome: "Sala 8", turma: "Turma 902", grade: {
+        SEG: { T1:"EFI", T2:"EFI", T3:"PORT", T4:"PORT", T5:"PORT", T6:"C.SOC", T7:"C.SOC" },
+        TER: { T1:"CIE", T2:"CIE", T3:"HIST", T4:"LIVRE", T5:"ART", T6:"ART", T7:"GEO" },
+        QUA: { T1:"PORT", T2:"PORT", T3:"ING", T4:"ING", T5:"ING", T6:"MAT", T7:"MAT" },
+        QUI: { T1:"MAT", T2:"MAT", T3:"GEO", T4:"GEO", T5:"CIE", T6:"DES", T7:"DES" },
+        SEX: { T1:"HIST", T2:"HIST", T3:"MUS", T4:"MUS", T5:"ESP", T6:"ESP", T7:"ESP" }
+      }},
+      { id: "A9", nome: "Sala 9", turma: "Reserva / Apoio", grade: { SEG:{}, TER:{}, QUA:{}, QUI:{}, SEX:{} } },
+      { id: "A10", nome: "Sala 10", turma: "Turma 904", grade: {
+        SEG: { T1:"PORT", T2:"PORT", T3:"C.SOC", T4:"C.SOC", T5:"ING", T6:"ING", T7:"ING" },
+        TER: { T1:"GEO", T2:"GEO", T3:"DES", T4:"DES", T5:"CIE", T6:"CIE", T7:"CIE" },
+        QUA: { T1:"EFI", T2:"EFI", T3:"MAT", T4:"MAT", T5:"PORT", T6:"PORT", T7:"FRA" },
+        QUI: { T1:"ART", T2:"ART", T3:"MAT", T4:"MAT", T5:"HIST", T6:"GEO", T7:"LIVRE" },
+        SEX: { T1:"FRA", T2:"FRA", T3:"HIST", T4:"HIST", T5:"MUS", T6:"MUS", T7:"PORT" }
+      }},
+      { id: "A11", nome: "Sala 11", turma: "Turma 906", grade: {
+        SEG: { T1:"C.SOC", T2:"C.SOC", T3:"EFI", T4:"EFI", T5:"ING", T6:"PORT", T7:"PORT" },
+        TER: { T1:"CIE", T2:"ART", T3:"ART", T4:"HIST", T5:"GEO", T6:"GEO", T7:"LIVRE" },
+        QUA: { T1:"MAT", T2:"MAT", T3:"F/E", T4:"F/E", T5:"F/E", T6:"PORT", T7:"PORT" },
+        QUI: { T1:"CIE", T2:"CIE", T3:"DES", T4:"DES", T5:"MAT", T6:"MAT", T7:"GEO" },
+        SEX: { T1:"MAT", T2:"MAT", T3:"ING", T4:"ING", T5:"PORT", T6:"HIST", T7:"HIST" }
+      }},
+      { id: "A12", nome: "Sala 12", turma: "Reserva / Apoio", grade: { SEG:{}, TER:{}, QUA:{}, QUI:{}, SEX:{} } }
+    ];
+
+    const LIBERADAS = ["efi", "ed. fisica", "educacao fisica", "art", "artes", "mus", "musica", "info", "informatica", "des", "desenho"];
+    const IDIOMAS = ["ing", "ingles", "fra", "frances", "esp", "espanhol", "f/e", "e/i", "edmar/fr", "ap"];
+
+    function getLiveTimeSlot() {
+      const now = new Date();
+      const dayIndex = now.getDay(); // 0 = Dom, 1 = Seg, ..., 5 = Sex, 6 = Sáb
+      const days = ["SEG", "SEG", "TER", "QUA", "QUI", "SEX", "SEG"];
+      const currentDay = days[dayIndex];
+
+      const hours = now.getHours();
+      const minutes = now.getMinutes();
+      const totalMinutes = hours * 60 + minutes;
+
+      // Mapeamento dos tempos da Tarde (12h30 às 18h00)
+      let slot = "T1";
+      if (totalMinutes < 790) slot = "T1";       // Até 13:10
+      else if (totalMinutes < 835) slot = "T2";  // 13:10 - 13:55
+      else if (totalMinutes < 880) slot = "T3";  // 13:55 - 14:40
+      else if (totalMinutes < 925) slot = "T4";  // 14:40 - 15:25
+      else if (totalMinutes < 980) slot = "T5";  // 15:25 - 16:20
+      else if (totalMinutes < 1025) slot = "T6"; // 16:20 - 17:05
+      else slot = "T7";                          // Após 17:05
+
+      return { day: currentDay, slot: slot, isWeekend: dayIndex === 0 || dayIndex === 6 };
+    }
+
+    function renderLivePreview() {
+      const liveInfo = getLiveTimeSlot();
+      const container = document.getElementById("live-rooms-grid");
+      const timeTag = document.getElementById("live-time-tag");
+
+      timeTag.innerText = `${liveInfo.day} • Tempo ${liveInfo.slot}`;
+      container.innerHTML = "";
+
+      let matchedRooms = [];
+
+      BLOCO_A_PREVIEW.forEach(room => {
+        const val = (room.grade[liveInfo.day] || {})[liveInfo.slot] || "";
+        const str = (val || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+
+        if (!val || val === "" || val.toUpperCase() === "LIVRE") {
+          matchedRooms.push({ room, type: "free", label: "🟢 Livre", desc: "Sem aula no horário" });
+        } else if (LIBERADAS.some(d => str === d || str.includes(d))) {
+          matchedRooms.push({ room, type: "free", label: "🟢 Alta Prob.", desc: `${val} (Fora da Sala)` });
+        } else if (IDIOMAS.some(d => str === d || str.includes(d))) {
+          matchedRooms.push({ room, type: "medium", label: "🟡 Média Prob.", desc: `${val} (Idiomas/Divisão)` });
+        }
+      });
+
+      // Pega até 4 salas disponíveis para exibir no preview da Home
+      const displayRooms = matchedRooms.slice(0, 4);
+
+      if (displayRooms.length === 0) {
+        container.innerHTML = `
+          <div style="grid-column: 1 / -1; font-size: 0.8rem; color: var(--text-muted); text-align: center; padding: 10px;">
+            Todas as salas teóricas ocupadas neste momento.
+          </div>
+        `;
+        return;
+      }
+
+      displayRooms.forEach(item => {
+        const card = document.createElement("div");
+        card.className = `status-card ${item.type}`;
+        card.innerHTML = `
+          <span class="status-tag">${item.label}</span>
+          <span class="room-name">${item.room.nome} (${item.room.turma})</span>
+          <span class="room-desc">${item.desc}</span>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // LISTA OFICIAL DE FERIADOS NACIONAIS 2026
     const HOLIDAYS_2026 = [
       { date: "2026-01-01", name: "Confraternização Universal", type: "Nacional" },
       { date: "2026-02-16", name: "Carnaval", type: "Ponto Facultativo" },
@@ -719,10 +875,12 @@
     }
 
     window.onload = () => {
+      renderLivePreview();
       setupHolidays();
       renderBlogTile();
       fetchRealBlogPosts();
       setInterval(rotateNews, 4500);
+      setInterval(renderLivePreview, 60000); // Atualiza as salas ao vivo a cada minuto
     };
   </script>
 </body>
