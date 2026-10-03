@@ -51,7 +51,7 @@
       display: flex;
       flex-direction: column;
       gap: 14px;
-      padding-bottom: 70px; /* Espaço para a barra inferior */
+      padding-bottom: 70px;
     }
 
     /* HEADER */
@@ -212,7 +212,7 @@
       color: var(--brand-blue);
     }
 
-    /* CARDS DAS SALAS (ESTILO INDEX TEMPO REAL) */
+    /* CARDS DAS SALAS */
     .matrix-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(135px, 1fr));
@@ -234,33 +234,19 @@
 
     .status-card:active { transform: scale(0.97); }
 
-    /* ESTILOS DE COR DOS CARDS */
-    .status-card.free {
-      background: var(--status-green-bg);
-      border-color: var(--status-green-border);
-    }
+    .status-card.free { background: var(--status-green-bg); border-color: var(--status-green-border); }
     .status-card.free .status-tag { color: var(--status-green-text); }
     .status-card.free .status-dot-icon { background: var(--status-green-dot); }
 
-    .status-card.medium {
-      background: var(--status-yellow-bg);
-      border-color: var(--status-yellow-border);
-    }
+    .status-card.medium { background: var(--status-yellow-bg); border-color: var(--status-yellow-border); }
     .status-card.medium .status-tag { color: var(--status-yellow-text); }
     .status-card.medium .status-dot-icon { background: var(--status-yellow-dot); }
 
-    .status-card.busy {
-      background: var(--status-red-bg);
-      border-color: var(--status-red-border);
-    }
+    .status-card.busy { background: var(--status-red-bg); border-color: var(--status-red-border); }
     .status-card.busy .status-tag { color: var(--status-red-text); }
     .status-card.busy .status-dot-icon { background: var(--status-red-dot); }
 
-    .card-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-    }
+    .card-top { display: flex; justify-content: space-between; align-items: flex-start; }
 
     .status-tag {
       font-size: 0.68rem;
@@ -271,24 +257,10 @@
       gap: 4px;
     }
 
-    .status-dot-icon {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-    }
+    .status-dot-icon { width: 6px; height: 6px; border-radius: 50%; }
 
-    .room-name {
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: var(--text-main);
-    }
-
-    .room-turma-desc {
-      font-size: 0.68rem;
-      font-weight: 600;
-      color: var(--text-muted);
-      text-transform: uppercase;
-    }
+    .room-name { font-size: 0.95rem; font-weight: 700; color: var(--text-main); }
+    .room-turma-desc { font-size: 0.68rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; }
 
     .room-subject-desc {
       font-size: 0.8rem;
@@ -430,7 +402,7 @@
 
     <!-- SUBMENU DE FILTROS COLLAPSIBLE -->
     <button class="filter-toggle-btn" onclick="toggleSubfilters()">
-      <span id="filter-summary-text">⚙️ Tarde • Qui • Tempo T1 (Todas)</span>
+      <span id="filter-summary-text">⚙️ Tarde • SEG • Tempo T1 (Todas)</span>
       <span id="filter-arrow">▼</span>
     </button>
 
@@ -445,11 +417,11 @@
       <!-- Dia -->
       <div class="control-row">
         <span class="row-label">Dia</span>
-        <button class="pill-btn day-btn" onclick="setDay('SEG', this)">Seg</button>
-        <button class="pill-btn day-btn" onclick="setDay('TER', this)">Ter</button>
-        <button class="pill-btn day-btn" onclick="setDay('QUA', this)">Qua</button>
-        <button class="pill-btn day-btn active" onclick="setDay('QUI', this)">Qui</button>
-        <button class="pill-btn day-btn" onclick="setDay('SEX', this)">Sex</button>
+        <button class="pill-btn day-btn" id="day-btn-SEG" onclick="setDay('SEG', this)">Seg</button>
+        <button class="pill-btn day-btn" id="day-btn-TER" onclick="setDay('TER', this)">Ter</button>
+        <button class="pill-btn day-btn" id="day-btn-QUA" onclick="setDay('QUA', this)">Qua</button>
+        <button class="pill-btn day-btn" id="day-btn-QUI" onclick="setDay('QUI', this)">Qui</button>
+        <button class="pill-btn day-btn" id="day-btn-SEX" onclick="setDay('SEX', this)">Sex</button>
       </div>
 
       <!-- Tempo de Aula -->
@@ -468,7 +440,7 @@
       </div>
     </section>
 
-    <!-- GRID DE SALAS (CARD EM TEMPO REAL ESTILO INDEX) -->
+    <!-- GRID DE SALAS -->
     <main class="matrix-grid" id="matrix-container"></main>
 
   </div>
@@ -518,7 +490,7 @@
 
     let currentBlock = "A";
     let currentShift = "TARDE";
-    let currentDay = "QUI";
+    let currentDay = "SEG";
     let currentTimeSlot = "T1";
     let currentFilter = "ALL";
 
@@ -617,6 +589,33 @@
         }
       }
     });
+
+    // DETECTA DIA DA SEMANA E TEMPO ATUAL AUTOMATICAMENTE
+    function autoDetectCurrentTimeSlot() {
+      const now = new Date();
+      const dayIndex = now.getDay(); // 0 = Dom, 1 = Seg, 2 = Ter, 3 = Qua, 4 = Qui, 5 = Sex, 6 = Sáb
+      const dayMap = ["SEG", "SEG", "TER", "QUA", "QUI", "SEX", "SEG"]; // Fim de semana ajusta para SEG
+      
+      currentDay = dayMap[dayIndex];
+
+      const hours = now.getHours();
+      const minutes = now.getMinutes();
+      const totalMinutes = hours * 60 + minutes;
+
+      // Mapeamento automático dos tempos da Tarde (12:30 às 18:00)
+      if (totalMinutes < 790) currentTimeSlot = "T1";       // Até 13:10
+      else if (totalMinutes < 835) currentTimeSlot = "T2";  // 13:10 - 13:55
+      else if (totalMinutes < 880) currentTimeSlot = "T3";  // 13:55 - 14:40
+      else if (totalMinutes < 925) currentTimeSlot = "T4";  // 14:40 - 15:25
+      else if (totalMinutes < 980) currentTimeSlot = "T5";  // 15:25 - 16:20
+      else if (totalMinutes < 1025) currentTimeSlot = "T6"; // 16:20 - 17:05
+      else currentTimeSlot = "T7";                          // Após 17:05
+
+      // Destaca visualmente o botão do dia correto
+      document.querySelectorAll(".day-btn").forEach(btn => btn.classList.remove("active"));
+      const activeDayBtn = document.getElementById(`day-btn-${currentDay}`);
+      if (activeDayBtn) activeDayBtn.classList.add("active");
+    }
 
     function toggleSubfilters() {
       const panel = document.getElementById("subfilters-panel");
@@ -821,6 +820,7 @@
     }
 
     window.onload = () => {
+      autoDetectCurrentTimeSlot();
       renderTimePills();
       updateFilterSummary();
       renderMatrix();
