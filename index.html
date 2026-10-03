@@ -41,6 +41,7 @@
       display: flex;
       flex-direction: column;
       gap: 16px;
+      padding-bottom: 70px;
     }
 
     /* HEADER */
@@ -155,7 +156,7 @@
       transform: scale(0.98);
     }
 
-    /* STATUS EM TEMPO REAL (GRID DE EXEMPLO) */
+    /* STATUS EM TEMPO REAL (GRID DE PREVIEW) */
     .preview-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -204,6 +205,76 @@
       color: var(--text-muted);
     }
 
+    /* LINKS ÚTEIS E DOCUMENTOS */
+    .links-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .link-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      text-decoration: none;
+      color: var(--text-main);
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+
+    .link-item:hover {
+      background: #e2e8f0;
+      border-color: #cbd5e1;
+    }
+
+    .link-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .link-icon {
+      font-size: 1.1rem;
+    }
+
+    .link-arrow {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .portarias-group {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .sublink-item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      text-decoration: none;
+      color: var(--text-main);
+      font-size: 0.75rem;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .sublink-item:hover {
+      background: var(--brand-blue-light);
+      border-color: var(--brand-blue);
+      color: var(--brand-blue);
+    }
+
     /* SEÇÃO DE AVISOS */
     .notice-card {
       background: var(--card-bg);
@@ -232,9 +303,13 @@
 
     /* NAVEGAÇÃO INFERIOR ESTILO APP */
     .bottom-nav {
-      position: sticky;
+      position: fixed;
       bottom: 12px;
-      background: rgba(255, 255, 255, 0.9);
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 32px);
+      max-width: 480px;
+      background: rgba(255, 255, 255, 0.92);
       backdrop-filter: blur(8px);
       border: 1px solid var(--border-color);
       border-radius: 20px;
@@ -243,6 +318,7 @@
       justify-content: space-around;
       align-items: center;
       box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+      z-index: 900;
     }
 
     .nav-item {
@@ -261,7 +337,7 @@
     }
 
     .nav-icon {
-      font-size: 1.2rem;
+      font-size: 1.1rem;
     }
   </style>
 </head>
@@ -297,9 +373,44 @@
       </a>
     </section>
 
+    <!-- LINKS ÚTEIS E DOCUMENTOS -->
+    <section class="action-card">
+      <div class="section-title">Links Úteis & Documentos</div>
+      
+      <div class="links-list">
+        <!-- SUAP -->
+        <a href="https://suap.cp2.g12.br" target="_blank" class="link-item">
+          <div class="link-info">
+            <span class="link-icon">🌐</span>
+            <span>Acessar SUAP</span>
+          </div>
+          <span class="link-arrow">↗</span>
+        </a>
+
+        <!-- Código de Ética -->
+        <a href="https://drive.google.com/file/d/1UNsBkbDuQZTrwzfDWCVuvtqelsWN0uPu/view?usp=drivesdk" target="_blank" class="link-item">
+          <div class="link-info">
+            <span class="link-icon">📜</span>
+            <span>Código de Ética Discente</span>
+          </div>
+          <span class="link-arrow">↗</span>
+        </a>
+
+        <!-- Portarias de Uniforme -->
+        <div style="margin-top: 4px;">
+          <div style="font-size: 0.72rem; font-weight: 600; color: var(--text-muted); margin-bottom: 6px;">Portarias de Uniforme:</div>
+          <div class="portarias-group">
+            <a href="https://drive.google.com/file/d/13BtJguaCNWew_ghQJr1TFtR5w_QT4iAb/view?usp=drivesdk" target="_blank" class="sublink-item">Doc 1 ↗</a>
+            <a href="https://drive.google.com/file/d/13I7hwIB0N0Wcz7cBZxD9pnOYm-cucsmI/view?usp=drivesdk" target="_blank" class="sublink-item">Doc 2 ↗</a>
+            <a href="https://drive.google.com/file/d/134C6xoiKmIOi0tqd422xfpS6WsT6l4gR/view?usp=drivesdk" target="_blank" class="sublink-item">Doc 3 ↗</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- STATUS DAS SALAS EM TEMPO REAL (PREVIEW) -->
     <section class="action-card">
-      <div class="section-title">Status das Salas em Tempo Real</div>
+      <div class="section-title">Status em Tempo Real (Exemplo)</div>
       
       <div class="preview-grid">
         <div class="status-card free">
