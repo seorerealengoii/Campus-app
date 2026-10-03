@@ -3,47 +3,55 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Campus Monitor — Modern UI</title>
+  <title>Campus Monitor — Painel de Salas</title>
   <style>
     :root {
-      --bg-dark: #0f172a;
-      --card-bg: #1e293b;
-      --card-hover: #334155;
-      --border-color: #334155;
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
-      --accent: #38bdf8;
-      --accent-bg: rgba(56, 189, 248, 0.1);
+      --bg-surface: #f8fafc;
+      --card-bg: #ffffff;
+      --border-color: #e2e8f0;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
       
-      --status-green: #10b981;
-      --status-green-bg: rgba(16, 185, 129, 0.15);
-      --status-yellow: #f59e0b;
-      --status-yellow-bg: rgba(245, 158, 11, 0.15);
-      --status-red: #ef4444;
-      --status-red-bg: rgba(239, 68, 68, 0.15);
+      --brand-blue: #0284c7;
+      --brand-blue-light: #e0f2fe;
       
+      --status-green-bg: #d1fae5;
+      --status-green-border: #a7f3d0;
+      --status-green-text: #065f46;
+      --status-green-dot: #10b981;
+
+      --status-yellow-bg: #fef3c7;
+      --status-yellow-border: #fde68a;
+      --status-yellow-text: #92400e;
+      --status-yellow-dot: #f59e0b;
+
+      --status-red-bg: #fee2e2;
+      --status-red-border: #fca5a5;
+      --status-red-text: #991b1b;
+      --status-red-dot: #ef4444;
+
       --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
 
     body {
-      background-color: var(--bg-dark);
+      background-color: var(--bg-surface);
       color: var(--text-main);
       font-family: var(--font-family);
       min-height: 100vh;
-      padding: 16px;
       display: flex;
-      flex-direction: column;
-      align-items: center;
+      justify-content: center;
+      padding: 16px;
     }
 
-    .container {
+    .app-container {
       width: 100%;
-      max-width: 1000px;
+      max-width: 600px;
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 14px;
+      padding-bottom: 70px; /* Espaço para a barra inferior */
     }
 
     /* HEADER */
@@ -51,55 +59,75 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding-bottom: 8px;
+      background: var(--card-bg);
+      padding: 14px 18px;
+      border-radius: 16px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
     }
 
-    .brand-title {
-      font-size: 1.25rem;
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-icon {
+      width: 32px;
+      height: 32px;
+      background: var(--brand-blue-light);
+      color: var(--brand-blue);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      font-weight: bold;
+    }
+
+    .brand-text h1 {
+      font-size: 0.95rem;
       font-weight: 700;
-      letter-spacing: -0.02em;
       color: var(--text-main);
+      letter-spacing: -0.01em;
     }
 
     .status-badge {
-      display: inline-flex;
+      display: flex;
       align-items: center;
       gap: 6px;
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       color: var(--text-muted);
-      margin-top: 2px;
     }
 
     .dot-sync {
       width: 7px;
       height: 7px;
       border-radius: 50%;
-      background-color: var(--status-yellow);
+      background-color: var(--status-yellow-dot);
     }
 
     .back-btn {
-      background: var(--card-bg);
+      background: var(--bg-surface);
       border: 1px solid var(--border-color);
       color: var(--text-main);
-      padding: 8px 16px;
+      padding: 6px 12px;
       border-radius: 8px;
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       text-decoration: none;
-      font-weight: 500;
-      transition: all 0.2s;
+      font-weight: 600;
     }
-
-    .back-btn:hover { background: var(--card-hover); }
 
     /* BLOCOS - NAVEGAÇÃO PRINCIPAL */
     .block-selector {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
+      gap: 6px;
       background: var(--card-bg);
-      padding: 6px;
-      border-radius: 12px;
+      padding: 5px;
+      border-radius: 14px;
       border: 1px solid var(--border-color);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.03);
     }
 
     .btn-block {
@@ -107,53 +135,47 @@
       border: none;
       color: var(--text-muted);
       padding: 10px;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       font-weight: 600;
-      border-radius: 8px;
+      border-radius: 10px;
       cursor: pointer;
       transition: all 0.2s;
     }
 
     .btn-block.active {
-      background: var(--accent);
-      color: #0f172a;
+      background: var(--brand-blue);
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(2, 132, 199, 0.25);
     }
 
-    /* FILTROS E SUBMENU DESDOBRÁVEL */
+    /* SUBMENU COLLAPSIBLE DE CONTROLES */
     .filter-toggle-btn {
       background: var(--card-bg);
       border: 1px solid var(--border-color);
       color: var(--text-main);
-      padding: 10px 14px;
-      border-radius: 10px;
-      font-size: 0.85rem;
+      padding: 12px 16px;
+      border-radius: 14px;
+      font-size: 0.82rem;
       font-weight: 600;
       cursor: pointer;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      transition: background 0.2s;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.02);
     }
-
-    .filter-toggle-btn:hover { background: var(--card-hover); }
 
     .subfilters-panel {
       display: none;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
       background: var(--card-bg);
       border: 1px solid var(--border-color);
-      padding: 16px;
-      border-radius: 12px;
-      animation: fadeIn 0.2s ease-in-out;
+      padding: 14px;
+      border-radius: 14px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.03);
     }
 
     .subfilters-panel.open { display: flex; }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-6px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
 
     .control-row {
       display: flex;
@@ -168,97 +190,131 @@
       font-weight: 700;
       color: var(--text-muted);
       text-transform: uppercase;
-      min-width: 55px;
+      min-width: 50px;
     }
 
     .pill-btn {
-      background: var(--bg-dark);
+      background: var(--bg-surface);
       border: 1px solid var(--border-color);
       color: var(--text-muted);
       padding: 6px 12px;
-      font-size: 0.8rem;
-      font-weight: 500;
-      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      border-radius: 8px;
       cursor: pointer;
       white-space: nowrap;
-      transition: all 0.2s;
+      transition: all 0.15s;
     }
 
     .pill-btn.active {
-      background: var(--accent-bg);
-      border-color: var(--accent);
-      color: var(--accent);
-      font-weight: 600;
+      background: var(--brand-blue-light);
+      border-color: var(--brand-blue);
+      color: var(--brand-blue);
     }
 
-    .pill-btn.filter-green.active { background: var(--status-green-bg); border-color: var(--status-green); color: var(--status-green); }
-    .pill-btn.filter-yellow.active { background: var(--status-yellow-bg); border-color: var(--status-yellow); color: var(--status-yellow); }
-    .pill-btn.filter-red.active { background: var(--status-red-bg); border-color: var(--status-red); color: var(--status-red); }
-
-    /* MATRIZ DE SALAS */
+    /* CARDS DAS SALAS (ESTILO INDEX TEMPO REAL) */
     .matrix-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(135px, 1fr));
-      gap: 12px;
+      gap: 10px;
     }
 
-    .room-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 14px;
+    .status-card {
+      border-radius: 14px;
+      padding: 12px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       aspect-ratio: 1 / 1;
+      border: 1px solid transparent;
       cursor: pointer;
-      transition: all 0.2s ease;
-      position: relative;
-      overflow: hidden;
+      transition: transform 0.1s ease, box-shadow 0.15s ease;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
     }
 
-    .room-card:hover {
-      transform: translateY(-2px);
-      border-color: var(--text-muted);
+    .status-card:active { transform: scale(0.97); }
+
+    /* ESTILOS DE COR DOS CARDS */
+    .status-card.free {
+      background: var(--status-green-bg);
+      border-color: var(--status-green-border);
+    }
+    .status-card.free .status-tag { color: var(--status-green-text); }
+    .status-card.free .status-dot-icon { background: var(--status-green-dot); }
+
+    .status-card.medium {
+      background: var(--status-yellow-bg);
+      border-color: var(--status-yellow-border);
+    }
+    .status-card.medium .status-tag { color: var(--status-yellow-text); }
+    .status-card.medium .status-dot-icon { background: var(--status-yellow-dot); }
+
+    .status-card.busy {
+      background: var(--status-red-bg);
+      border-color: var(--status-red-border);
+    }
+    .status-card.busy .status-tag { color: var(--status-red-text); }
+    .status-card.busy .status-dot-icon { background: var(--status-red-dot); }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
     }
 
-    .room-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 3px;
+    .status-tag {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 4px;
     }
 
-    .room-card.status-green::before { background-color: var(--status-green); }
-    .room-card.status-yellow::before { background-color: var(--status-yellow); }
-    .room-card.status-red::before { background-color: var(--status-red); }
+    .status-dot-icon {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+    }
 
-    .card-header { display: flex; justify-content: space-between; align-items: flex-start; }
-    .room-title { font-size: 1.1rem; font-weight: 700; color: var(--text-main); }
-    .status-indicator { width: 8px; height: 8px; border-radius: 50%; }
-    .status-green .status-indicator { background: var(--status-green); box-shadow: 0 0 8px var(--status-green); }
-    .status-yellow .status-indicator { background: var(--status-yellow); box-shadow: 0 0 8px var(--status-yellow); }
-    .status-red .status-indicator { background: var(--status-red); box-shadow: 0 0 8px var(--status-red); }
+    .room-name {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
 
-    .room-turma-tag { font-size: 0.7rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; margin-top: 2px; }
-    .room-subject-name { font-size: 0.85rem; font-weight: 600; color: var(--text-main); line-height: 1.2; word-break: break-word; }
+    .room-turma-desc {
+      font-size: 0.68rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .room-subject-desc {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1.15;
+      margin-top: 2px;
+      word-break: break-word;
+    }
 
     .empty-msg {
       grid-column: 1 / -1;
       text-align: center;
-      padding: 40px 20px;
+      padding: 30px;
       background: var(--card-bg);
       border: 1px dashed var(--border-color);
-      border-radius: 12px;
+      border-radius: 14px;
       color: var(--text-muted);
-      font-size: 0.9rem;
+      font-size: 0.85rem;
     }
 
-    /* DRAWER / MODAL LATERAL */
+    /* DRAWER / MODAL */
     .drawer-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(15, 23, 42, 0.8);
+      background: rgba(15, 23, 42, 0.4);
       backdrop-filter: blur(4px);
       display: flex;
       justify-content: center;
@@ -273,13 +329,13 @@
 
     .drawer {
       background: var(--card-bg);
-      border-top: 1px solid var(--border-color);
       border-radius: 20px 20px 0 0;
       width: 100%;
-      max-width: 550px;
-      padding: 24px;
+      max-width: 500px;
+      padding: 20px;
       transform: translateY(100%);
       transition: transform 0.25s cubic-bezier(0.1, 0.9, 0.2, 1);
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
     }
 
     .drawer-overlay.open .drawer { transform: translateY(0); }
@@ -288,57 +344,93 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 16px;
-      padding-bottom: 12px;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
       border-bottom: 1px solid var(--border-color);
     }
 
-    .close-btn { background: transparent; border: none; font-size: 1.4rem; color: var(--text-muted); cursor: pointer; }
+    .close-btn { background: transparent; border: none; font-size: 1.3rem; color: var(--text-muted); cursor: pointer; }
 
-    .info-card {
-      background: var(--bg-dark);
-      padding: 14px;
+    .info-box {
+      background: var(--bg-surface);
+      padding: 12px;
       border-radius: 10px;
       border: 1px solid var(--border-color);
-      margin-bottom: 16px;
+      margin-bottom: 14px;
     }
 
-    .info-card h4 { font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.05em; }
-    .info-card p { font-size: 0.95rem; font-weight: 600; margin-top: 4px; }
+    .info-box h4 { font-size: 0.68rem; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.04em; }
+    .info-box p { font-size: 0.9rem; font-weight: 700; margin-top: 2px; }
 
-    .timeline { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 10px; }
-    .timeline-slot { display: flex; flex-direction: column; align-items: center; padding: 8px 4px; background: var(--bg-dark); border-radius: 8px; border: 1px solid var(--border-color); font-size: 0.75rem; color: var(--text-muted); }
-    .timeline-slot.current { border-color: var(--accent); color: var(--accent); font-weight: 700; }
-    .slot-dot { width: 6px; height: 6px; border-radius: 50%; margin-top: 6px; }
-    .dot-green { background: var(--status-green); }
-    .dot-yellow { background: var(--status-yellow); }
-    .dot-red { background: var(--status-red); }
+    .timeline { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-top: 8px; }
+    .timeline-slot { display: flex; flex-direction: column; align-items: center; padding: 6px 2px; background: var(--bg-surface); border-radius: 8px; border: 1px solid var(--border-color); font-size: 0.7rem; color: var(--text-muted); }
+    .timeline-slot.current { border-color: var(--brand-blue); color: var(--brand-blue); font-weight: 700; background: var(--brand-blue-light); }
+    .slot-dot { width: 6px; height: 6px; border-radius: 50%; margin-top: 4px; }
+
+    /* TAB BAR INFERIOR */
+    .bottom-nav {
+      position: fixed;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 32px);
+      max-width: 480px;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 8px 16px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+      z-index: 900;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+
+    .nav-item.active { color: var(--brand-blue); }
+    .nav-icon { font-size: 1.1rem; }
   </style>
 </head>
 <body>
 
-  <div class="container">
+  <div class="app-container">
+    
+    <!-- HEADER -->
     <header>
-      <div>
-        <div class="brand-title">Campus Monitor</div>
-        <div class="status-badge">
-          <span class="dot-sync" id="sync-dot"></span>
-          <span id="sync-status">Sincronizando...</span>
+      <div class="brand">
+        <div class="brand-icon">📊</div>
+        <div>
+          <div class="brand-text"><h1>Monitor de Salas</h1></div>
+          <div class="status-badge">
+            <span class="dot-sync" id="sync-dot"></span>
+            <span id="sync-status">Sincronizando...</span>
+          </div>
         </div>
       </div>
-      <a href="index.html" class="back-btn">← Voltar</a>
+      <a href="index.html" class="back-btn">← Início</a>
     </header>
 
-    <!-- NAVEGAÇÃO PRINCIPAL POR BLOCOS -->
+    <!-- SELEÇÃO DE BLOCOS -->
     <nav class="block-selector">
       <button class="btn-block active" onclick="setBlock('A', this)">Bloco A</button>
       <button class="btn-block" onclick="setBlock('B', this)">Bloco B</button>
       <button class="btn-block" onclick="setBlock('C', this)">Bloco C</button>
     </nav>
 
-    <!-- SUBMENU DESDOBRÁVEL DE FILTROS -->
+    <!-- SUBMENU DE FILTROS COLLAPSIBLE -->
     <button class="filter-toggle-btn" onclick="toggleSubfilters()">
-      <span id="filter-summary-text">⚙️ Tarde • Qui • Tempo T1 (Todos)</span>
+      <span id="filter-summary-text">⚙️ Tarde • Qui • Tempo T1 (Todas)</span>
       <span id="filter-arrow">▼</span>
     </button>
 
@@ -366,42 +458,55 @@
         <div id="time-pills-container" style="display:flex; gap:6px;"></div>
       </div>
 
-      <!-- Filtro de Probabilidade -->
+      <!-- Filtro de Status -->
       <div class="control-row">
         <span class="row-label">Filtro</span>
         <button class="pill-btn filter-btn active" onclick="setFilter('ALL', this)">Todas</button>
-        <button class="pill-btn filter-btn filter-green" onclick="setFilter('GREEN', this)">Alta Prob. 🟢</button>
-        <button class="pill-btn filter-btn filter-yellow" onclick="setFilter('YELLOW', this)">Média Prob. 🟡</button>
-        <button class="pill-btn filter-btn filter-red" onclick="setFilter('RED', this)">Ocupadas 🔴</button>
+        <button class="pill-btn filter-btn" onclick="setFilter('GREEN', this)">Livres 🟢</button>
+        <button class="pill-btn filter-btn" onclick="setFilter('YELLOW', this)">Média 🟡</button>
+        <button class="pill-btn filter-btn" onclick="setFilter('RED', this)">Ocupadas 🔴</button>
       </div>
     </section>
 
-    <!-- MATRIZ DE SALAS -->
+    <!-- GRID DE SALAS (CARD EM TEMPO REAL ESTILO INDEX) -->
     <main class="matrix-grid" id="matrix-container"></main>
+
   </div>
 
-  <!-- DRAWER / DETALHES DA SALA -->
+  <!-- DRAWER LATERAL / MODAL -->
   <div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer(event)">
     <div class="drawer" onclick="event.stopPropagation()">
       <div class="drawer-header">
         <div>
-          <h3 id="dw-title" style="font-size:1.1rem; font-weight:700;">Sala ---</h3>
-          <p id="dw-sub" style="font-size:0.8rem; color:var(--text-muted);">---</p>
+          <h3 id="dw-title" style="font-size:1rem; font-weight:700;">Sala ---</h3>
+          <p id="dw-sub" style="font-size:0.75rem; color:var(--text-muted);">---</p>
         </div>
         <button class="close-btn" onclick="toggleDrawer(false)">&times;</button>
       </div>
 
-      <div class="info-card">
+      <div class="info-box">
         <h4>Status do Horário Selecionado</h4>
         <p id="dw-status">---</p>
       </div>
 
       <div>
-        <div style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; color: var(--text-muted);">Visão do Dia Selecionado</div>
+        <div style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted);">Grade do Dia Selecionado</div>
         <div class="timeline" id="dw-timeline"></div>
       </div>
     </div>
   </div>
+
+  <!-- TAB BAR INFERIOR -->
+  <nav class="bottom-nav">
+    <a href="index.html" class="nav-item">
+      <span class="nav-icon">🏠</span>
+      <span>Início</span>
+    </a>
+    <a href="monitor.html" class="nav-item active">
+      <span class="nav-icon">📊</span>
+      <span>Monitor</span>
+    </a>
+  </nav>
 
   <script>
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyMh66nq8XPvoFTKVYHS_40ad3dLF4E4iwbLG1DrFrPRpPjxUyUVPpXFtPixxMRv2yU/exec";
@@ -522,7 +627,7 @@
 
     function updateFilterSummary() {
       const shiftText = currentShift === "TARDE" ? "Tarde" : "Manhã";
-      const filterText = currentFilter === "ALL" ? "Todos" : currentFilter === "GREEN" ? "🟢 Livres" : currentFilter === "YELLOW" ? "🟡 Média Prob." : "🔴 Ocupadas";
+      const filterText = currentFilter === "ALL" ? "Todas" : currentFilter === "GREEN" ? "🟢 Livres" : currentFilter === "YELLOW" ? "🟡 Média" : "🔴 Ocupadas";
       document.getElementById("filter-summary-text").innerText = `⚙️ ${shiftText} • ${currentDay} • Tempo ${currentTimeSlot} (${filterText})`;
     }
 
@@ -531,12 +636,12 @@
     }
 
     function calculateStatus(val) {
-      if (!val || val.trim() === "" || val.toUpperCase() === "LIVRE") return { status: "GREEN", text: "LIVRE / Sem Aula" };
+      if (!val || val.trim() === "" || val.toUpperCase() === "LIVRE") return { code: "free", label: "Livre", fullText: "LIVRE / Sem Aula" };
       const str = normalizeText(val);
-      if (str.includes("indisponivel") || str.includes("ocupada")) return { status: "RED", text: "INDISPONÍVEL / Ocupada" };
-      if (LIBERADAS.some(d => str === d || str.includes(d))) return { status: "GREEN", text: "ALTA PROB. VAGA (Prática/Deslocamento)" };
-      if (IDIOMAS.some(d => str === d || str.includes(d))) return { status: "YELLOW", text: "MÉDIA PROB. (Idiomas/Divisão)" };
-      return { status: "RED", text: "OCUPADA (Aula Teórica / Reserva)" };
+      if (str.includes("indisponivel") || str.includes("ocupada")) return { code: "busy", label: "Ocupada", fullText: "INDISPONÍVEL / Ocupada" };
+      if (LIBERADAS.some(d => str === d || str.includes(d))) return { code: "free", label: "Alta Prob.", fullText: "ALTA PROB. VAGA (Prática/Deslocamento)" };
+      if (IDIOMAS.some(d => str === d || str.includes(d))) return { code: "medium", label: "Média Prob.", fullText: "MÉDIA PROB. (Idiomas/Divisão)" };
+      return { code: "busy", label: "Ocupada", fullText: "OCUPADA (Aula Teórica / Reserva)" };
     }
 
     async function fetchOnlineDocData() {
@@ -579,7 +684,7 @@
           });
 
           statusEl.innerText = "Ao vivo";
-          syncDot.style.backgroundColor = "var(--status-green)";
+          syncDot.style.backgroundColor = "var(--status-green-dot)";
           renderMatrix();
           return;
         }
@@ -588,7 +693,7 @@
       }
 
       statusEl.innerText = "Cache Local";
-      syncDot.style.backgroundColor = "var(--status-yellow)";
+      syncDot.style.backgroundColor = "var(--status-yellow-dot)";
     }
 
     function renderTimePills() {
@@ -651,21 +756,28 @@
         const val = (room.grade[currentDay] || {})[currentTimeSlot] || "";
         const st = calculateStatus(val);
 
-        if (currentFilter !== "ALL" && st.status !== currentFilter) return;
+        if (currentFilter !== "ALL") {
+          if (currentFilter === "GREEN" && st.code !== "free") return;
+          if (currentFilter === "YELLOW" && st.code !== "medium") return;
+          if (currentFilter === "RED" && st.code !== "busy") return;
+        }
 
         const card = document.createElement("div");
-        card.className = `room-card status-${st.status.toLowerCase()}`;
+        card.className = `status-card ${st.code}`;
         card.onclick = () => openDrawer(room);
 
         card.innerHTML = `
-          <div>
-            <div class="card-header">
-              <span class="room-title">${room.nome}</span>
-              <span class="status-indicator"></span>
+          <div class="card-top">
+            <div>
+              <div class="room-name">${room.nome}</div>
+              <div class="room-turma-desc">${room.turma}</div>
             </div>
-            <div class="room-turma-tag">${room.turma}</div>
+            <span class="status-tag">
+              <span class="status-dot-icon"></span>
+              ${st.label}
+            </span>
           </div>
-          <div class="room-subject-name">${val || "LIVRE"}</div>
+          <div class="room-subject-desc">${val || "LIVRE"}</div>
         `;
         container.appendChild(card);
       });
@@ -677,7 +789,7 @@
 
       document.getElementById("dw-title").innerText = `${room.nome} (${room.turma})`;
       document.getElementById("dw-sub").innerText = `Bloco ${room.bloco} • ${currentDay} • Tempo ${currentTimeSlot}`;
-      document.getElementById("dw-status").innerText = st.text;
+      document.getElementById("dw-status").innerText = st.fullText;
 
       const timeline = document.getElementById("dw-timeline");
       timeline.innerHTML = "";
@@ -686,11 +798,13 @@
         const slotVal = (room.grade[currentDay] || {})[t] || "";
         const slotSt = calculateStatus(slotVal);
 
+        let dotColor = slotSt.code === "free" ? "var(--status-green-dot)" : slotSt.code === "medium" ? "var(--status-yellow-dot)" : "var(--status-red-dot)";
+
         const cell = document.createElement("div");
         cell.className = `timeline-slot ${t === currentTimeSlot ? "current" : ""}`;
         cell.innerHTML = `
           <div>${t}</div>
-          <div class="slot-dot dot-${slotSt.status.toLowerCase()}"></div>
+          <div class="slot-dot" style="background-color:${dotColor}"></div>
         `;
         timeline.appendChild(cell);
       });
