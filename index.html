@@ -40,8 +40,8 @@
       max-width: 480px;
       display: flex;
       flex-direction: column;
-      gap: 16px;
-      padding-bottom: 70px;
+      gap: 14px;
+      padding-bottom: 75px;
     }
 
     /* HEADER */
@@ -50,30 +50,34 @@
       justify-content: space-between;
       align-items: center;
       background: var(--card-bg);
-      padding: 14px 18px;
+      padding: 12px 16px;
       border-radius: 16px;
       border: 1px solid var(--border-color);
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
     }
 
-    .brand {
+    .header-left {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
     }
 
-    .brand-icon {
-      width: 32px;
-      height: 32px;
-      background: var(--brand-blue-light);
-      color: var(--brand-blue);
-      border-radius: 8px;
+    .menu-hamburguer-btn {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      width: 36px;
+      height: 36px;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 1.1rem;
-      font-weight: bold;
+      cursor: pointer;
+      color: var(--text-main);
+      transition: background 0.2s;
     }
+
+    .menu-hamburguer-btn:active { transform: scale(0.95); }
 
     .brand-text h1 {
       font-size: 0.95rem;
@@ -84,128 +88,66 @@
     }
 
     .brand-text p {
-      font-size: 0.72rem;
+      font-size: 0.7rem;
       color: var(--text-muted);
     }
 
-    /* CARD DE BOAS-VINDAS */
-    .welcome-card {
-      background: linear-gradient(135deg, #e0f2fe 0%, #ffffff 100%);
-      border: 1px solid var(--border-color);
-      border-radius: 16px;
-      padding: 18px;
+    /* MENU HAMBÚRGUER LATERAL (DRAWER LEFT) */
+    .menu-drawer-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15, 23, 42, 0.4);
+      backdrop-filter: blur(4px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+      z-index: 1000;
+    }
+
+    .menu-drawer-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .menu-drawer {
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      width: 80%;
+      max-width: 320px;
+      background: var(--card-bg);
+      border-right: 1px solid var(--border-color);
+      padding: 20px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      transform: translateX(-100%);
+      transition: transform 0.25s cubic-bezier(0.1, 0.9, 0.2, 1);
+      z-index: 1001;
+      box-shadow: 4px 0 20px rgba(0,0,0,0.08);
+      overflow-y: auto;
+    }
+
+    .menu-drawer-overlay.open .menu-drawer {
+      transform: translateX(0);
+    }
+
+    .drawer-top {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-color);
     }
 
-    .welcome-text h2 {
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: var(--text-main);
-    }
-
-    .welcome-text p {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      margin-top: 2px;
-    }
-
-    .welcome-emoji {
-      font-size: 2rem;
-    }
-
-    /* AÇÃO PRINCIPAL / ACESSO RÁPIDO */
-    .action-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 16px;
-      padding: 16px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.03);
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .section-title {
-      font-size: 0.75rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      color: var(--text-muted);
-    }
-
-    .main-button {
-      background: var(--brand-blue);
-      color: #ffffff;
+    .close-drawer-btn {
+      background: transparent;
       border: none;
-      border-radius: 12px;
-      padding: 14px;
-      font-size: 0.95rem;
-      font-weight: 600;
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
-      transition: transform 0.1s ease, background 0.2s;
-    }
-
-    .main-button:active {
-      transform: scale(0.98);
-    }
-
-    /* STATUS EM TEMPO REAL (GRID DE PREVIEW) */
-    .preview-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-
-    .status-card {
-      border-radius: 12px;
-      padding: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      border: 1px solid transparent;
-    }
-
-    .status-card.free {
-      background: var(--status-green-bg);
-      border-color: rgba(16, 185, 129, 0.2);
-    }
-
-    .status-card.busy {
-      background: var(--status-red-bg);
-      border-color: rgba(239, 68, 68, 0.2);
-    }
-
-    .status-tag {
-      font-size: 0.65rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .status-card.free .status-tag { color: #047857; }
-    .status-card.busy .status-tag { color: #b91c1c; }
-
-    .room-name {
-      font-size: 0.9rem;
-      font-weight: 700;
-      color: var(--text-main);
-    }
-
-    .room-desc {
-      font-size: 0.72rem;
+      font-size: 1.4rem;
       color: var(--text-muted);
+      cursor: pointer;
     }
 
-    /* LINKS ÚTEIS E DOCUMENTOS */
+    /* LINKS DO MENU HAMBÚRGUER */
     .links-list {
       display: flex;
       flex-direction: column;
@@ -228,23 +170,9 @@
     }
 
     .link-item:hover {
-      background: #e2e8f0;
-      border-color: #cbd5e1;
-    }
-
-    .link-info {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .link-icon {
-      font-size: 1.1rem;
-    }
-
-    .link-arrow {
-      font-size: 0.8rem;
-      color: var(--text-muted);
+      background: var(--brand-blue-light);
+      border-color: var(--brand-blue);
+      color: var(--brand-blue);
     }
 
     .portarias-group {
@@ -266,42 +194,162 @@
       color: var(--text-main);
       font-size: 0.75rem;
       font-weight: 600;
-      transition: all 0.2s;
     }
 
-    .sublink-item:hover {
-      background: var(--brand-blue-light);
-      border-color: var(--brand-blue);
-      color: var(--brand-blue);
-    }
-
-    /* SEÇÃO DE AVISOS */
-    .notice-card {
+    /* TILE DINÂMICA DO BLOG DO CAMPUS */
+    .blog-tile {
       background: var(--card-bg);
       border: 1px solid var(--border-color);
       border-radius: 16px;
       padding: 16px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 10px;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.15s ease;
     }
 
-    .notice-item {
-      font-size: 0.82rem;
-      color: var(--text-main);
-      padding: 8px 10px;
-      background: var(--bg-surface);
-      border-radius: 8px;
-      border-left: 3px solid var(--brand-blue);
+    .blog-tile:active { transform: scale(0.98); }
+
+    .blog-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
-    .notice-date {
+    .blog-badge {
       font-size: 0.68rem;
-      color: var(--text-muted);
-      margin-top: 2px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--brand-blue);
+      background: var(--brand-blue-light);
+      padding: 3px 8px;
+      border-radius: 6px;
     }
 
-    /* NAVEGAÇÃO INFERIOR ESTILO APP */
+    .blog-news-container {
+      min-height: 48px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .blog-title {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1.25;
+      transition: opacity 0.3s ease;
+    }
+
+    .blog-date {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .blog-indicators {
+      display: flex;
+      gap: 4px;
+      margin-top: 4px;
+    }
+
+    .blog-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--border-color);
+      transition: background 0.3s;
+    }
+
+    .blog-dot.active { background: var(--brand-blue); }
+
+    /* BOTÕES DE ACESSO PRINCIPAL */
+    .action-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .section-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+    }
+
+    .main-button {
+      background: var(--brand-blue);
+      color: #ffffff;
+      border: none;
+      border-radius: 12px;
+      padding: 13px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.2);
+    }
+
+    .secondary-button {
+      background: var(--bg-surface);
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 11px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: background 0.2s;
+    }
+
+    /* PREVIEW TEMPO REAL */
+    .preview-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .status-card {
+      border-radius: 12px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .status-card.free { background: var(--status-green-bg); border: 1px solid rgba(16, 185, 129, 0.2); }
+    .status-card.busy { background: var(--status-red-bg); border: 1px solid rgba(239, 68, 68, 0.2); }
+
+    .status-tag {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .status-card.free .status-tag { color: #047857; }
+    .status-card.busy .status-tag { color: #b91c1c; }
+
+    .room-name { font-size: 0.88rem; font-weight: 700; color: var(--text-main); }
+    .room-desc { font-size: 0.7rem; color: var(--text-muted); }
+
+    /* TAB BAR INFERIOR */
     .bottom-nav {
       position: fixed;
       bottom: 12px;
@@ -313,7 +361,7 @@
       backdrop-filter: blur(8px);
       border: 1px solid var(--border-color);
       border-radius: 20px;
-      padding: 8px 16px;
+      padding: 8px 12px;
       display: flex;
       justify-content: space-around;
       align-items: center;
@@ -326,99 +374,69 @@
       flex-direction: column;
       align-items: center;
       gap: 2px;
-      font-size: 0.7rem;
+      font-size: 0.68rem;
       font-weight: 600;
       color: var(--text-muted);
       text-decoration: none;
     }
 
-    .nav-item.active {
-      color: var(--brand-blue);
-    }
-
-    .nav-icon {
-      font-size: 1.1rem;
-    }
+    .nav-item.active { color: var(--brand-blue); }
+    .nav-icon { font-size: 1.1rem; }
   </style>
 </head>
 <body>
 
   <div class="app-container">
     
-    <!-- HEADER -->
+    <!-- HEADER COM BOTÃO HAMBÚRGUER -->
     <header>
-      <div class="brand">
-        <div class="brand-icon">🏫</div>
+      <div class="header-left">
+        <button class="menu-hamburguer-btn" onclick="toggleMenuDrawer(true)">☰</button>
         <div class="brand-text">
           <h1>Campus Monitor</h1>
-          <p>Gestão de Salas & Ambientes</p>
+          <p>Gestão de Salas & Acessos</p>
         </div>
       </div>
     </header>
 
-    <!-- WELCOME CARD -->
-    <section class="welcome-card">
-      <div class="welcome-text">
-        <h2>Bem-vindo ao Portal!</h2>
-        <p>Consulte a disponibilidade de salas em tempo real.</p>
+    <!-- TILE DINÂMICA DO BLOG DO CAMPUS -->
+    <section class="blog-tile" onclick="goToNews()">
+      <div class="blog-header">
+        <span class="blog-badge">📰 Blog RE2 • Atualizações</span>
+        <span style="font-size:0.75rem; color:var(--text-muted);">Ver tudo ↗</span>
       </div>
-      <div class="welcome-emoji">🏫</div>
+
+      <div class="blog-news-container">
+        <div class="blog-title" id="blog-title">Carregando notícias do campus...</div>
+        <div class="blog-date" id="blog-date">Informativo Geral</div>
+      </div>
+
+      <div class="blog-indicators" id="blog-dots"></div>
     </section>
 
-    <!-- ACESSO RÁPIDO AO MONITOR -->
+    <!-- ACESSO RÁPIDO AOS SISTEMAS -->
     <section class="action-card">
-      <div class="section-title">Acesso Principal</div>
+      <div class="section-title">Sistemas Principais</div>
+      
       <a href="monitor.html" class="main-button">
         <span>🖥️ Monitor de Salas ao Vivo</span>
       </a>
+
+      <a href="https://disciplinar.falconservicosfse.com.br" target="_blank" class="secondary-button">
+        <span>📋 Sistema Disciplinar / Ocorrências</span>
+        <span style="font-size:0.75rem; color:var(--text-muted);">↗</span>
+      </a>
     </section>
 
-    <!-- LINKS ÚTEIS E DOCUMENTOS -->
+    <!-- PREVIEW TEMPO REAL -->
     <section class="action-card">
-      <div class="section-title">Links Úteis & Documentos</div>
-      
-      <div class="links-list">
-        <!-- SUAP -->
-        <a href="https://suap.cp2.g12.br" target="_blank" class="link-item">
-          <div class="link-info">
-            <span class="link-icon">🌐</span>
-            <span>Acessar SUAP</span>
-          </div>
-          <span class="link-arrow">↗</span>
-        </a>
-
-        <!-- Código de Ética -->
-        <a href="https://drive.google.com/file/d/1UNsBkbDuQZTrwzfDWCVuvtqelsWN0uPu/view?usp=drivesdk" target="_blank" class="link-item">
-          <div class="link-info">
-            <span class="link-icon">📜</span>
-            <span>Código de Ética Discente</span>
-          </div>
-          <span class="link-arrow">↗</span>
-        </a>
-
-        <!-- Portarias de Uniforme -->
-        <div style="margin-top: 4px;">
-          <div style="font-size: 0.72rem; font-weight: 600; color: var(--text-muted); margin-bottom: 6px;">Portarias de Uniforme:</div>
-          <div class="portarias-group">
-            <a href="https://drive.google.com/file/d/13BtJguaCNWew_ghQJr1TFtR5w_QT4iAb/view?usp=drivesdk" target="_blank" class="sublink-item">Doc 1 ↗</a>
-            <a href="https://drive.google.com/file/d/13I7hwIB0N0Wcz7cBZxD9pnOYm-cucsmI/view?usp=drivesdk" target="_blank" class="sublink-item">Doc 2 ↗</a>
-            <a href="https://drive.google.com/file/d/134C6xoiKmIOi0tqd422xfpS6WsT6l4gR/view?usp=drivesdk" target="_blank" class="sublink-item">Doc 3 ↗</a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- STATUS DAS SALAS EM TEMPO REAL (PREVIEW) -->
-    <section class="action-card">
-      <div class="section-title">Status em Tempo Real (Exemplo)</div>
-      
+      <div class="section-title">Status do Campus (Exemplo)</div>
       <div class="preview-grid">
         <div class="status-card free">
           <span class="status-tag">🟢 Livre</span>
           <span class="room-name">Sala 9 (Bloco A)</span>
           <span class="room-desc">Sem aula / Reserva</span>
         </div>
-
         <div class="status-card busy">
           <span class="status-tag">🔴 Ocupada</span>
           <span class="room-name">Sala 1 (Bloco A)</span>
@@ -427,16 +445,7 @@
       </div>
     </section>
 
-    <!-- ÚLTIMOS AVISOS -->
-    <section class="notice-card">
-      <div class="section-title">Últimos Avisos</div>
-      <div class="notice-item">
-        <strong>Sincronização Ativa:</strong> As reservas no OneDrive são atualizadas automaticamente no monitor.
-        <div class="notice-date">2026 • Sistema Integrado</div>
-      </div>
-    </section>
-
-    <!-- TAB BAR (BARRA INFERIOR) -->
+    <!-- TAB BAR INFERIOR -->
     <nav class="bottom-nav">
       <a href="index.html" class="nav-item active">
         <span class="nav-icon">🏠</span>
@@ -446,9 +455,115 @@
         <span class="nav-icon">📊</span>
         <span>Monitor</span>
       </a>
+      <a href="https://disciplinar.falconservicosfse.com.br" target="_blank" class="nav-item">
+        <span class="nav-icon">🛡️</span>
+        <span>Ocorrências</span>
+      </a>
     </nav>
 
   </div>
 
+  <!-- DRAWER HAMBÚRGUER LATERAL (LINKS ÚTEIS & DOCUMENTOS) -->
+  <div class="menu-drawer-overlay" id="menu-drawer-overlay" onclick="toggleMenuDrawer(false)">
+    <div class="menu-drawer" onclick="event.stopPropagation()">
+      <div class="drawer-top">
+        <div style="font-weight:700; font-size:0.95rem;">Links & Documentos</div>
+        <button class="close-drawer-btn" onclick="toggleMenuDrawer(false)">&times;</button>
+      </div>
+
+      <div class="links-list">
+        <div class="section-title" style="margin-top:4px;">Sistemas Acadêmicos</div>
+        
+        <a href="https://suap.cp2.g12.br" target="_blank" class="link-item">
+          <span>🌐 Acessar SUAP</span>
+          <span>↗</span>
+        </a>
+
+        <a href="https://disciplinar.falconservicosfse.com.br" target="_blank" class="link-item">
+          <span>📋 Sistema Disciplinar</span>
+          <span>↗</span>
+        </a>
+
+        <div class="section-title" style="margin-top:12px;">Normas & Regulamentos</div>
+
+        <a href="https://drive.google.com/file/d/1UNsBkbDuQZTrwzfDWCVuvtqelsWN0uPu/view?usp=drivesdk" target="_blank" class="link-item">
+          <span>📜 Código de Ética Discente</span>
+          <span>↗</span>
+        </a>
+
+        <div style="margin-top: 6px;">
+          <div style="font-size: 0.72rem; font-weight: 600; color: var(--text-muted); margin-bottom: 6px;">Portarias de Uniforme:</div>
+          <div class="portarias-group">
+            <a href="https://drive.google.com/file/d/13BtJguaCNWew_ghQJr1TFtR5w_QT4iAb/view?usp=drivesdk" target="_blank" class="sublink-item">Doc 1 ↗</a>
+            <a href="https://drive.google.com/file/d/13I7hwIB0N0Wcz7cBZxD9pnOYm-cucsmI/view?usp=drivesdk" target="_blank" class="sublink-item">Doc 2 ↗</a>
+            <a href="https://drive.google.com/file/d/134C6xoiKmIOi0tqd422xfpS6WsT6l4gR/view?usp=drivesdk" target="_blank" class="sublink-item">Doc 3 ↗</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // NOTÍCIAS RECENTES DO BLOG RE2
+    const BLOG_NEWS = [
+      {
+        title: "Avisos e Informativos do Campus Realengo II",
+        date: "Blog Oficial RE2",
+        url: "https://blog.cp2.g12.br/re2/"
+      },
+      {
+        title: "Horários e Organização das Atividades Acadêmicas",
+        date: "Ano Letivo 2026",
+        url: "https://blog.cp2.g12.br/re2/"
+      },
+      {
+        title: "Acompanhe as Publicações Oficiais e Eventos",
+        date: "Informativo Geral",
+        url: "https://blog.cp2.g12.br/re2/"
+      }
+    ];
+
+    let currentNewsIndex = 0;
+
+    function renderBlogTile() {
+      const news = BLOG_NEWS[currentNewsIndex];
+      const titleEl = document.getElementById("blog-title");
+      const dateEl = document.getElementById("blog-date");
+
+      titleEl.style.opacity = "0";
+      setTimeout(() => {
+        titleEl.innerText = news.title;
+        dateEl.innerText = news.date;
+        titleEl.style.opacity = "1";
+      }, 200);
+
+      const dotsContainer = document.getElementById("blog-dots");
+      dotsContainer.innerHTML = "";
+      BLOG_NEWS.forEach((_, idx) => {
+        const dot = document.createElement("div");
+        dot.className = `blog-dot ${idx === currentNewsIndex ? "active" : ""}`;
+        dotsContainer.appendChild(dot);
+      });
+    }
+
+    function goToNews() {
+      const news = BLOG_NEWS[currentNewsIndex];
+      window.open(news.url, "_blank");
+    }
+
+    function rotateNews() {
+      currentNewsIndex = (currentNewsIndex + 1) % BLOG_NEWS.length;
+      renderBlogTile();
+    }
+
+    function toggleMenuDrawer(open) {
+      document.getElementById("menu-drawer-overlay").classList.toggle("open", open);
+    }
+
+    window.onload = () => {
+      renderBlogTile();
+      setInterval(rotateNews, 4500); // Alterna notícias a cada 4.5 segundos
+    };
+  </script>
 </body>
 </html>
