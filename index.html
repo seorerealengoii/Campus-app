@@ -184,3 +184,16 @@
       const msg = "Atendimento e acompanhamento necessário.";
       atualizarBannerVisual(titulo, msg);
       dispararAlertaPush(titulo, msg);
+    }
+
+    function acionarProtocoloPersonalizado() {
+      const detalhe = prompt("Digite o motivo/comentários do protocolo personalizado:");
+      if (detalhe && detalhe.trim() !== "") {
+        const titulo = "🚨 ALERTA DE EMERGÊNCIA";
+        atualizarBannerVisual(titulo, detalhe);
+        dispararAlertaPush(titulo, detalhe);
+      }
+    }
+  </script>
+</body>
+</html>
