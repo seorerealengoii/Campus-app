@@ -4,6 +4,18 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Campus Monitor - Início</title>
+
+  <!-- OneSignal Web SDK -->
+  <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+  <script>
+    window.OneSignalDeferred = window.OneSignalDeferred || [];
+    OneSignalDeferred.push(async function(OneSignal) {
+      await OneSignal.init({
+        appId: "ccd1d73b-a787-4144-a805-855f14907e27",
+      });
+    });
+  </script>
+
   <style>
     :root {
       --bg-surface: #f1f5f9;
@@ -56,7 +68,6 @@
       padding-bottom: 75px;
     }
 
-    /* HEADER */
     header {
       display: flex;
       justify-content: space-between;
@@ -85,6 +96,17 @@
       justify-content: center;
       cursor: pointer;
     }
+
+    .banner-alerta {
+      display: none;
+      background-color: #ef4444;
+      color: white;
+      padding: 14px 16px;
+      border-radius: 12px;
+      font-weight: bold;
+      text-align: center;
+      box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.3);
+    }
   </style>
 </head>
 <body>
@@ -97,9 +119,81 @@
       </div>
     </header>
 
-    <!-- O teu conteúdo principal aqui -->
-
+    <div id="bannerAlerta" class="banner-alerta">
+      <div id="bannerTitulo">🚨 PROTOCOLO ATIVO</div>
+      <div id="bannerMensagem" style="font-weight: normal; font-size: 0.9em; margin-top: 4px;"></div>
+    </div>
   </div>
 
+  <script>
+    const ONESIGNAL_APP_ID = "ccd1d73b-a787-4144-a805-855f14907e27";
+    const ONESIGNAL_REST_KEY = "os_v2_app_" + "zti5oo5hq5aujkafqvprjed6e7vqox25iw4ezgubmomtjm32prhpztvxgckpoefvxw7qmxsrgygsnidikt3n4tetrqkw7qodglwgnvq";
+
+    function atualizarBannerVisual(titulo, mensagem) {
+      const banner = document.getElementById("bannerAlerta");
+      const bannerTitulo = document.getElementById("bannerTitulo");
+      const bannerMensagem = document.getElementById("bannerMensagem");
+
+      if (banner && bannerTitulo && bannerMensagem) {
+        bannerTitulo.innerText = titulo;
+        bannerMensagem.innerText = mensagem;
+        banner.style.display = "block";
+      }
+    }
+
+    async function dispararAlertaPush(titulo, mensagem) {
+      try {
+        const response = await fetch("https://onesignal.com/api/v1/notifications", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json; charset=utf-8",
+            "Authorization": "Key " + ONESIGNAL_REST_KEY
+          },
+          body: JSON.stringify({
+            app_id: ONESIGNAL_APP_ID,
+            included_segments: ["Subscribed Users"],
+            headings: { pt: titulo, en: titulo },
+            contents: { pt: mensagem, en: mensagem },
+            vibrate: [500, 100, 500, 100, 500]
+          })
+        });
+
+        const data = await response.json();
+        console.log("Push disparado:", data);
+      } catch (error) {
+        console.error("Erro ao enviar Push:", error);
+      }
+    }
+
+    function acionarProtocoloVentoChuva() {
+      const titulo = "🚨 ALERTA: Vento/Chuva Forte";
+      const msg = "Atenção às áreas abertas e à quadra. Protocolo ativo.";
+      atualizarBannerVisual(titulo, msg);
+      dispararAlertaPush(titulo, msg);
+    }
+
+    function acionarProtocoloJulie() {
+      const titulo = "🚨 ALERTA: Protocolo Julie";
+      const msg = "Apoio solicitado pela equipe. Verificar a central.";
+      atualizarBannerVisual(titulo, msg);
+      dispararAlertaPush(titulo, msg);
+    }
+
+    function acionarProtocoloJLodi() {
+      const titulo = "🚨 ALERTA: Protocolo J. Lodi";
+      const msg = "Atendimento e acompanhamento necessário.";
+      atualizarBannerVisual(titulo, msg);
+      dispararAlertaPush(titulo, msg);
+    }
+
+    function acionarProtocoloPersonalizado() {
+      const detalhe = prompt("Digite o motivo/comentários do protocolo personalizado:");
+      if (detalhe && detalhe.trim() !== "") {
+        const titulo = "🚨 ALERTA DE EMERGÊNCIA";
+        atualizarBannerVisual(titulo, detalhe);
+        dispararAlertaPush(titulo, detalhe);
+      }
+    }
+  </script>
 </body>
 </html>
