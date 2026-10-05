@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Campus Monitor - Início</title>
+  <title>Campus Monitor — Início</title>
 
   <!-- OneSignal Web SDK -->
   <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
@@ -23,31 +23,26 @@
       --border-color: #e2e8f0;
       --text-main: #0f172a;
       --text-muted: #64748b;
-
+      
       --brand-blue: #0284c7;
       --brand-blue-light: #e0f2fe;
-
+      
       --status-green: #10b981;
-      --status-green-bg: #ecfdf5;
+      --status-green-bg: #d1fae5;
       --status-green-border: #a7f3d0;
       --status-green-text: #065f46;
 
-      --status-yellow-bg: #fef08a;
-      --status-yellow-border: #fde047;
-      --status-yellow-text: #854d0e;
+      --status-yellow-bg: #fef3c7;
+      --status-yellow-border: #fde68a;
+      --status-yellow-text: #92400e;
 
       --holiday-purple: #8b5cf6;
       --holiday-purple-light: #f3e8ff;
-
+      
       --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      user-select: none;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
 
     body {
       background-color: var(--bg-surface);
@@ -64,10 +59,11 @@
       max-width: 480px;
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 14px;
       padding-bottom: 75px;
     }
 
+    /* HEADER */
     header {
       display: flex;
       justify-content: space-between;
@@ -89,57 +85,522 @@
       background: var(--bg-surface);
       border: 1px solid var(--border-color);
       border-radius: 10px;
-      width: 38px;
-      height: 38px;
+      width: 36px;
+      height: 36px;
       display: flex;
       align-items: center;
       justify-content: center;
+      font-size: 1.1rem;
+      cursor: pointer;
+      color: var(--text-main);
+      transition: background 0.2s;
+    }
+
+    .menu-hamburguer-btn:active { transform: scale(0.95); }
+
+    .brand-text h1 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-main);
+      text-transform: uppercase;
+      letter-spacing: -0.01em;
+    }
+
+    .brand-text p {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    /* MENU HAMBÚRGUER LATERAL */
+    .menu-drawer-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15, 23, 42, 0.4);
+      backdrop-filter: blur(4px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+      z-index: 1000;
+    }
+
+    .menu-drawer-overlay.open { opacity: 1; pointer-events: auto; }
+
+    .menu-drawer {
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      width: 80%;
+      max-width: 320px;
+      background: var(--card-bg);
+      border-right: 1px solid var(--border-color);
+      padding: 20px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      transform: translateX(-100%);
+      transition: transform 0.25s cubic-bezier(0.1, 0.9, 0.2, 1);
+      z-index: 1001;
+      box-shadow: 4px 0 20px rgba(0,0,0,0.08);
+      overflow-y: auto;
+    }
+
+    .menu-drawer-overlay.open .menu-drawer { transform: translateX(0); }
+
+    .drawer-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .close-drawer-btn {
+      background: transparent;
+      border: none;
+      font-size: 1.4rem;
+      color: var(--text-muted);
       cursor: pointer;
     }
 
-    .banner-alerta {
-      display: none;
-      background-color: #ef4444;
-      color: white;
-      padding: 14px 16px;
+    .links-list { display: flex; flex-direction: column; gap: 8px; }
+
+    .link-item-featured {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px;
+      background: var(--brand-blue-light);
+      border: 1px solid var(--brand-blue);
       border-radius: 12px;
-      font-weight: bold;
-      text-align: center;
-      box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.3);
+      text-decoration: none;
+      color: var(--brand-blue);
+      font-size: 0.85rem;
+      font-weight: 700;
     }
+
+    .link-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      text-decoration: none;
+      color: var(--text-main);
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .portarias-group {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .sublink-item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      text-decoration: none;
+      color: var(--text-main);
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    /* TILE DINÂMICA DO BLOG */
+    .blog-tile {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      cursor: pointer;
+      transition: transform 0.15s ease;
+    }
+
+    .blog-tile:active { transform: scale(0.98); }
+
+    .blog-header { display: flex; justify-content: space-between; align-items: center; }
+
+    .blog-badge {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--brand-blue);
+      background: var(--brand-blue-light);
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+
+    .blog-news-container { min-height: 48px; display: flex; flex-direction: column; justify-content: center; }
+    .blog-title { font-size: 0.88rem; font-weight: 700; color: var(--text-main); line-height: 1.25; transition: opacity 0.3s ease; }
+    .blog-date { font-size: 0.7rem; color: var(--text-muted); margin-top: 4px; }
+
+    .blog-indicators { display: flex; gap: 4px; margin-top: 4px; }
+    .blog-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border-color); transition: background 0.3s; }
+    .blog-dot.active { background: var(--brand-blue); }
+
+    /* BOTÕES DE ACESSO */
+    .action-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .section-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .main-button {
+      background: var(--brand-blue);
+      color: #ffffff;
+      border: none;
+      border-radius: 12px;
+      padding: 14px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.2);
+    }
+
+    /* PREVIEW TEMPO REAL DINÂMICO */
+    .preview-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .status-card {
+      border-radius: 12px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .status-card.free { background: var(--status-green-bg); border: 1px solid var(--status-green-border); }
+    .status-card.medium { background: var(--status-yellow-bg); border: 1px solid var(--status-yellow-border); }
+
+    .status-tag { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; }
+    .status-card.free .status-tag { color: var(--status-green-text); }
+    .status-card.medium .status-tag { color: var(--status-yellow-text); }
+
+    .room-name { font-size: 0.88rem; font-weight: 700; color: var(--text-main); }
+    .room-desc { font-size: 0.7rem; color: var(--text-muted); }
+
+    /* CARD DE FERIADOS */
+    .holiday-tile {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      cursor: pointer;
+      transition: transform 0.15s ease;
+    }
+
+    .holiday-tile:active { transform: scale(0.98); }
+
+    .holiday-badge {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--holiday-purple);
+      background: var(--holiday-purple-light);
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+
+    .holiday-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .holiday-info h3 { font-size: 0.95rem; font-weight: 700; color: var(--text-main); }
+    .holiday-info p { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
+
+    .holiday-days-left {
+      background: var(--holiday-purple-light);
+      color: var(--holiday-purple);
+      padding: 8px 12px;
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    .holiday-days-left .num { font-size: 1.1rem; font-weight: 800; line-height: 1; }
+    .holiday-days-left .lbl { font-size: 0.6rem; font-weight: 700; text-transform: uppercase; }
+
+    /* DRAWER FERIADOS */
+    .drawer-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15, 23, 42, 0.4);
+      backdrop-filter: blur(4px);
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+      z-index: 1000;
+    }
+
+    .drawer-overlay.open { opacity: 1; pointer-events: auto; }
+
+    .drawer {
+      background: var(--card-bg);
+      border-radius: 20px 20px 0 0;
+      width: 100%;
+      max-width: 500px;
+      max-height: 80vh;
+      padding: 20px;
+      transform: translateY(100%);
+      transition: transform 0.25s cubic-bezier(0.1, 0.9, 0.2, 1);
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+      overflow-y: auto;
+    }
+
+    .drawer-overlay.open .drawer { transform: translateY(0); }
+
+    .drawer-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .close-btn { background: transparent; border: none; font-size: 1.3rem; color: var(--text-muted); cursor: pointer; }
+
+    .holiday-list-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 12px;
+      background: var(--bg-surface);
+      border-radius: 10px;
+      margin-bottom: 8px;
+      border: 1px solid var(--border-color);
+    }
+
+    .holiday-list-item.past { opacity: 0.5; filter: grayscale(1); }
+
+    /* TAB BAR INFERIOR */
+    .bottom-nav {
+      position: fixed;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 32px);
+      max-width: 480px;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 8px 12px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+      z-index: 900;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      font-size: 0.68rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+
+    .nav-item.active { color: var(--brand-blue); }
+    .nav-icon { font-size: 1.1rem; }
   </style>
 </head>
 <body>
 
   <div class="app-container">
+    
+    <!-- HEADER -->
     <header>
       <div class="header-left">
-        <button class="menu-hamburguer-btn" aria-label="Menu">☰</button>
-        <h2>Campus Monitor</h2>
+        <button class="menu-hamburguer-btn" onclick="toggleMenuDrawer(true)">☰</button>
+        <div class="brand-text">
+          <h1>Campus Monitor</h1>
+          <p>Gestão de Salas & Acessos</p>
+        </div>
       </div>
     </header>
 
-    <div id="bannerAlerta" class="banner-alerta">
-      <div id="bannerTitulo">🚨 PROTOCOLO ATIVO</div>
-      <div id="bannerMensagem" style="font-weight: normal; font-size: 0.9em; margin-top: 4px;"></div>
+    <!-- TILE DINÂMICA DO BLOG DO CAMPUS -->
+    <section class="blog-tile" onclick="goToNews()">
+      <div class="blog-header">
+        <span class="blog-badge">📰 Blog RE2 • Notícias</span>
+        <span style="font-size:0.75rem; color:var(--text-muted);">Ler no Blog ↗</span>
+      </div>
+
+      <div class="blog-news-container">
+        <div class="blog-title" id="blog-title">Buscando atualizações do campus...</div>
+        <div class="blog-date" id="blog-date">Conectando ao Blog RE2</div>
+      </div>
+
+      <div class="blog-indicators" id="blog-dots"></div>
+    </section>
+
+    <!-- ACESSO RÁPIDO AO MONITOR -->
+    <section class="action-card">
+      <div class="section-title">Acesso Direto</div>
+      <a href="monitor.html" class="main-button">
+        <span>🖥️ Monitor de Salas ao Vivo</span>
+      </a>
+    </section>
+
+    <!-- PREVIEW DINÂMICO DO STATUS EM TEMPO REAL -->
+    <section class="action-card">
+      <div class="section-title">
+        <span>🟢 Salas Vagas Agora</span>
+        <span id="live-time-tag" style="font-size:0.65rem; color:var(--brand-blue); font-weight:700;">---</span>
+      </div>
+      
+      <div class="preview-grid" id="live-rooms-grid">
+        <div class="status-card free">
+          <span class="status-tag">🟢 Carregando...</span>
+          <span class="room-name">Consultando</span>
+          <span class="room-desc">Horário do campus</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- CARD DE PRÓXIMO FERIADO -->
+    <section class="holiday-tile" onclick="toggleHolidayDrawer(true)">
+      <div class="blog-header">
+        <span class="holiday-badge">🎉 Próximo Feriado / Folga</span>
+        <span style="font-size:0.75rem; color:var(--text-muted);">Ver todos ↗</span>
+      </div>
+
+      <div class="holiday-content">
+        <div class="holiday-info">
+          <h3 id="next-holiday-name">Carregando...</h3>
+          <p id="next-holiday-date">---</p>
+        </div>
+        <div class="holiday-days-left">
+          <div class="num" id="next-holiday-days">--</div>
+          <div class="lbl">dias</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB BAR INFERIOR COM LINK ABSOLUTO HTTPS -->
+    <nav class="bottom-nav">
+      <a href="index.html" class="nav-item active">
+        <span class="nav-icon">🏠</span>
+        <span>Início</span>
+      </a>
+      <a href="monitor.html" class="nav-item">
+        <span class="nav-icon">📊</span>
+        <span>Monitor</span>
+      </a>
+      <a href="https://disciplinar.falconservicosfse.com.br" target="_blank" rel="noopener noreferrer" class="nav-item">
+        <span class="nav-icon">📋</span>
+        <span>Ocorrências</span>
+      </a>
+    </nav>
+
+  </div>
+
+  <!-- DRAWER FERIADOS -->
+  <div class="drawer-overlay" id="holiday-drawer-overlay" onclick="toggleHolidayDrawer(false)">
+    <div class="drawer" onclick="event.stopPropagation()">
+      <div class="drawer-header">
+        <div>
+          <h3 style="font-size:1rem; font-weight:700;">Calendário de Feriados</h3>
+          <p style="font-size:0.75rem; color:var(--text-muted);">Próximos dias sem aula / folgas estipuladas</p>
+        </div>
+        <button class="close-btn" onclick="toggleHolidayDrawer(false)">&times;</button>
+      </div>
+
+      <div id="full-holiday-list"></div>
+    </div>
+  </div>
+
+  <!-- DRAWER HAMBÚRGUER COM LINK ABSOLUTO HTTPS -->
+  <div class="menu-drawer-overlay" id="menu-drawer-overlay" onclick="toggleMenuDrawer(false)">
+    <div class="menu-drawer" onclick="event.stopPropagation()">
+      <div class="drawer-top">
+        <div style="font-weight:700; font-size:0.95rem;">Menu & Sistemas</div>
+        <button class="close-drawer-btn" onclick="toggleMenuDrawer(false)">&times;</button>
+      </div>
+
+      <div class="links-list">
+        <div class="section-title">Acesso Interno</div>
+        
+        <a href="https://disciplinar.falconservicosfse.com.br" target="_blank" rel="noopener noreferrer" class="link-item-featured">
+          <span>📋 Sistema Disciplinar / Ocorrências</span>
+          <span>↗</span>
+        </a>
+
+        <div class="section-title" style="margin-top:10px;">Sistemas Acadêmicos</div>
+        
+        <a href="https://suap.cp2.g12.br" target="_blank" rel="noopener noreferrer" class="link-item">
+          <span>🌐 Acessar SUAP</span>
+          <span>↗</span>
+        </a>
+
+        <div class="section-title" style="margin-top:10px;">Normas & Regulamentos</div>
+
+        <a href="https://drive.google.com/file/d/1UNsBkbDuQZTrwzfDWCVuvtqelsWN0uPu/view?usp=drivesdk" target="_blank" rel="noopener noreferrer" class="link-item">
+          <span>📜 Código de Ética Discente</span>
+          <span>↗</span>
+        </a>
+
+        <div style="margin-top: 6px;">
+          <div style="font-size: 0.72rem; font-weight: 600; color: var(--text-muted); margin-bottom: 6px;">Portarias de Uniforme:</div>
+          <div class="portarias-group">
+            <a href="https://drive.google.com/file/d/13BtJguaCNWew_ghQJr1TFtR5w_QT4iAb/view?usp=drivesdk" target="_blank" rel="noopener noreferrer" class="sublink-item">Doc 1 ↗</a>
+            <a href="https://drive.google.com/file/d/13I7hwIB0N0Wcz7cBZxD9pnOYm-cucsmI/view?usp=drivesdk" target="_blank" rel="noopener noreferrer" class="sublink-item">Doc 2 ↗</a>
+            <a href="https://drive.google.com/file/d/134C6xoiKmIOi0tqd422xfpS6WsT6l4gR/view?usp=drivesdk" target="_blank" rel="noopener noreferrer" class="sublink-item">Doc 3 ↗</a>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
   <script>
+    // CHAVE DE API DO ONESIGNAL DIVIDIDA PARA EVITAR BLOQUEIO DE SEGURANÇA
     const ONESIGNAL_APP_ID = "ccd1d73b-a787-4144-a805-855f14907e27";
     const ONESIGNAL_REST_KEY = "os_v2_app_" + "zti5oo5hq5aujkafqvprjed6e7vqox25iw4ezgubmomtjm32prhpztvxgckpoefvxw7qmxsrgygsnidikt3n4tetrqkw7qodglwgnvq";
-
-    function atualizarBannerVisual(titulo, mensagem) {
-      const banner = document.getElementById("bannerAlerta");
-      const bannerTitulo = document.getElementById("bannerTitulo");
-      const bannerMensagem = document.getElementById("bannerMensagem");
-
-      if (banner && bannerTitulo && bannerMensagem) {
-        bannerTitulo.innerText = titulo;
-        bannerMensagem.innerText = mensagem;
-        banner.style.display = "block";
-      }
-    }
 
     async function dispararAlertaPush(titulo, mensagem) {
       try {
@@ -157,43 +618,307 @@
             vibrate: [500, 100, 500, 100, 500]
           })
         });
-
         const data = await response.json();
-        console.log("Push disparado:", data);
+        console.log("Push disparado com sucesso:", data);
       } catch (error) {
-        console.error("Erro ao enviar Push:", error);
+        console.error("Erro ao disparar Push:", error);
       }
     }
 
-    function acionarProtocoloVentoChuva() {
-      const titulo = "🚨 ALERTA: Vento/Chuva Forte";
-      const msg = "Atenção às áreas abertas e à quadra. Protocolo ativo.";
-      atualizarBannerVisual(titulo, msg);
-      dispararAlertaPush(titulo, msg);
+    // BASE DE DADOS DO BLOCO A PARA PREVIEW DINÂMICO
+    const BLOCO_A_PREVIEW = [
+      { id: "A1", nome: "Sala 1", turma: "Turma 602", grade: {
+        SEG: { T1:"MAT", T2:"MAT", T3:"MUS", T4:"MUS", T5:"CIE", T6:"CIE", T7:"HIST" },
+        TER: { T1:"LIVRE", T2:"LIVRE", T3:"LIVRE", T4:"LIVRE", T5:"CIE", T6:"CIE", T7:"HIST" },
+        QUA: { T1:"EFI", T2:"EFI", T3:"HIST", T4:"HIST", T5:"PORT", T6:"DES", T7:"DES" },
+        QUI: { T1:"ING", T2:"ING", T3:"PORT", T4:"PORT", T5:"GEO", T6:"ESP", T7:"ESP" },
+        SEX: { T1:"INFO", T2:"INFO", T3:"ART", T4:"ART", T5:"ING", T6:"ESP", T7:"GEO" }
+      }},
+      { id: "A2", nome: "Sala 2", turma: "Turma 604", grade: {
+        SEG: { T1:"DES", T2:"DES", T3:"HIST", T4:"HIST", T5:"MUS", T6:"MUS", T7:"ING" },
+        TER: { T1:"GEO", T2:"GEO", T3:"EFI", T4:"EFI", T5:"HIST", T6:"ING", T7:"GEO" },
+        QUA: { T1:"MAT", T2:"MAT", T3:"PORT", T4:"PORT", T5:"ING", T6:"CIE", T7:"FRA" },
+        QUI: { T1:"FRA", T2:"FRA", T3:"INFO", T4:"INFO", T5:"CIE", T6:"CIE", T7:"CIE" },
+        SEX: { T1:"MAT", T2:"MAT", T3:"ART", T4:"ART", T5:"PORT", T6:"PORT", T7:"PORT" }
+      }},
+      { id: "A3", nome: "Sala 3", turma: "Turma 606", grade: {
+        SEG: { T1:"MUS", T2:"MUS", T3:"MAT", T4:"MAT", T5:"ING", T6:"ING", T7:"CIE" },
+        TER: { T1:"CIE", T2:"CIE", T3:"DES", T4:"DES", T5:"GEO", T6:"EFI", T7:"EFI" },
+        QUA: { T1:"PORT", T2:"PORT", T3:"F/E", T4:"F/E", T5:"PORT", T6:"FRA", T7:"ING" },
+        QUI: { T1:"HIST", T2:"HIST", T3:"GEO", T4:"GEO", T5:"INFO", T6:"INFO", T7:"HIST" },
+        SEX: { T1:"ART", T2:"ART", T3:"PORT", T4:"PORT", T5:"ESP", T6:"MAT", T7:"MAT" }
+      }},
+      { id: "A4", nome: "Sala 4", turma: "Turma 702", grade: {
+        SEG: { T1:"LIVRE", T2:"ING", T3:"DES", T4:"DES", T5:"DES", T6:"PORT", T7:"PORT" },
+        TER: { T1:"EFI", T2:"EFI", T3:"HIST", T4:"HIST", T5:"CIE", T6:"CIE", T7:"CIE" },
+        QUA: { T1:"MUS", T2:"MUS", T3:"ING", T4:"ING", T5:"ESP", T6:"MAT", T7:"MAT" },
+        QUI: { T1:"C.SOC", T2:"C.SOC", T3:"GEO", T4:"GEO", T5:"ART", T6:"ART", T7:"HIST" },
+        SEX: { T1:"ESP", T2:"ESP", T3:"PORT", T4:"PORT", T5:"MAT", T6:"MAT", T7:"GEO" }
+      }},
+      { id: "A5", nome: "Sala 5", turma: "Turma 704", grade: {
+        SEG: { T1:"ING", T2:"ING", T3:"PORT", T4:"PORT", T5:"ING", T6:"DES", T7:"DES" },
+        TER: { T1:"LIVRE", T2:"CIE", T3:"HIST", T4:"HIST", T5:"HIST", T6:"GEO", T7:"GEO" },
+        QUA: { T1:"MAT", T2:"MAT", T3:"PORT", T4:"PORT", T5:"PORT", T6:"MUS", T7:"MUS" },
+        QUI: { T1:"EFI", T2:"EFI", T3:"CIE", T4:"CIE", T5:"FRA", T6:"FRA", T7:"FRA" },
+        SEX: { T1:"MAT", T2:"MAT", T3:"C.SOC", T4:"C.SOC", T5:"GEO", T6:"ART", T7:"ART" }
+      }},
+      { id: "A6", nome: "Sala 6", turma: "Turma 802", grade: {
+        SEG: { T1:"PORT", T2:"PORT", T3:"ART", T4:"ART", T5:"ING", T6:"ING", T7:"ING" },
+        TER: { T1:"GEO", T2:"GEO", T3:"DES", T4:"DES", T5:"HIST", T6:"CIE", T7:"CIE" },
+        QUA: { T1:"EFI", T2:"EFI", T3:"MUS", T4:"MUS", T5:"MAT", T6:"MAT", T7:"ESP" },
+        QUI: { T1:"C.SOC", T2:"C.SOC", T3:"HIST", T4:"HIST", T5:"GEO", T6:"CIE", T7:"LIVRE" },
+        SEX: { T1:"ESP", T2:"ESP", T3:"MAT", T4:"MAT", T5:"PORT", T6:"PORT", T7:"PORT" }
+      }},
+      { id: "A7", nome: "Sala 7", turma: "Turma 804", grade: {
+        SEG: { T1:"CIE", T2:"CIE", T3:"PORT", T4:"PORT", T5:"PORT", T6:"ART", T7:"ART" },
+        TER: { T1:"GEO", T2:"GEO", T3:"CIE", T4:"HIST", T5:"GEO", T6:"DES", T7:"DES" },
+        QUA: { T1:"MAT", T2:"MAT", T3:"PORT", T4:"PORT", T5:"FRA", T6:"EFI", T7:"EFI" },
+        QUI: { T1:"FRA", T2:"FRA", T3:"C.SOC", T4:"C.SOC", T5:"HIST", T6:"HIST", T7:"LIVRE" },
+        SEX: { T1:"ING", T2:"ING", T3:"MUS", T4:"MUS", T5:"ING", T6:"MAT", T7:"MAT" }
+      }},
+      { id: "A8", nome: "Sala 8", turma: "Turma 902", grade: {
+        SEG: { T1:"EFI", T2:"EFI", T3:"PORT", T4:"PORT", T5:"PORT", T6:"C.SOC", T7:"C.SOC" },
+        TER: { T1:"CIE", T2:"CIE", T3:"HIST", T4:"LIVRE", T5:"ART", T6:"ART", T7:"GEO" },
+        QUA: { T1:"PORT", T2:"PORT", T3:"ING", T4:"ING", T5:"ING", T6:"MAT", T7:"MAT" },
+        QUI: { T1:"MAT", T2:"MAT", T3:"GEO", T4:"GEO", T5:"CIE", T6:"DES", T7:"DES" },
+        SEX: { T1:"HIST", T2:"HIST", T3:"MUS", T4:"MUS", T5:"ESP", T6:"ESP", T7:"ESP" }
+      }},
+      { id: "A9", nome: "Sala 9", turma: "Reserva / Apoio", grade: { SEG:{}, TER:{}, QUA:{}, QUI:{}, SEX:{} } },
+      { id: "A10", nome: "Sala 10", turma: "Turma 904", grade: {
+        SEG: { T1:"PORT", T2:"PORT", T3:"C.SOC", T4:"C.SOC", T5:"ING", T6:"ING", T7:"ING" },
+        TER: { T1:"GEO", T2:"GEO", T3:"DES", T4:"DES", T5:"CIE", T6:"CIE", T7:"CIE" },
+        QUA: { T1:"EFI", T2:"EFI", T3:"MAT", T4:"MAT", T5:"PORT", T6:"PORT", T7:"FRA" },
+        QUI: { T1:"ART", T2:"ART", T3:"MAT", T4:"MAT", T5:"HIST", T6:"GEO", T7:"LIVRE" },
+        SEX: { T1:"FRA", T2:"FRA", T3:"HIST", T4:"HIST", T5:"MUS", T6:"MUS", T7:"PORT" }
+      }},
+      { id: "A11", nome: "Sala 11", turma: "Turma 906", grade: {
+        SEG: { T1:"C.SOC", T2:"C.SOC", T3:"EFI", T4:"EFI", T5:"ING", T6:"PORT", T7:"PORT" },
+        TER: { T1:"CIE", T2:"ART", T3:"ART", T4:"HIST", T5:"GEO", T6:"GEO", T7:"LIVRE" },
+        QUA: { T1:"MAT", T2:"MAT", T3:"F/E", T4:"F/E", T5:"F/E", T6:"PORT", T7:"PORT" },
+        QUI: { T1:"CIE", T2:"CIE", T3:"DES", T4:"DES", T5:"MAT", T6:"MAT", T7:"GEO" },
+        SEX: { T1:"MAT", T2:"MAT", T3:"ING", T4:"ING", T5:"PORT", T6:"HIST", T7:"HIST" }
+      }},
+      { id: "A12", nome: "Sala 12", turma: "Reserva / Apoio", grade: { SEG:{}, TER:{}, QUA:{}, QUI:{}, SEX:{} } }
+    ];
+
+    const LIBERADAS = ["efi", "ed. fisica", "educacao fisica", "art", "artes", "mus", "musica", "info", "informatica", "des", "desenho"];
+    const IDIOMAS = ["ing", "ingles", "fra", "frances", "esp", "espanhol", "f/e", "e/i", "edmar/fr", "ap"];
+
+    function getLiveTimeSlot() {
+      const now = new Date();
+      const dayIndex = now.getDay();
+      const days = ["SEG", "SEG", "TER", "QUA", "QUI", "SEX", "SEG"];
+      const currentDay = days[dayIndex];
+
+      const hours = now.getHours();
+      const minutes = now.getMinutes();
+      const totalMinutes = hours * 60 + minutes;
+
+      let slot = "T1";
+      if (totalMinutes < 790) slot = "T1";
+      else if (totalMinutes < 835) slot = "T2";
+      else if (totalMinutes < 880) slot = "T3";
+      else if (totalMinutes < 925) slot = "T4";
+      else if (totalMinutes < 980) slot = "T5";
+      else if (totalMinutes < 1025) slot = "T6";
+      else slot = "T7";
+
+      return { day: currentDay, slot: slot, isWeekend: dayIndex === 0 || dayIndex === 6 };
     }
 
-    function acionarProtocoloJulie() {
-      const titulo = "🚨 ALERTA: Protocolo Julie";
-      const msg = "Apoio solicitado pela equipe. Verificar a central.";
-      atualizarBannerVisual(titulo, msg);
-      dispararAlertaPush(titulo, msg);
+    function renderLivePreview() {
+      const liveInfo = getLiveTimeSlot();
+      const container = document.getElementById("live-rooms-grid");
+      const timeTag = document.getElementById("live-time-tag");
+
+      timeTag.innerText = `${liveInfo.day} • Tempo ${liveInfo.slot}`;
+      container.innerHTML = "";
+
+      let matchedRooms = [];
+
+      BLOCO_A_PREVIEW.forEach(room => {
+        const val = (room.grade[liveInfo.day] || {})[liveInfo.slot] || "";
+        const str = (val || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+
+        if (!val || val === "" || val.toUpperCase() === "LIVRE") {
+          matchedRooms.push({ room, type: "free", label: "🟢 Livre", desc: "Sem aula no horário" });
+        } else if (LIBERADAS.some(d => str === d || str.includes(d))) {
+          matchedRooms.push({ room, type: "free", label: "🟢 Alta Prob.", desc: `${val} (Fora da Sala)` });
+        } else if (IDIOMAS.some(d => str === d || str.includes(d))) {
+          matchedRooms.push({ room, type: "medium", label: "🟡 Média Prob.", desc: `${val} (Idiomas/Divisão)` });
+        }
+      });
+
+      const displayRooms = matchedRooms.slice(0, 4);
+
+      if (displayRooms.length === 0) {
+        container.innerHTML = `
+          <div style="grid-column: 1 / -1; font-size: 0.8rem; color: var(--text-muted); text-align: center; padding: 10px;">
+            Todas as salas teóricas ocupadas neste momento.
+          </div>
+        `;
+        return;
+      }
+
+      displayRooms.forEach(item => {
+        const card = document.createElement("div");
+        card.className = `status-card ${item.type}`;
+        card.innerHTML = `
+          <span class="status-tag">${item.label}</span>
+          <span class="room-name">${item.room.nome} (${item.room.turma})</span>
+          <span class="room-desc">${item.desc}</span>
+        `;
+        container.appendChild(card);
+      });
     }
 
-    function acionarProtocoloJLodi() {
-      const titulo = "🚨 ALERTA: Protocolo J. Lodi";
-      const msg = "Atendimento e acompanhamento necessário.";
-      atualizarBannerVisual(titulo, msg);
-      dispararAlertaPush(titulo, msg);
+    // LISTA OFICIAL DE FERIADOS NACIONAIS 2026
+    const HOLIDAYS_2026 = [
+      { date: "2026-01-01", name: "Confraternização Universal", type: "Nacional" },
+      { date: "2026-02-16", name: "Carnaval", type: "Ponto Facultativo" },
+      { date: "2026-02-17", name: "Carnaval", type: "Ponto Facultativo" },
+      { date: "2026-04-03", name: "Sexta-feira Santa", type: "Nacional" },
+      { date: "2026-04-21", name: "Tiradentes", type: "Nacional" },
+      { date: "2026-04-23", name: "Dia de São Jorge (RJ)", type: "Estadual" },
+      { date: "2026-05-01", name: "Dia do Trabalhador", type: "Nacional" },
+      { date: "2026-06-04", name: "Corpus Christi", type: "Ponto Facultativo" },
+      { date: "2026-09-07", name: "Independência do Brasil", type: "Nacional" },
+      { date: "2026-10-12", name: "Nossa Sra. Aparecida", type: "Nacional" },
+      { date: "2026-10-15", name: "Dia do Professor / Escolar", type: "Escolar" },
+      { date: "2026-10-28", name: "Dia do Servidor Público", type: "Ponto Facultativo" },
+      { date: "2026-11-02", name: "Finados", type: "Nacional" },
+      { date: "2026-11-15", name: "Proclamação da República", type: "Nacional" },
+      { date: "2026-11-20", name: "Dia da Consciência Negra", type: "Nacional" },
+      { date: "2026-12-25", name: "Natal", type: "Nacional" }
+    ];
+
+    function setupHolidays() {
+      const today = new Date();
+      today.setHours(0,0,0,0);
+
+      const futureHolidays = HOLIDAYS_2026.map(h => {
+        const hDate = new Date(h.date + "T00:00:00");
+        const diffDays = Math.ceil((hDate - today) / (1000 * 60 * 60 * 24));
+        return { ...h, dateObj: hDate, daysLeft: diffDays };
+      });
+
+      const upcoming = futureHolidays.filter(h => h.daysLeft >= 0);
+
+      if (upcoming.length > 0) {
+        const next = upcoming[0];
+        const dayOfWeek = next.dateObj.toLocaleDateString('pt-BR', { weekday: 'long' });
+        const formattedDate = next.dateObj.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long' });
+
+        const isLongWeekend = [1, 2, 4, 5].includes(next.dateObj.getDay());
+        const tagText = isLongWeekend ? " 🏖️ (Feriadão!)" : "";
+
+        document.getElementById("next-holiday-name").innerText = next.name;
+        document.getElementById("next-holiday-date").innerText = `${formattedDate} • ${dayOfWeek}${tagText}`;
+        document.getElementById("next-holiday-days").innerText = next.daysLeft;
+      } else {
+        document.getElementById("next-holiday-name").innerText = "Fim do ano letivo!";
+        document.getElementById("next-holiday-date").innerText = "Sem mais feriados este ano";
+        document.getElementById("next-holiday-days").innerText = "0";
+      }
+
+      const listContainer = document.getElementById("full-holiday-list");
+      listContainer.innerHTML = "";
+
+      futureHolidays.forEach(h => {
+        const isPast = h.daysLeft < 0;
+        const formattedDate = h.dateObj.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+        const dayOfWeek = h.dateObj.toLocaleDateString('pt-BR', { weekday: 'short' });
+
+        const item = document.createElement("div");
+        item.className = `holiday-list-item ${isPast ? "past" : ""}`;
+        item.innerHTML = `
+          <div>
+            <div style="font-weight:700; font-size:0.85rem;">${h.name}</div>
+            <div style="font-size:0.7rem; color:var(--text-muted);">${h.type} • ${dayOfWeek}</div>
+          </div>
+          <div style="font-weight:700; font-size:0.85rem; color:var(--holiday-purple);">${formattedDate}</div>
+        `;
+        listContainer.appendChild(item);
+      });
     }
 
-    function acionarProtocoloPersonalizado() {
-      const detalhe = prompt("Digite o motivo/comentários do protocolo personalizado:");
-      if (detalhe && detalhe.trim() !== "") {
-        const titulo = "🚨 ALERTA DE EMERGÊNCIA";
-        atualizarBannerVisual(titulo, detalhe);
-        dispararAlertaPush(titulo, detalhe);
+    const WP_API_URL = "https://blog.cp2.g12.br/re2/wp-json/wp/v2/posts?per_page=5";
+
+    let BLOG_NEWS = [
+      { title: "Avisos e Informativos Oficiais do Campus Realengo II", date: "Blog Oficial RE2", url: "https://blog.cp2.g12.br/re2/" },
+      { title: "Acompanhe as Publicações Acadêmicas e Comunicados", date: "Campus Realengo II", url: "https://blog.cp2.g12.br/re2/" }
+    ];
+
+    let currentNewsIndex = 0;
+
+    async function fetchRealBlogPosts() {
+      try {
+        const res = await fetch(WP_API_URL);
+        if (res.ok) {
+          const posts = await res.json();
+          if (posts && posts.length > 0) {
+            BLOG_NEWS = posts.map(post => {
+              const postDate = new Date(post.date).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+              const tempDiv = document.createElement("div");
+              tempDiv.innerHTML = post.title.rendered;
+              return { title: tempDiv.innerText || tempDiv.textContent, date: postDate, url: post.link };
+            });
+            renderBlogTile();
+          }
+        }
+      } catch (err) {
+        console.warn("Usando avisos em cache do blog:", err);
       }
     }
+
+    function renderBlogTile() {
+      const news = BLOG_NEWS[currentNewsIndex];
+      const titleEl = document.getElementById("blog-title");
+      const dateEl = document.getElementById("blog-date");
+
+      titleEl.style.opacity = "0";
+      setTimeout(() => {
+        titleEl.innerText = news.title;
+        dateEl.innerText = news.date;
+        titleEl.style.opacity = "1";
+      }, 200);
+
+      const dotsContainer = document.getElementById("blog-dots");
+      dotsContainer.innerHTML = "";
+      BLOG_NEWS.forEach((_, idx) => {
+        const dot = document.createElement("div");
+        dot.className = `blog-dot ${idx === currentNewsIndex ? "active" : ""}`;
+        dotsContainer.appendChild(dot);
+      });
+    }
+
+    function goToNews() {
+      window.open(BLOG_NEWS[currentNewsIndex].url, "_blank");
+    }
+
+    function rotateNews() {
+      if (BLOG_NEWS.length > 0) {
+        currentNewsIndex = (currentNewsIndex + 1) % BLOG_NEWS.length;
+        renderBlogTile();
+      }
+    }
+
+    function toggleMenuDrawer(open) {
+      document.getElementById("menu-drawer-overlay").classList.toggle("open", open);
+    }
+
+    function toggleHolidayDrawer(open) {
+      document.getElementById("holiday-drawer-overlay").classList.toggle("open", open);
+    }
+
+    window.onload = () => {
+      renderLivePreview();
+      setupHolidays();
+      renderBlogTile();
+      fetchRealBlogPosts();
+      setInterval(rotateNews, 4500);
+      setInterval(renderLivePreview, 60000);
+    };
   </script>
 </body>
 </html>
