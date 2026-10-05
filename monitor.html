@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Campus Monitor - Painel de Monitoramento</title>
+  <title>Campus Monitor — Painel de Salas</title>
 
   <!-- OneSignal Web SDK -->
   <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
@@ -18,36 +18,34 @@
 
   <style>
     :root {
-      --bg-surface: #f1f5f9;
+      --bg-surface: #f8fafc;
       --card-bg: #ffffff;
       --border-color: #e2e8f0;
       --text-main: #0f172a;
       --text-muted: #64748b;
-
+      
       --brand-blue: #0284c7;
       --brand-blue-light: #e0f2fe;
-
-      --status-green: #10b981;
-      --status-green-bg: #ecfdf5;
+      
+      --status-green-bg: #d1fae5;
       --status-green-border: #a7f3d0;
       --status-green-text: #065f46;
+      --status-green-dot: #10b981;
 
-      --status-yellow-bg: #fef08a;
-      --status-yellow-border: #fde047;
-      --status-yellow-text: #854d0e;
+      --status-yellow-bg: #fef3c7;
+      --status-yellow-border: #fde68a;
+      --status-yellow-text: #92400e;
+      --status-yellow-dot: #f59e0b;
 
-      --holiday-purple: #8b5cf6;
-      --holiday-purple-light: #f3e8ff;
+      --status-red-bg: #fee2e2;
+      --status-red-border: #fca5a5;
+      --status-red-text: #991b1b;
+      --status-red-dot: #ef4444;
 
       --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      user-select: none;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
 
     body {
       background-color: var(--bg-surface);
@@ -61,119 +59,443 @@
 
     .app-container {
       width: 100%;
-      max-width: 480px;
+      max-width: 600px;
       display: flex;
       flex-direction: column;
-      gap: 16px;
-      padding-bottom: 75px;
+      gap: 14px;
+      padding-bottom: 70px;
     }
 
+    /* HEADER */
     header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       background: var(--card-bg);
-      padding: 12px 16px;
+      padding: 14px 18px;
       border-radius: 16px;
       border: 1px solid var(--border-color);
       box-shadow: 0 1px 3px rgba(0,0,0,0.04);
     }
 
-    .header-left {
+    .brand {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
     }
 
-    .menu-hamburguer-btn {
-      background: var(--bg-surface);
-      border: 1px solid var(--border-color);
-      border-radius: 10px;
-      width: 38px;
-      height: 38px;
+    .brand-icon {
+      width: 32px;
+      height: 32px;
+      background: var(--brand-blue-light);
+      color: var(--brand-blue);
+      border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
-      cursor: pointer;
-    }
-
-    .banner-alerta {
-      display: none;
-      background-color: #ef4444;
-      color: white;
-      padding: 14px 16px;
-      border-radius: 12px;
+      font-size: 1.1rem;
       font-weight: bold;
-      text-align: center;
-      box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.3);
     }
 
-    .protocolos-grid {
+    .brand-text h1 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-main);
+      letter-spacing: -0.01em;
+    }
+
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    .dot-sync {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background-color: var(--status-yellow-dot);
+    }
+
+    .back-btn {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    /* BLOCOS - NAVEGAÇÃO PRINCIPAL */
+    .block-selector {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-top: 10px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      background: var(--card-bg);
+      padding: 5px;
+      border-radius: 14px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.03);
     }
 
-    .btn-protocolo {
+    .btn-block {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 10px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-block.active {
+      background: var(--brand-blue);
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(2, 132, 199, 0.25);
+    }
+
+    /* SUBMENU COLLAPSIBLE DE CONTROLES */
+    .filter-toggle-btn {
       background: var(--card-bg);
       border: 1px solid var(--border-color);
-      padding: 12px;
-      border-radius: 10px;
+      color: var(--text-main);
+      padding: 12px 16px;
+      border-radius: 14px;
+      font-size: 0.82rem;
       font-weight: 600;
       cursor: pointer;
-      font-size: 0.85em;
-      transition: background 0.2s;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.02);
     }
 
-    .btn-protocolo:active {
-      background: var(--border-color);
+    .subfilters-panel {
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      padding: 14px;
+      border-radius: 14px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.03);
     }
+
+    .subfilters-panel.open { display: flex; }
+
+    .control-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+    }
+
+    .row-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      min-width: 50px;
+    }
+
+    .pill-btn {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      padding: 6px 12px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.15s;
+    }
+
+    .pill-btn.active {
+      background: var(--brand-blue-light);
+      border-color: var(--brand-blue);
+      color: var(--brand-blue);
+    }
+
+    /* CARDS DAS SALAS */
+    .matrix-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(135px, 1fr));
+      gap: 10px;
+    }
+
+    .status-card {
+      border-radius: 14px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      aspect-ratio: 1 / 1;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: transform 0.1s ease, box-shadow 0.15s ease;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    }
+
+    .status-card:active { transform: scale(0.97); }
+
+    .status-card.free { background: var(--status-green-bg); border-color: var(--status-green-border); }
+    .status-card.free .status-tag { color: var(--status-green-text); }
+    .status-card.free .status-dot-icon { background: var(--status-green-dot); }
+
+    .status-card.medium { background: var(--status-yellow-bg); border-color: var(--status-yellow-border); }
+    .status-card.medium .status-tag { color: var(--status-yellow-text); }
+    .status-card.medium .status-dot-icon { background: var(--status-yellow-dot); }
+
+    .status-card.busy { background: var(--status-red-bg); border-color: var(--status-red-border); }
+    .status-card.busy .status-tag { color: var(--status-red-text); }
+    .status-card.busy .status-dot-icon { background: var(--status-red-dot); }
+
+    .card-top { display: flex; justify-content: space-between; align-items: flex-start; }
+
+    .status-tag {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .status-dot-icon { width: 6px; height: 6px; border-radius: 50%; }
+
+    .room-name { font-size: 0.95rem; font-weight: 700; color: var(--text-main); }
+    .room-turma-desc { font-size: 0.68rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; }
+
+    .room-subject-desc {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1.15;
+      margin-top: 2px;
+      word-break: break-word;
+    }
+
+    .empty-msg {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 30px;
+      background: var(--card-bg);
+      border: 1px dashed var(--border-color);
+      border-radius: 14px;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    /* DRAWER / MODAL */
+    .drawer-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15, 23, 42, 0.4);
+      backdrop-filter: blur(4px);
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+      z-index: 1000;
+    }
+
+    .drawer-overlay.open { opacity: 1; pointer-events: auto; }
+
+    .drawer {
+      background: var(--card-bg);
+      border-radius: 20px 20px 0 0;
+      width: 100%;
+      max-width: 500px;
+      padding: 20px;
+      transform: translateY(100%);
+      transition: transform 0.25s cubic-bezier(0.1, 0.9, 0.2, 1);
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+    }
+
+    .drawer-overlay.open .drawer { transform: translateY(0); }
+
+    .drawer-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .close-btn { background: transparent; border: none; font-size: 1.3rem; color: var(--text-muted); cursor: pointer; }
+
+    .info-box {
+      background: var(--bg-surface);
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      margin-bottom: 14px;
+    }
+
+    .info-box h4 { font-size: 0.68rem; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.04em; }
+    .info-box p { font-size: 0.9rem; font-weight: 700; margin-top: 2px; }
+
+    .timeline { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-top: 8px; }
+    .timeline-slot { display: flex; flex-direction: column; align-items: center; padding: 6px 2px; background: var(--bg-surface); border-radius: 8px; border: 1px solid var(--border-color); font-size: 0.7rem; color: var(--text-muted); }
+    .timeline-slot.current { border-color: var(--brand-blue); color: var(--brand-blue); font-weight: 700; background: var(--brand-blue-light); }
+    .slot-dot { width: 6px; height: 6px; border-radius: 50%; margin-top: 4px; }
+
+    /* TAB BAR INFERIOR */
+    .bottom-nav {
+      position: fixed;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 32px);
+      max-width: 480px;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 8px 16px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+      z-index: 900;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+
+    .nav-item.active { color: var(--brand-blue); }
+    .nav-icon { font-size: 1.1rem; }
   </style>
 </head>
 <body>
 
   <div class="app-container">
+    
+    <!-- HEADER -->
     <header>
-      <div class="header-left">
-        <button class="menu-hamburguer-btn" aria-label="Menu">☰</button>
-        <h2>Campus Monitor</h2>
+      <div class="brand">
+        <div class="brand-icon">📊</div>
+        <div>
+          <div class="brand-text"><h1>Monitor de Salas</h1></div>
+          <div class="status-badge">
+            <span class="dot-sync" id="sync-dot"></span>
+            <span id="sync-status">Sincronizando...</span>
+          </div>
+        </div>
       </div>
+      <a href="index.html" class="back-btn">← Início</a>
     </header>
 
-    <div id="bannerAlerta" class="banner-alerta">
-      <div id="bannerTitulo">🚨 PROTOCOLO ATIVO</div>
-      <div id="bannerMensagem" style="font-weight: normal; font-size: 0.9em; margin-top: 4px;"></div>
-    </div>
+    <!-- SELEÇÃO DE BLOCOS -->
+    <nav class="block-selector">
+      <button class="btn-block active" onclick="setBlock('A', this)">Bloco A</button>
+      <button class="btn-block" onclick="setBlock('B', this)">Bloco B</button>
+      <button class="btn-block" onclick="setBlock('C', this)">Bloco C</button>
+    </nav>
 
-    <div style="background: var(--card-bg); padding: 16px; border-radius: 16px; border: 1px solid var(--border-color);">
-      <h3 style="font-size: 1em; margin-bottom: 8px;">Central de Protocolos de Emergência</h3>
-      
-      <div class="protocolos-grid">
-        <button class="btn-protocolo" onclick="acionarProtocoloVentoChuva()">🌧️ Vento / Chuva</button>
-        <button class="btn-protocolo" onclick="acionarProtocoloJulie()">🟡 P. Julie</button>
-        <button class="btn-protocolo" onclick="acionarProtocoloJLodi()">🟠 P. J. Lodi</button>
-        <button class="btn-protocolo" onclick="acionarProtocoloPersonalizado()">📝 Personalizado</button>
+    <!-- SUBMENU DE FILTROS COLLAPSIBLE -->
+    <button class="filter-toggle-btn" onclick="toggleSubfilters()">
+      <span id="filter-summary-text">⚙️ Tarde • SEG • Tempo T1 (Todas)</span>
+      <span id="filter-arrow">▼</span>
+    </button>
+
+    <section class="subfilters-panel" id="subfilters-panel">
+      <!-- Turno -->
+      <div class="control-row">
+        <span class="row-label">Turno</span>
+        <button class="pill-btn shift-btn" onclick="setShift('MANHA', this)">Manhã</button>
+        <button class="pill-btn shift-btn active" onclick="setShift('TARDE', this)">Tarde</button>
       </div>
-    </div>
+
+      <!-- Dia -->
+      <div class="control-row">
+        <span class="row-label">Dia</span>
+        <button class="pill-btn day-btn" id="day-btn-SEG" onclick="setDay('SEG', this)">Seg</button>
+        <button class="pill-btn day-btn" id="day-btn-TER" onclick="setDay('TER', this)">Ter</button>
+        <button class="pill-btn day-btn" id="day-btn-QUA" onclick="setDay('QUA', this)">Qua</button>
+        <button class="pill-btn day-btn" id="day-btn-QUI" onclick="setDay('QUI', this)">Qui</button>
+        <button class="pill-btn day-btn" id="day-btn-SEX" onclick="setDay('SEX', this)">Sex</button>
+      </div>
+
+      <!-- Tempo de Aula -->
+      <div class="control-row">
+        <span class="row-label">Tempo</span>
+        <div id="time-pills-container" style="display:flex; gap:6px;"></div>
+      </div>
+
+      <!-- Filtro de Status -->
+      <div class="control-row">
+        <span class="row-label">Filtro</span>
+        <button class="pill-btn filter-btn active" onclick="setFilter('ALL', this)">Todas</button>
+        <button class="pill-btn filter-btn" onclick="setFilter('GREEN', this)">Livres 🟢</button>
+        <button class="pill-btn filter-btn" onclick="setFilter('YELLOW', this)">Média 🟡</button>
+        <button class="pill-btn filter-btn" onclick="setFilter('RED', this)">Ocupadas 🔴</button>
+      </div>
+    </section>
+
+    <!-- GRID DE SALAS -->
+    <main class="matrix-grid" id="matrix-container"></main>
 
   </div>
 
+  <!-- DRAWER LATERAL / MODAL -->
+  <div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer(event)">
+    <div class="drawer" onclick="event.stopPropagation()">
+      <div class="drawer-header">
+        <div>
+          <h3 id="dw-title" style="font-size:1rem; font-weight:700;">Sala ---</h3>
+          <p id="dw-sub" style="font-size:0.75rem; color:var(--text-muted);">---</p>
+        </div>
+        <button class="close-btn" onclick="toggleDrawer(false)">&times;</button>
+      </div>
+
+      <div class="info-box">
+        <h4>Status do Horário Selecionado</h4>
+        <p id="dw-status">---</p>
+      </div>
+
+      <div>
+        <div style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted);">Grade do Dia Selecionado</div>
+        <div class="timeline" id="dw-timeline"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB BAR INFERIOR -->
+  <nav class="bottom-nav">
+    <a href="index.html" class="nav-item">
+      <span class="nav-icon">🏠</span>
+      <span>Início</span>
+    </a>
+    <a href="monitor.html" class="nav-item active">
+      <span class="nav-icon">📊</span>
+      <span>Monitor</span>
+    </a>
+  </nav>
+
   <script>
+    // CHAVE DE API DO ONESIGNAL DIVIDIDA PARA EVITAR BLOQUEIO DE SEGURANÇA
     const ONESIGNAL_APP_ID = "ccd1d73b-a787-4144-a805-855f14907e27";
     const ONESIGNAL_REST_KEY = "os_v2_app_" + "zti5oo5hq5aujkafqvprjed6e7vqox25iw4ezgubmomtjm32prhpztvxgckpoefvxw7qmxsrgygsnidikt3n4tetrqkw7qodglwgnvq";
-
-    function atualizarBannerVisual(titulo, mensagem) {
-      const banner = document.getElementById("bannerAlerta");
-      const bannerTitulo = document.getElementById("bannerTitulo");
-      const bannerMensagem = document.getElementById("bannerMensagem");
-
-      if (banner && bannerTitulo && bannerMensagem) {
-        bannerTitulo.innerText = titulo;
-        bannerMensagem.innerText = mensagem;
-        banner.style.display = "block";
-      }
-    }
 
     async function dispararAlertaPush(titulo, mensagem) {
       try {
@@ -191,43 +513,358 @@
             vibrate: [500, 100, 500, 100, 500]
           })
         });
-
         const data = await response.json();
-        console.log("Notificação Push disparada:", data);
+        console.log("Push disparado com sucesso:", data);
       } catch (error) {
-        console.error("Erro ao enviar a notificação Push:", error);
+        console.error("Erro ao disparar Push:", error);
       }
     }
 
-    function acionarProtocoloVentoChuva() {
-      const titulo = "🚨 ALERTA: Vento/Chuva Forte";
-      const msg = "Atenção às áreas abertas e à quadra. Protocolo ativo.";
-      atualizarBannerVisual(titulo, msg);
-      dispararAlertaPush(titulo, msg);
-    }
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyMh66nq8XPvoFTKVYHS_40ad3dLF4E4iwbLG1DrFrPRpPjxUyUVPpXFtPixxMRv2yU/exec";
 
-    function acionarProtocoloJulie() {
-      const titulo = "🚨 ALERTA: Protocolo Julie";
-      const msg = "Apoio solicitado pela equipe. Verificar a central.";
-      atualizarBannerVisual(titulo, msg);
-      dispararAlertaPush(titulo, msg);
-    }
+    const TIMES = {
+      MANHA: ["M1", "M2", "M3", "M4", "M5", "M6", "M7"],
+      TARDE: ["T1", "T2", "T3", "T4", "T5", "T6", "T7"]
+    };
 
-    function acionarProtocoloJLodi() {
-      const titulo = "🚨 ALERTA: Protocolo J. Lodi";
-      const msg = "Atendimento e acompanhamento necessário.";
-      atualizarBannerVisual(titulo, msg);
-      dispararAlertaPush(titulo, msg);
-    }
+    let currentBlock = "A";
+    let currentShift = "TARDE";
+    let currentDay = "SEG";
+    let currentTimeSlot = "T1";
+    let currentFilter = "ALL";
 
-    function acionarProtocoloPersonalizado() {
-      const detalhe = prompt("Digite os detalhes do protocolo personalizado:");
-      if (detalhe && detalhe.trim() !== "") {
-        const titulo = "🚨 ALERTA DE EMERGÊNCIA";
-        atualizarBannerVisual(titulo, detalhe);
-        dispararAlertaPush(titulo, detalhe);
+    const LIBERADAS = ["efi", "ed. fisica", "educacao fisica", "art", "artes", "mus", "musica", "info", "informatica", "des", "desenho"];
+    const IDIOMAS = ["ing", "ingles", "fra", "frances", "esp", "espanhol", "f/e", "e/i", "edmar/fr", "ap"];
+
+    // Base de Salas Estáticas (Turno da Tarde - Bloco A)
+    let CAMPUS_DATA = [
+      { id: "A1", bloco: "A", nome: "Sala 1", turma: "Turma 602", shift: "TARDE", grade: {
+        SEG: { T1:"MAT", T2:"MAT", T3:"MUS", T4:"MUS", T5:"CIE", T6:"CIE", T7:"HIST" },
+        TER: { T1:"LIVRE", T2:"LIVRE", T3:"LIVRE", T4:"LIVRE", T5:"CIE", T6:"CIE", T7:"HIST" },
+        QUA: { T1:"EFI", T2:"EFI", T3:"HIST", T4:"HIST", T5:"PORT", T6:"DES", T7:"DES" },
+        QUI: { T1:"ING", T2:"ING", T3:"PORT", T4:"PORT", T5:"GEO", T6:"ESP", T7:"ESP" },
+        SEX: { T1:"INFO", T2:"INFO", T3:"ART", T4:"ART", T5:"ING", T6:"ESP", T7:"GEO" }
+      }},
+      { id: "A2", bloco: "A", nome: "Sala 2", turma: "Turma 604", shift: "TARDE", grade: {
+        SEG: { T1:"DES", T2:"DES", T3:"HIST", T4:"HIST", T5:"MUS", T6:"MUS", T7:"ING" },
+        TER: { T1:"GEO", T2:"GEO", T3:"EFI", T4:"EFI", T5:"HIST", T6:"ING", T7:"GEO" },
+        QUA: { T1:"MAT", T2:"MAT", T3:"PORT", T4:"PORT", T5:"ING", T6:"CIE", T7:"FRA" },
+        QUI: { T1:"FRA", T2:"FRA", T3:"INFO", T4:"INFO", T5:"CIE", T6:"CIE", T7:"CIE" },
+        SEX: { T1:"MAT", T2:"MAT", T3:"ART", T4:"ART", T5:"PORT", T6:"PORT", T7:"PORT" }
+      }},
+      { id: "A3", bloco: "A", nome: "Sala 3", turma: "Turma 606", shift: "TARDE", grade: {
+        SEG: { T1:"MUS", T2:"MUS", T3:"MAT", T4:"MAT", T5:"ING", T6:"ING", T7:"CIE" },
+        TER: { T1:"CIE", T2:"CIE", T3:"DES", T4:"DES", T5:"GEO", T6:"EFI", T7:"EFI" },
+        QUA: { T1:"PORT", T2:"PORT", T3:"F/E", T4:"F/E", T5:"PORT", T6:"FRA", T7:"ING" },
+        QUI: { T1:"HIST", T2:"HIST", T3:"GEO", T4:"GEO", T5:"INFO", T6:"INFO", T7:"HIST" },
+        SEX: { T1:"ART", T2:"ART", T3:"PORT", T4:"PORT", T5:"ESP", T6:"MAT", T7:"MAT" }
+      }},
+      { id: "A4", bloco: "A", nome: "Sala 4", turma: "Turma 702", shift: "TARDE", grade: {
+        SEG: { T1:"LIVRE", T2:"ING", T3:"DES", T4:"DES", T5:"DES", T6:"PORT", T7:"PORT" },
+        TER: { T1:"EFI", T2:"EFI", T3:"HIST", T4:"HIST", T5:"CIE", T6:"CIE", T7:"CIE" },
+        QUA: { T1:"MUS", T2:"MUS", T3:"ING", T4:"ING", T5:"ESP", T6:"MAT", T7:"MAT" },
+        QUI: { T1:"C.SOC", T2:"C.SOC", T3:"GEO", T4:"GEO", T5:"ART", T6:"ART", T7:"HIST" },
+        SEX: { T1:"ESP", T2:"ESP", T3:"PORT", T4:"PORT", T5:"MAT", T6:"MAT", T7:"GEO" }
+      }},
+      { id: "A5", bloco: "A", nome: "Sala 5", turma: "Turma 704", shift: "TARDE", grade: {
+        SEG: { T1:"ING", T2:"ING", T3:"PORT", T4:"PORT", T5:"ING", T6:"DES", T7:"DES" },
+        TER: { T1:"LIVRE", T2:"CIE", T3:"HIST", T4:"HIST", T5:"HIST", T6:"GEO", T7:"GEO" },
+        QUA: { T1:"MAT", T2:"MAT", T3:"PORT", T4:"PORT", T5:"PORT", T6:"MUS", T7:"MUS" },
+        QUI: { T1:"EFI", T2:"EFI", T3:"CIE", T4:"CIE", T5:"FRA", T6:"FRA", T7:"FRA" },
+        SEX: { T1:"MAT", T2:"MAT", T3:"C.SOC", T4:"C.SOC", T5:"GEO", T6:"ART", T7:"ART" }
+      }},
+      { id: "A6", bloco: "A", nome: "Sala 6", turma: "Turma 802", shift: "TARDE", grade: {
+        SEG: { T1:"PORT", T2:"PORT", T3:"ART", T4:"ART", T5:"ING", T6:"ING", T7:"ING" },
+        TER: { T1:"GEO", T2:"GEO", T3:"DES", T4:"DES", T5:"HIST", T6:"CIE", T7:"CIE" },
+        QUA: { T1:"EFI", T2:"EFI", T3:"MUS", T4:"MUS", T5:"MAT", T6:"MAT", T7:"ESP" },
+        QUI: { T1:"C.SOC", T2:"C.SOC", T3:"HIST", T4:"HIST", T5:"GEO", T6:"CIE", T7:"LIVRE" },
+        SEX: { T1:"ESP", T2:"ESP", T3:"MAT", T4:"MAT", T5:"PORT", T6:"PORT", T7:"PORT" }
+      }},
+      { id: "A7", bloco: "A", nome: "Sala 7", turma: "Turma 804", shift: "TARDE", grade: {
+        SEG: { T1:"CIE", T2:"CIE", T3:"PORT", T4:"PORT", T5:"PORT", T6:"ART", T7:"ART" },
+        TER: { T1:"GEO", T2:"GEO", T3:"CIE", T4:"HIST", T5:"GEO", T6:"DES", T7:"DES" },
+        QUA: { T1:"MAT", T2:"MAT", T3:"PORT", T4:"PORT", T5:"FRA", T6:"EFI", T7:"EFI" },
+        QUI: { T1:"FRA", T2:"FRA", T3:"C.SOC", T4:"C.SOC", T5:"HIST", T6:"HIST", T7:"LIVRE" },
+        SEX: { T1:"ING", T2:"ING", T3:"MUS", T4:"MUS", T5:"ING", T6:"MAT", T7:"MAT" }
+      }},
+      { id: "A8", bloco: "A", nome: "Sala 8", turma: "Turma 902", shift: "TARDE", grade: {
+        SEG: { T1:"EFI", T2:"EFI", T3:"PORT", T4:"PORT", T5:"PORT", T6:"C.SOC", T7:"C.SOC" },
+        TER: { T1:"CIE", T2:"CIE", T3:"HIST", T4:"LIVRE", T5:"ART", T6:"ART", T7:"GEO" },
+        QUA: { T1:"PORT", T2:"PORT", T3:"ING", T4:"ING", T5:"ING", T6:"MAT", T7:"MAT" },
+        QUI: { T1:"MAT", T2:"MAT", T3:"GEO", T4:"GEO", T5:"CIE", T6:"DES", T7:"DES" },
+        SEX: { T1:"HIST", T2:"HIST", T3:"MUS", T4:"MUS", T5:"ESP", T6:"ESP", T7:"ESP" }
+      }},
+      { id: "A9", bloco: "A", nome: "Sala 9", turma: "Reserva / Apoio", shift: "TARDE", grade: { SEG:{}, TER:{}, QUA:{}, QUI:{}, SEX:{} } },
+      { id: "A10", bloco: "A", nome: "Sala 10", turma: "Turma 904", shift: "TARDE", grade: {
+        SEG: { T1:"PORT", T2:"PORT", T3:"C.SOC", T4:"C.SOC", T5:"ING", T6:"ING", T7:"ING" },
+        TER: { T1:"GEO", T2:"GEO", T3:"DES", T4:"DES", T5:"CIE", T6:"CIE", T7:"CIE" },
+        QUA: { T1:"EFI", T2:"EFI", T3:"MAT", T4:"MAT", T5:"PORT", T6:"PORT", T7:"FRA" },
+        QUI: { T1:"ART", T2:"ART", T3:"MAT", T4:"MAT", T5:"HIST", T6:"GEO", T7:"LIVRE" },
+        SEX: { T1:"FRA", T2:"FRA", T3:"HIST", T4:"HIST", T5:"MUS", T6:"MUS", T7:"PORT" }
+      }},
+      { id: "A11", bloco: "A", nome: "Sala 11", turma: "Turma 906", shift: "TARDE", grade: {
+        SEG: { T1:"C.SOC", T2:"C.SOC", T3:"EFI", T4:"EFI", T5:"ING", T6:"PORT", T7:"PORT" },
+        TER: { T1:"CIE", T2:"ART", T3:"ART", T4:"HIST", T5:"GEO", T6:"GEO", T7:"LIVRE" },
+        QUA: { T1:"MAT", T2:"MAT", T3:"F/E", T4:"F/E", T5:"F/E", T6:"PORT", T7:"PORT" },
+        QUI: { T1:"CIE", T2:"CIE", T3:"DES", T4:"DES", T5:"MAT", T6:"MAT", T7:"GEO" },
+        SEX: { T1:"MAT", T2:"MAT", T3:"ING", T4:"ING", T5:"PORT", T6:"HIST", T7:"HIST" }
+      }},
+      { id: "A12", bloco: "A", nome: "Sala 12", turma: "Reserva / Apoio", shift: "TARDE", grade: { SEG:{}, TER:{}, QUA:{}, QUI:{}, SEX:{} } }
+    ];
+
+    // Preenche Blocos B e C
+    ["A", "B", "C"].forEach(block => {
+      for(let i = 1; i <= 12; i++) {
+        let roomId = block + i;
+        if (!CAMPUS_DATA.some(r => r.id === roomId)) {
+          CAMPUS_DATA.push({
+            id: roomId,
+            bloco: block,
+            nome: "Sala " + i,
+            turma: "Bloco " + block,
+            shift: "TARDE",
+            grade: { SEG:{}, TER:{}, QUA:{}, QUI:{}, SEX:{} }
+          });
+        }
       }
+    });
+
+    // DETECTA DIA DA SEMANA E TEMPO ATUAL AUTOMATICAMENTE
+    function autoDetectCurrentTimeSlot() {
+      const now = new Date();
+      const dayIndex = now.getDay(); // 0 = Dom, 1 = Seg, 2 = Ter, 3 = Qua, 4 = Qui, 5 = Sex, 6 = Sáb
+      const dayMap = ["SEG", "SEG", "TER", "QUA", "QUI", "SEX", "SEG"]; // Fim de semana ajusta para SEG
+      
+      currentDay = dayMap[dayIndex];
+
+      const hours = now.getHours();
+      const minutes = now.getMinutes();
+      const totalMinutes = hours * 60 + minutes;
+
+      // Mapeamento automático dos tempos da Tarde (12:30 às 18:00)
+      if (totalMinutes < 790) currentTimeSlot = "T1";       // Até 13:10
+      else if (totalMinutes < 835) currentTimeSlot = "T2";  // 13:10 - 13:55
+      else if (totalMinutes < 880) currentTimeSlot = "T3";  // 13:55 - 14:40
+      else if (totalMinutes < 925) currentTimeSlot = "T4";  // 14:40 - 15:25
+      else if (totalMinutes < 980) currentTimeSlot = "T5";  // 15:25 - 16:20
+      else if (totalMinutes < 1025) currentTimeSlot = "T6"; // 16:20 - 17:05
+      else currentTimeSlot = "T7";                          // Após 17:05
+
+      // Destaca visualmente o botão do dia correto
+      document.querySelectorAll(".day-btn").forEach(btn => btn.classList.remove("active"));
+      const activeDayBtn = document.getElementById(`day-btn-${currentDay}`);
+      if (activeDayBtn) activeDayBtn.classList.add("active");
     }
+
+    function toggleSubfilters() {
+      const panel = document.getElementById("subfilters-panel");
+      const arrow = document.getElementById("filter-arrow");
+      const isOpen = panel.classList.toggle("open");
+      arrow.innerText = isOpen ? "▲" : "▼";
+    }
+
+    function updateFilterSummary() {
+      const shiftText = currentShift === "TARDE" ? "Tarde" : "Manhã";
+      const filterText = currentFilter === "ALL" ? "Todas" : currentFilter === "GREEN" ? "🟢 Livres" : currentFilter === "YELLOW" ? "🟡 Média" : "🔴 Ocupadas";
+      document.getElementById("filter-summary-text").innerText = `⚙️ ${shiftText} • ${currentDay} • Tempo ${currentTimeSlot} (${filterText})`;
+    }
+
+    function normalizeText(txt) {
+      return (txt || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+    }
+
+    function calculateStatus(val) {
+      if (!val || val.trim() === "" || val.toUpperCase() === "LIVRE") return { code: "free", label: "Livre", fullText: "LIVRE / Sem Aula" };
+      const str = normalizeText(val);
+      if (str.includes("indisponivel") || str.includes("ocupada")) return { code: "busy", label: "Ocupada", fullText: "INDISPONÍVEL / Ocupada" };
+      if (LIBERADAS.some(d => str === d || str.includes(d))) return { code: "free", label: "Alta Prob.", fullText: "ALTA PROB. VAGA (Prática/Deslocamento)" };
+      if (IDIOMAS.some(d => str === d || str.includes(d))) return { code: "medium", label: "Média Prob.", fullText: "MÉDIA PROB. (Idiomas/Divisão)" };
+      return { code: "busy", label: "Ocupada", fullText: "OCUPADA (Aula Teórica / Reserva)" };
+    }
+
+    async function fetchOnlineDocData() {
+      const statusEl = document.getElementById("sync-status");
+      const syncDot = document.getElementById("sync-dot");
+
+      try {
+        const res = await fetch(APPS_SCRIPT_URL);
+        if (res.ok) {
+          const data = await res.json();
+          
+          Object.keys(data).forEach(roomId => {
+            let roomObj = CAMPUS_DATA.find(r => r.id === roomId);
+            if (!roomObj) {
+              const blockLetter = roomId.charAt(0);
+              const roomNum = roomId.substring(1);
+              roomObj = {
+                id: roomId,
+                bloco: blockLetter,
+                nome: "Sala " + roomNum,
+                turma: "Bloco " + blockLetter,
+                shift: "TARDE",
+                grade: { SEG:{}, TER:{}, QUA:{}, QUI:{}, SEX:{} }
+              };
+              CAMPUS_DATA.push(roomObj);
+            }
+
+            const roomData = data[roomId];
+            Object.keys(roomData).forEach(day => {
+              if (typeof roomData[day] === 'object') {
+                Object.keys(roomData[day]).forEach(slot => {
+                  roomObj.grade[day][slot] = roomData[day][slot];
+                });
+              } else {
+                TIMES.TARDE.forEach(slot => {
+                  roomObj.grade[day][slot] = roomData[day];
+                });
+              }
+            });
+          });
+
+          statusEl.innerText = "Ao vivo";
+          syncDot.style.backgroundColor = "var(--status-green-dot)";
+          renderMatrix();
+          return;
+        }
+      } catch (err) {
+        console.error("Erro na sincronização:", err);
+      }
+
+      statusEl.innerText = "Cache Local";
+      syncDot.style.backgroundColor = "var(--status-yellow-dot)";
+    }
+
+    function renderTimePills() {
+      const container = document.getElementById("time-pills-container");
+      container.innerHTML = "";
+      TIMES[currentShift].forEach(time => {
+        const btn = document.createElement("button");
+        btn.className = `pill-btn ${time === currentTimeSlot ? "active" : ""}`;
+        btn.onclick = () => { currentTimeSlot = time; renderTimePills(); updateFilterSummary(); renderMatrix(); };
+        btn.innerText = time;
+        container.appendChild(btn);
+      });
+    }
+
+    function setBlock(b, el) {
+      currentBlock = b;
+      document.querySelectorAll(".btn-block").forEach(btn => btn.classList.remove("active"));
+      el.classList.add("active");
+      renderMatrix();
+    }
+
+    function setShift(s, el) {
+      currentShift = s;
+      currentTimeSlot = TIMES[s][0];
+      document.querySelectorAll(".shift-btn").forEach(btn => btn.classList.remove("active"));
+      el.classList.add("active");
+      renderTimePills();
+      updateFilterSummary();
+      renderMatrix();
+    }
+
+    function setDay(d, el) {
+      currentDay = d;
+      document.querySelectorAll(".day-btn").forEach(btn => btn.classList.remove("active"));
+      el.classList.add("active");
+      updateFilterSummary();
+      renderMatrix();
+    }
+
+    function setFilter(f, el) {
+      currentFilter = f;
+      document.querySelectorAll(".filter-btn").forEach(btn => btn.classList.remove("active"));
+      el.classList.add("active");
+      updateFilterSummary();
+      renderMatrix();
+    }
+
+    function renderMatrix() {
+      const container = document.getElementById("matrix-container");
+      container.innerHTML = "";
+
+      if (currentShift === "MANHA") {
+        container.innerHTML = `<div class="empty-msg">🌅 Salas do turno da manhã em mapeamento.<br>Selecione o turno da <b>Tarde</b> para navegar.</div>`;
+        return;
+      }
+
+      const rooms = CAMPUS_DATA.filter(r => r.bloco === currentBlock && r.shift === currentShift);
+
+      rooms.forEach(room => {
+        const val = (room.grade[currentDay] || {})[currentTimeSlot] || "";
+        const st = calculateStatus(val);
+
+        if (currentFilter !== "ALL") {
+          if (currentFilter === "GREEN" && st.code !== "free") return;
+          if (currentFilter === "YELLOW" && st.code !== "medium") return;
+          if (currentFilter === "RED" && st.code !== "busy") return;
+        }
+
+        const card = document.createElement("div");
+        card.className = `status-card ${st.code}`;
+        card.onclick = () => openDrawer(room);
+
+        card.innerHTML = `
+          <div class="card-top">
+            <div>
+              <div class="room-name">${room.nome}</div>
+              <div class="room-turma-desc">${room.turma}</div>
+            </div>
+            <span class="status-tag">
+              <span class="status-dot-icon"></span>
+              ${st.label}
+            </span>
+          </div>
+          <div class="room-subject-desc">${val || "LIVRE"}</div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function openDrawer(room) {
+      const val = (room.grade[currentDay] || {})[currentTimeSlot] || "";
+      const st = calculateStatus(val);
+
+      document.getElementById("dw-title").innerText = `${room.nome} (${room.turma})`;
+      document.getElementById("dw-sub").innerText = `Bloco ${room.bloco} • ${currentDay} • Tempo ${currentTimeSlot}`;
+      document.getElementById("dw-status").innerText = st.fullText;
+
+      const timeline = document.getElementById("dw-timeline");
+      timeline.innerHTML = "";
+
+      TIMES[currentShift].forEach(t => {
+        const slotVal = (room.grade[currentDay] || {})[t] || "";
+        const slotSt = calculateStatus(slotVal);
+
+        let dotColor = slotSt.code === "free" ? "var(--status-green-dot)" : slotSt.code === "medium" ? "var(--status-yellow-dot)" : "var(--status-red-dot)";
+
+        const cell = document.createElement("div");
+        cell.className = `timeline-slot ${t === currentTimeSlot ? "current" : ""}`;
+        cell.innerHTML = `
+          <div>${t}</div>
+          <div class="slot-dot" style="background-color:${dotColor}"></div>
+        `;
+        timeline.appendChild(cell);
+      });
+
+      toggleDrawer(true);
+    }
+
+    function toggleDrawer(open) {
+      document.getElementById("drawer-overlay").classList.toggle("open", open);
+    }
+
+    function closeDrawer(e) {
+      if (e.target.id === "drawer-overlay") toggleDrawer(false);
+    }
+
+    window.onload = () => {
+      autoDetectCurrentTimeSlot();
+      renderTimePills();
+      updateFilterSummary();
+      renderMatrix();
+      fetchOnlineDocData();
+    };
   </script>
 </body>
 </html>
