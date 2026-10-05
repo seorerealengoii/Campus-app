@@ -97,7 +97,6 @@
       cursor: pointer;
     }
 
-    /* BANNER DE ALERTA VISUAL DA PÁGINA */
     .banner-alerta {
       display: none;
       background-color: #ef4444;
@@ -120,24 +119,16 @@
       </div>
     </header>
 
-    <!-- Banner que exibe avisos no topo da tela -->
     <div id="bannerAlerta" class="banner-alerta">
       <div id="bannerTitulo">🚨 PROTOCOLO ATIVO</div>
       <div id="bannerMensagem" style="font-weight: normal; font-size: 0.9em; margin-top: 4px;"></div>
     </div>
-
-    <!-- Conteúdo do teu app aqui... -->
-
   </div>
 
   <script>
-    // ==========================================
-    // CONFIGURAÇÕES DO ONESIGNAL (ENVIO DE PUSH)
-    // ==========================================
     const ONESIGNAL_APP_ID = "ccd1d73b-a787-4144-a805-855f14907e27";
     const ONESIGNAL_REST_KEY = "os_v2_app_zti5oo5hq5aujkafqvprjed6e7vqox25iw4ezgubmomtjm32prhpztvxgckpoefvxw7qmxsrgygsnidikt3n4tetrqkw7qodglwgnvq";
 
-    // Atualiza o banner visual vermelho no topo do site
     function atualizarBannerVisual(titulo, mensagem) {
       const banner = document.getElementById("bannerAlerta");
       const bannerTitulo = document.getElementById("bannerTitulo");
@@ -150,7 +141,6 @@
       }
     }
 
-    // Dispara a notificação Push via API do OneSignal para os telemóveis/PC
     async function dispararAlertaPush(titulo, mensagem) {
       try {
         const response = await fetch("https://onesignal.com/api/v1/notifications", {
@@ -175,9 +165,6 @@
       }
     }
 
-    // ==========================================
-    // FUNÇÕES DOS 4 PROTOCOLOS
-    // ==========================================
     function acionarProtocoloVentoChuva() {
       const titulo = "🚨 ALERTA: Vento/Chuva Forte";
       const msg = "Atenção às áreas abertas e à quadra. Protocolo ativo.";
@@ -197,16 +184,3 @@
       const msg = "Atendimento e acompanhamento necessário.";
       atualizarBannerVisual(titulo, msg);
       dispararAlertaPush(titulo, msg);
-    }
-
-    function acionarProtocoloPersonalizado() {
-      const detalhe = prompt("Digite o motivo/comentários do protocolo personalizado:");
-      if (detalhe && detalhe.trim() !== "") {
-        const titulo = "🚨 ALERTA DE EMERGÊNCIA";
-        atualizarBannerVisual(titulo, detalhe);
-        dispararAlertaPush(titulo, detalhe);
-      }
-    }
-  </script>
-</body>
-</html>
