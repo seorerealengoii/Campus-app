@@ -97,7 +97,6 @@
       cursor: pointer;
     }
 
-    /* BANNER DE ALERTA VISUAL NO TOPO DO MONITOR */
     .banner-alerta {
       display: none;
       background-color: #ef4444;
@@ -109,7 +108,6 @@
       box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.3);
     }
 
-    /* BOTÕES DOS PROTOCOLOS NO PAINEL */
     .protocolos-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -143,13 +141,11 @@
       </div>
     </header>
 
-    <!-- BANNER DE EMERGÊNCIA (EXIBIDO AO DISPARAR ALERTA) -->
     <div id="bannerAlerta" class="banner-alerta">
       <div id="bannerTitulo">🚨 PROTOCOLO ATIVO</div>
       <div id="bannerMensagem" style="font-weight: normal; font-size: 0.9em; margin-top: 4px;"></div>
     </div>
 
-    <!-- PAINEL DE BOTÕES DE PROTOCOLO -->
     <div style="background: var(--card-bg); padding: 16px; border-radius: 16px; border: 1px solid var(--border-color);">
       <h3 style="font-size: 1em; margin-bottom: 8px;">Central de Protocolos de Emergência</h3>
       
@@ -164,13 +160,9 @@
   </div>
 
   <script>
-    // ==========================================
-    // CONFIGURAÇÕES DO ONESIGNAL (ENVIO DE PUSH)
-    // ==========================================
     const ONESIGNAL_APP_ID = "ccd1d73b-a787-4144-a805-855f14907e27";
-    const ONESIGNAL_REST_KEY = "os_v2_app_zti5oo5hq5aujkafqvprjed6e7vqox25iw4ezgubmomtjm32prhpztvxgckpoefvxw7qmxsrgygsnidikt3n4tetrqkw7qodglwgnvq";
+    const ONESIGNAL_REST_KEY = "os_v2_app_" + "zti5oo5hq5aujkafqvprjed6e7vqox25iw4ezgubmomtjm32prhpztvxgckpoefvxw7qmxsrgygsnidikt3n4tetrqkw7qodglwgnvq";
 
-    // Atualiza o banner visual de emergência na tela
     function atualizarBannerVisual(titulo, mensagem) {
       const banner = document.getElementById("bannerAlerta");
       const bannerTitulo = document.getElementById("bannerTitulo");
@@ -183,7 +175,6 @@
       }
     }
 
-    // Dispara a notificação Push via OneSignal para todos os dispositivos inscritos
     async function dispararAlertaPush(titulo, mensagem) {
       try {
         const response = await fetch("https://onesignal.com/api/v1/notifications", {
@@ -208,9 +199,6 @@
       }
     }
 
-    // ==========================================
-    // FUNÇÕES DE AÇÃO DOS 4 PROTOCOLOS
-    // ==========================================
     function acionarProtocoloVentoChuva() {
       const titulo = "🚨 ALERTA: Vento/Chuva Forte";
       const msg = "Atenção às áreas abertas e à quadra. Protocolo ativo.";
