@@ -12,6 +12,8 @@
     OneSignalDeferred.push(async function(OneSignal) {
       await OneSignal.init({
         appId: "ccd1d73b-a787-4144-a805-855f14907e27",
+        serviceWorkerPath: "OneSignalSDKWorker.js",
+        serviceWorkerParam: { scope: "/Campus-app/" },
         allowLocalhostAsSecureOrigin: true
       });
 
@@ -24,27 +26,37 @@
       });
     });
 
-    // Função para forçar a abertura do pedido nativo de permissão
+    // Função de clique direto sem bloqueio do navegador
     async function solicitarPermissaoNotificacoes() {
-      if (window.OneSignalDeferred) {
-        window.OneSignalDeferred.push(async function(OneSignal) {
-          try {
-            // Solicita permissão diretamente via OneSignal
-            const permission = await OneSignal.Notifications.requestPermission();
-            if (permission) {
-              showToast("Inscrição realizada com sucesso!", "🔔");
-            }
-          } catch (err) {
-            console.error("Erro ao solicitar permissão:", err);
-            // Fallback nativo do navegador caso o OneSignal falhe
-            if (typeof Notification !== "undefined") {
-              const res = await Notification.requestPermission();
-              if (res === "granted") {
-                showToast("Permissão concedida no navegador!", "🔔");
-              }
-            }
-          }
-        });
+      if (!("Notification" in window)) {
+        alert("Este navegador não suporta notificações.");
+        return;
+      }
+
+      if (Notification.permission === "granted") {
+        showToast("Alertas já estão ativos neste aparelho!", "🔔");
+        return;
+      }
+
+      if (Notification.permission === "denied") {
+        alert("As notificações estão bloqueadas no seu navegador. Toque no ícone de cadeado 🔒 ao lado da URL para permitir.");
+        return;
+      }
+
+      // Força a janela nativa do navegador no clique do usuário
+      try {
+        const permission = await Notification.requestPermission();
+        if (permission === "granted") {
+          showToast("Notificações ativadas com sucesso!", "🔔");
+          window.OneSignalDeferred = window.OneSignalDeferred || [];
+          window.OneSignalDeferred.push(function(OneSignal) {
+            OneSignal.Notifications.requestPermission();
+          });
+        } else {
+          showToast("Permissão não concedida.", "⚠️");
+        }
+      } catch (err) {
+        console.error("Erro:", err);
       }
     }
   </script>
