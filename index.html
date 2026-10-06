@@ -103,11 +103,7 @@
       box-shadow: 0 1px 3px rgba(0,0,0,0.04);
     }
 
-    .header-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
+    .header-left { display: flex; align-items: center; gap: 12px; }
 
     .menu-hamburguer-btn {
       background: var(--bg-surface);
@@ -123,17 +119,8 @@
       color: var(--text-main);
     }
 
-    .brand-text h1 {
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: var(--text-main);
-      text-transform: uppercase;
-    }
-
-    .brand-text p {
-      font-size: 0.7rem;
-      color: var(--text-muted);
-    }
+    .brand-text h1 { font-size: 0.95rem; font-weight: 700; color: var(--text-main); text-transform: uppercase; }
+    .brand-text p { font-size: 0.7rem; color: var(--text-muted); }
 
     .banner-alerta {
       display: none;
@@ -211,16 +198,9 @@
       border: 1px solid var(--border-color);
     }
 
-    .toast-notification.show {
-      transform: translateX(-50%) translateY(0);
-      opacity: 1;
-    }
+    .toast-notification.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
-    .protocolos-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-    }
+    .protocolos-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 
     .btn-protocolo {
       background: var(--bg-surface);
@@ -324,26 +304,8 @@
       font-weight: 600;
     }
 
-    .portarias-group {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 6px;
-      margin-top: 4px;
-    }
-
-    .sublink-item {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 8px;
-      background: var(--bg-surface);
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      text-decoration: none;
-      color: var(--text-main);
-      font-size: 0.75rem;
-      font-weight: 600;
-    }
+    .portarias-group { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 4px; }
+    .sublink-item { display: flex; align-items: center; justify-content: center; padding: 8px; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 8px; text-decoration: none; color: var(--text-main); font-size: 0.75rem; font-weight: 600; }
 
     .blog-tile, .action-card, .holiday-tile {
       background: var(--card-bg);
@@ -488,7 +450,7 @@
         <span style="font-size:0.75rem; color:var(--text-muted);">Ler no Blog ↗</span>
       </div>
       <div class="blog-news-container">
-        <div class="blog-title" id="blog-title">Buscando atualizações...</div>
+        <div class="blog-title" id="blog-title">Buscando atualizações do campus...</div>
         <div class="blog-date" id="blog-date">Conectando ao Blog RE2</div>
       </div>
       <div class="blog-indicators" id="blog-dots"></div>
@@ -564,7 +526,7 @@
       <div class="drawer-header">
         <div>
           <h3 style="font-size:1rem; font-weight:700;">Calendário de Feriados</h3>
-          <p style="font-size:0.75rem; color:var(--text-muted);">Próximos dias sem aula / folgas</p>
+          <p style="font-size:0.75rem; color:var(--text-muted);">Próximos dias sem aula / folgas estipuladas</p>
         </div>
         <button class="close-btn" onclick="toggleHolidayDrawer(false)">&times;</button>
       </div>
@@ -594,11 +556,19 @@
           <span>🌐 Acessar SUAP</span>
           <span>↗</span>
         </a>
-        <div class="section-title" style="margin-top:10px;">Normas</div>
+        <div class="section-title" style="margin-top:10px;">Normas & Regulamentos</div>
         <a href="https://drive.google.com/file/d/1UNsBkbDuQZTrwzfDWCVuvtqelsWN0uPu/view?usp=drivesdk" target="_blank" rel="noopener noreferrer" class="link-item">
           <span>📜 Código de Ética Discente</span>
           <span>↗</span>
         </a>
+        <div style="margin-top: 6px;">
+          <div style="font-size: 0.72rem; font-weight: 600; color: var(--text-muted); margin-bottom: 6px;">Portarias de Uniforme:</div>
+          <div class="portarias-group">
+            <a href="https://drive.google.com/file/d/13BtJguaCNWew_ghQJr1TFtR5w_QT4iAb/view?usp=drivesdk" target="_blank" rel="noopener noreferrer" class="sublink-item">Doc 1 ↗</a>
+            <a href="https://drive.google.com/file/d/13I7hwIB0N0Wcz7cBZxD9pnOYm-cucsmI/view?usp=drivesdk" target="_blank" rel="noopener noreferrer" class="sublink-item">Doc 2 ↗</a>
+            <a href="https://drive.google.com/file/d/134C6xoiKmIOi0tqd422xfpS6WsT6l4gR/view?usp=drivesdk" target="_blank" rel="noopener noreferrer" class="sublink-item">Doc 3 ↗</a>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -636,10 +606,14 @@
       
       try {
         const SUPABASE_FUNCTION_URL = "https://rqnvrpsfxfueevxeeukv.supabase.co/functions/v1/swift-task";
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJxbnZycHNmeGZ1ZWV2eGVldWt2Iiwicm9sZSI6ImFub24iLCJpYXQiOjQ3MTI4MDgyNzN9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJxbnZycHNmeGZ1ZWV2eGVldWt2Iiwicm9sZSI6ImFub24iLCJpYXQiOjQ3MTI4MDgyNzN9..."; // Chave pública anónima segura
         
         const response = await fetch(SUPABASE_FUNCTION_URL, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { 
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + SUPABASE_ANON_KEY
+          },
           body: JSON.stringify({ titulo, mensagem })
         });
 
@@ -648,20 +622,20 @@
         try {
           data = JSON.parse(textResult);
         } catch (e) {
-          throw new Error("Resposta inválida do servidor: " + textResult);
+          throw new Error("Resposta inválida: " + textResult);
         }
 
         if (data.id) {
-          alert("SUCESSO! Push ID: " + data.id);
+          showToast("Push enviado com sucesso!", "🔔");
         } else if (data.errors) {
           alert("Erro OneSignal: " + JSON.stringify(data.errors));
         } else if (data.error) {
           alert("Erro Supabase: " + data.error);
         } else {
-          alert("Resposta inesperada: " + textResult);
+          showToast("Alerta ativado com sucesso.", "✅");
         }
       } catch (error) {
-        alert("FALHA DE REDE/CORS: " + error.message);
+        alert("FALHA DE REDE: " + error.message);
       }
     }
 
@@ -726,36 +700,161 @@
     function solicitarEncerramento() {
       const pin = prompt("🔐 Digite o PIN para encerrar o protocolo:");
       if (pin === PIN_CORRETO) {
-        dispararAlertaPush("✅ PROTOCOLO ENCERRADO", "A situação foi normalizada.");
+        dispararAlertaPush("✅ PROTOCOLO ENCERRADO", "A situação foi normalizada pela central.");
       } else {
         showToast("PIN incorreto. Mantido ativo.");
       }
     }
 
     const BLOCO_A_PREVIEW = [
-      { id: "A1", nome: "Sala 1", turma: "Turma 602", grade: { SEG: { T1:"MAT" }, TER: { T1:"LIVRE" }, QUA: { T1:"EFI" }, QUI: { T1:"ING" }, SEX: { T1:"INFO" } } }
+      { id: "A1", nome: "Sala 1", turma: "Turma 602", grade: {
+        SEG: { T1:"MAT", T2:"MAT", T3:"MUS", T4:"MUS", T5:"CIE", T6:"CIE", T7:"HIST" },
+        TER: { T1:"LIVRE", T2:"LIVRE", T3:"LIVRE", T4:"LIVRE", T5:"CIE", T6:"CIE", T7:"HIST" },
+        QUA: { T1:"EFI", T2:"EFI", T3:"HIST", T4:"HIST", T5:"PORT", T6:"DES", T7:"DES" },
+        QUI: { T1:"ING", T2:"ING", T3:"PORT", T4:"PORT", T5:"GEO", T6:"ESP", T7:"ESP" },
+        SEX: { T1:"INFO", T2:"INFO", T3:"ART", T4:"ART", T5:"ING", T6:"ESP", T7:"GEO" }
+      }},
+      { id: "A2", nome: "Sala 2", turma: "Turma 604", grade: {
+        SEG: { T1:"DES", T2:"DES", T3:"HIST", T4:"HIST", T5:"MUS", T6:"MUS", T7:"ING" },
+        TER: { T1:"GEO", T2:"GEO", T3:"EFI", T4:"EFI", T5:"HIST", T6:"ING", T7:"GEO" },
+        QUA: { T1:"MAT", T2:"MAT", T3:"PORT", T4:"PORT", T5:"ING", T6:"CIE", T7:"FRA" },
+        QUI: { T1:"FRA", T2:"FRA", T3:"INFO", T4:"INFO", T5:"CIE", T6:"CIE", T7:"CIE" },
+        SEX: { T1:"MAT", T2:"MAT", T3:"ART", T4:"ART", T5:"PORT", T6:"PORT", T7:"PORT" }
+      }},
+      { id: "A3", nome: "Sala 3", turma: "Turma 606", grade: {
+        SEG: { T1:"MUS", T2:"MUS", T3:"MAT", T4:"MAT", T5:"ING", T6:"ING", T7:"CIE" },
+        TER: { T1:"CIE", T2:"CIE", T3:"DES", T4:"DES", T5:"GEO", T6:"EFI", T7:"EFI" },
+        QUA: { T1:"PORT", T2:"PORT", T3:"F/E", T4:"F/E", T5:"PORT", T6:"FRA", T7:"ING" },
+        QUI: { T1:"HIST", T2:"HIST", T3:"GEO", T4:"GEO", T5:"INFO", T6:"INFO", T7:"HIST" },
+        SEX: { T1:"ART", T2:"ART", T3:"PORT", T4:"PORT", T5:"ESP", T6:"MAT", T7:"MAT" }
+      }},
+      { id: "A4", nome: "Sala 4", turma: "Turma 702", grade: {
+        SEG: { T1:"LIVRE", T2:"ING", T3:"DES", T4:"DES", T5:"DES", T6:"PORT", T7:"PORT" },
+        TER: { T1:"EFI", T2:"EFI", T3:"HIST", T4:"HIST", T5:"CIE", T6:"CIE", T7:"CIE" },
+        QUA: { T1:"MUS", T2:"MUS", T3:"ING", T4:"ING", T5:"ESP", T6:"MAT", T7:"MAT" },
+        QUI: { T1:"C.SOC", T2:"C.SOC", T3:"GEO", T4:"GEO", T5:"ART", T6:"ART", T7:"HIST" },
+        SEX: { T1:"ESP", T2:"ESP", T3:"PORT", T4:"PORT", T5:"MAT", T6:"MAT", T7:"GEO" }
+      }},
+      { id: "A5", nome: "Sala 5", turma: "Turma 704", grade: {
+        SEG: { T1:"ING", T2:"ING", T3:"PORT", T4:"PORT", T5:"ING", T6:"DES", T7:"DES" },
+        TER: { T1:"LIVRE", T2:"CIE", T3:"HIST", T4:"HIST", T5:"HIST", T6:"GEO", T7:"GEO" },
+        QUA: { T1:"MAT", T2:"MAT", T3:"PORT", T4:"PORT", T5:"PORT", T6:"MUS", T7:"MUS" },
+        QUI: { T1:"EFI", T2:"EFI", T3:"CIE", T4:"CIE", T5:"FRA", T6:"FRA", T7:"FRA" },
+        SEX: { T1:"MAT", T2:"MAT", T3:"C.SOC", T4:"C.SOC", T5:"GEO", T6:"ART", T7:"ART" }
+      }},
+      { id: "A6", nome: "Sala 6", turma: "Turma 802", grade: {
+        SEG: { T1:"PORT", T2:"PORT", T3:"ART", T4:"ART", T5:"ING", T6:"ING", T7:"ING" },
+        TER: { T1:"GEO", T2:"GEO", T3:"DES", T4:"DES", T5:"HIST", T6:"CIE", T7:"CIE" },
+        QUA: { T1:"EFI", T2:"EFI", T3:"MUS", T4:"MUS", T5:"MAT", T6:"MAT", T7:"ESP" },
+        QUI: { T1:"C.SOC", T2:"C.SOC", T3:"HIST", T4:"HIST", T5:"GEO", T6:"CIE", T7:"LIVRE" },
+        SEX: { T1:"ESP", T2:"ESP", T3:"MAT", T4:"MAT", T5:"PORT", T6:"PORT", T7:"PORT" }
+      }},
+      { id: "A7", nome: "Sala 7", turma: "Turma 804", grade: {
+        SEG: { T1:"CIE", T2:"CIE", T3:"PORT", T4:"PORT", T5:"PORT", T6:"ART", T7:"ART" },
+        TER: { T1:"GEO", T2:"GEO", T3:"CIE", T4:"HIST", T5:"GEO", T6:"DES", T7:"DES" },
+        QUA: { T1:"MAT", T2:"MAT", T3:"PORT", T4:"PORT", T5:"FRA", T6:"EFI", T7:"EFI" },
+        QUI: { T1:"FRA", T2:"FRA", T3:"C.SOC", T4:"C.SOC", T5:"HIST", T6:"HIST", T7:"LIVRE" },
+        SEX: { T1:"ING", T2:"ING", T3:"MUS", T4:"MUS", T5:"ING", T6:"MAT", T7:"MAT" }
+      }},
+      { id: "A8", nome: "Sala 8", turma: "Turma 902", grade: {
+        SEG: { T1:"EFI", T2:"EFI", T3:"PORT", T4:"PORT", T5:"PORT", T6:"C.SOC", T7:"C.SOC" },
+        TER: { T1:"CIE", T2:"CIE", T3:"HIST", T4:"LIVRE", T5:"ART", T6:"ART", T7:"GEO" },
+        QUA: { T1:"PORT", T2:"PORT", T3:"ING", T4:"ING", T5:"ING", T6:"MAT", T7:"MAT" },
+        QUI: { T1:"MAT", T2:"MAT", T3:"GEO", T4:"GEO", T5:"CIE", T6:"DES", T7:"DES" },
+        SEX: { T1:"HIST", T2:"HIST", T3:"MUS", T4:"MUS", T5:"ESP", T6:"ESP", T7:"ESP" }
+      }},
+      { id: "A9", nome: "Sala 9", turma: "Reserva / Apoio", grade: { SEG:{}, TER:{}, QUA:{}, QUI:{}, SEX:{} } },
+      { id: "A10", nome: "Sala 10", turma: "Turma 904", grade: {
+        SEG: { T1:"PORT", T2:"PORT", T3:"C.SOC", T4:"C.SOC", T5:"ING", T6:"ING", T7:"ING" },
+        TER: { T1:"GEO", T2:"GEO", T3:"DES", T4:"DES", T5:"CIE", T6:"CIE", T7:"CIE" },
+        QUA: { T1:"EFI", T2:"EFI", T3:"MAT", T4:"MAT", T5:"PORT", T6:"PORT", T7:"FRA" },
+        QUI: { T1:"ART", T2:"ART", T3:"MAT", T4:"MAT", T5:"HIST", T6:"GEO", T7:"LIVRE" },
+        SEX: { T1:"FRA", T2:"FRA", T3:"HIST", T4:"HIST", T5:"MUS", T6:"MUS", T7:"PORT" }
+      }},
+      { id: "A11", nome: "Sala 11", turma: "Turma 906", grade: {
+        SEG: { T1:"C.SOC", T2:"C.SOC", T3:"EFI", T4:"EFI", T5:"ING", T6:"PORT", T7:"PORT" },
+        TER: { T1:"CIE", T2:"ART", T3:"ART", T4:"HIST", T5:"GEO", T6:"GEO", T7:"LIVRE" },
+        QUA: { T1:"MAT", T2:"MAT", T3:"F/E", T4:"F/E", T5:"F/E", T6:"PORT", T7:"PORT" },
+        QUI: { T1:"CIE", T2:"CIE", T3:"DES", T4:"DES", T5:"MAT", T6:"MAT", T7:"GEO" },
+        SEX: { T1:"MAT", T2:"MAT", T3:"ING", T4:"ING", T5:"PORT", T6:"HIST", T7:"HIST" }
+      }},
+      { id: "A12", nome: "Sala 12", turma: "Reserva / Apoio", grade: { SEG:{}, TER:{}, QUA:{}, QUI:{}, SEX:{} } }
     ];
 
-    const LIBERADAS = ["efi", "art", "mus", "info", "des"];
-    const IDIOMAS = ["ing", "fra", "esp", "f/e"];
+    const LIBERADAS = ["efi", "ed. fisica", "educacao fisica", "art", "artes", "mus", "musica", "info", "informatica", "des", "desenho"];
+    const IDIOMAS = ["ing", "ingles", "fra", "frances", "esp", "espanhol", "f/e", "e/i", "edmar/fr", "ap"];
 
     function getLiveTimeSlot() {
       const now = new Date();
       const dayIndex = now.getDay();
       const days = ["SEG", "SEG", "TER", "QUA", "QUI", "SEX", "SEG"];
-      return { day: days[dayIndex], slot: "T1", isWeekend: dayIndex === 0 || dayIndex === 6 };
+      const currentDay = days[dayIndex];
+
+      const hours = now.getHours();
+      const minutes = now.getMinutes();
+      const totalMinutes = hours * 60 + minutes;
+
+      let slot = "T1";
+      if (totalMinutes < 790) slot = "T1";
+      else if (totalMinutes < 835) slot = "T2";
+      else if (totalMinutes < 880) slot = "T3";
+      else if (totalMinutes < 925) slot = "T4";
+      else if (totalMinutes < 980) slot = "T5";
+      else if (totalMinutes < 1025) slot = "T6";
+      else slot = "T7";
+
+      return { day: currentDay, slot: slot, isWeekend: dayIndex === 0 || dayIndex === 6 };
     }
 
     function renderLivePreview() {
       const liveInfo = getLiveTimeSlot();
       const container = document.getElementById("live-rooms-grid");
-      document.getElementById("live-time-tag").innerText = `${liveInfo.day} • Tempo ${liveInfo.slot}`;
-      container.innerHTML = `<div class="status-card free"><span class="status-tag">🟢 Disponível</span><span class="room-name">Sala 1 (Turma 602)</span><span class="room-desc">Horário ativo</span></div>`;
+      const timeTag = document.getElementById("live-time-tag");
+
+      timeTag.innerText = `${liveInfo.day} • Tempo ${liveInfo.slot}`;
+      container.innerHTML = "";
+
+      let matchedRooms = [];
+
+      BLOCO_A_PREVIEW.forEach(room => {
+        const val = (room.grade[liveInfo.day] || {})[liveInfo.slot] || "";
+        const str = (val || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+
+        if (!val || val === "" || val.toUpperCase() === "LIVRE") {
+          matchedRooms.push({ room, type: "free", label: "🟢 Livre", desc: "Sem aula no horário" });
+        } else if (LIBERADAS.some(d => str === d || str.includes(d))) {
+          matchedRooms.push({ room, type: "free", label: "🟢 Alta Prob.", desc: `${val} (Fora da Sala)` });
+        } else if (IDIOMAS.some(d => str === d || str.includes(d))) {
+          matchedRooms.push({ room, type: "medium", label: "🟡 Média Prob.", desc: `${val} (Idiomas/Divisão)` });
+        }
+      });
+
+      const displayRooms = matchedRooms.slice(0, 4);
+
+      if (displayRooms.length === 0) {
+        container.innerHTML = `
+          <div style="grid-column: 1 / -1; font-size: 0.8rem; color: var(--text-muted); text-align: center; padding: 10px;">
+            Todas as salas teóricas ocupadas neste momento.
+          </div>
+        `;
+        return;
+      }
+
+      displayRooms.forEach(item => {
+        const card = document.createElement("div");
+        card.className = `status-card ${item.type}`;
+        card.innerHTML = `
+          <span class="status-tag">${item.label}</span>
+          <span class="room-name">${item.room.nome} (${item.room.turma})</span>
+          <span class="room-desc">${item.desc}</span>
+        `;
+        container.appendChild(card);
+      });
     }
 
     const HOLIDAYS_2026 = [
       { date: "2026-10-12", name: "Nossa Sra. Aparecida", type: "Nacional" },
-      { date: "2026-10-15", name: "Dia do Professor", type: "Escolar" }
+      { date: "2026-10-15", name: "Dia do Professor / Escolar", type: "Escolar" }
     ];
 
     function setupHolidays() {
@@ -764,6 +863,42 @@
       document.getElementById("next-holiday-days").innerText = "9";
     }
 
+    const WP_API_URL = "https://blog.cp2.g12.br/re2/wp-json/wp/v2/posts?per_page=5";
+    let BLOG_NEWS = [
+      { title: "Avisos e Informativos Oficiais do Campus Realengo II", date: "Blog Oficial RE2", url: "https://blog.cp2.g12.br/re2/" }
+    ];
+    let currentNewsIndex = 0;
+
+    async function fetchRealBlogPosts() {
+      try {
+        const res = await fetch(WP_API_URL);
+        if (res.ok) {
+          const posts = await res.json();
+          if (posts && posts.length > 0) {
+            BLOG_NEWS = posts.map(post => {
+              const postDate = new Date(post.date).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+              const tempDiv = document.createElement("div");
+              tempDiv.innerHTML = post.title.rendered;
+              return { title: tempDiv.innerText || tempDiv.textContent, date: postDate, url: post.link };
+            });
+            renderBlogTile();
+          }
+        }
+      } catch (err) {}
+    }
+
+    function renderBlogTile() {
+      const news = BLOG_NEWS[currentNewsIndex];
+      const titleEl = document.getElementById("blog-title");
+      const dateEl = document.getElementById("blog-date");
+      if (titleEl && dateEl) {
+        titleEl.innerText = news.title;
+        dateEl.innerText = news.date;
+      }
+    }
+
+    function goToNews() { window.open(BLOG_NEWS[currentNewsIndex].url, "_blank"); }
+
     function toggleMenuDrawer(open) { document.getElementById("menu-drawer-overlay").classList.toggle("open", open); }
     function toggleHolidayDrawer(open) { document.getElementById("holiday-drawer-overlay").classList.toggle("open", open); }
 
@@ -771,6 +906,9 @@
       initSlideToDismiss();
       renderLivePreview();
       setupHolidays();
+      renderBlogTile();
+      fetchRealBlogPosts();
+      setInterval(renderLivePreview, 60000);
     };
   </script>
 </body>
