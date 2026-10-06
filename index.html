@@ -12,7 +12,9 @@
     OneSignalDeferred.push(async function(OneSignal) {
       await OneSignal.init({
         appId: "ccd1d73b-a787-4144-a805-855f14907e27",
-        serviceWorkerPath: "OneSignalSDKWorker.js"
+        serviceWorkerPath: "OneSignalSDKWorker.js",
+        serviceWorkerParam: { scope: "/Campus-app/" },
+        allowLocalhostAsSecureOrigin: true
       });
 
       // Escuta o Push recebido para ativar o banner em tempo real na tela
@@ -24,19 +26,20 @@
       });
     });
 
-    // Função corrigida do botão de permissão do menu
+    // Função para solicitar permissão de notificações pelo menu hambúrguer
     function solicitarPermissaoNotificacoes() {
       window.OneSignalDeferred = window.OneSignalDeferred || [];
       window.OneSignalDeferred.push(async function(OneSignal) {
         try {
-          if (OneSignal.Notifications.permission) {
+          const permission = OneSignal.Notifications.permission;
+          if (permission) {
             showToast("Alertas já estão ativos neste aparelho!", "🔔");
           } else {
             await OneSignal.Notifications.requestPermission();
           }
         } catch (err) {
           console.error("Erro ao solicitar permissão:", err);
-          showToast("Aperte em Permitir no aviso do navegador.", "⚠️️");
+          showToast("Aperte em Permitir no aviso do navegador.", "⚠️");
         }
       });
     }
@@ -722,7 +725,7 @@
     <section class="action-card">
       <div class="section-title">🚨 Central de Protocolos</div>
       <div class="protocolos-grid">
-        <button class="btn-protocolo" onclick="solicitarAtivacao('🌧️ Vento / Chuva', 'Atenção às áreas abertas e à quadra. Protocolo ativo.')">🌧️ Vento / Chuva</button>
+        <button class="btn-protocolo" onclick="solicitarAtivacao('🌧️ Vento / Chuva', 'Atenção às áreas abertas e à quadra. Protocolo ativo.')">🌧️️ Vento / Chuva</button>
         <button class="btn-protocolo" onclick="solicitarAtivacao('🟡 Protocolo Julie', 'Apoio solicitado pela equipe. Verificar a central.')">🟡 P. Julie</button>
         <button class="btn-protocolo" onclick="solicitarAtivacao('🟠 Protocolo J. Lodi', 'Atendimento e acompanhamento necessário.')">🟠 P. J. Lodi</button>
         <button class="btn-protocolo" onclick="solicitarPersonalizado()">📝 Personalizado</button>
