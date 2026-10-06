@@ -5,15 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Campus Monitor — Início</title>
 
-  <!-- OneSignal Web SDK -->
+  <!-- OneSignal Web SDK v16 -->
   <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
   <script>
     window.OneSignalDeferred = window.OneSignalDeferred || [];
     OneSignalDeferred.push(async function(OneSignal) {
       await OneSignal.init({
         appId: "ccd1d73b-a787-4144-a805-855f14907e27",
-        serviceWorkerPath: "OneSignalSDKWorker.js",
-        serviceWorkerParam: { scope: "/Campus-app/" },
         allowLocalhostAsSecureOrigin: true
       });
 
@@ -26,22 +24,28 @@
       });
     });
 
-    // Função para solicitar permissão de notificações pelo menu hambúrguer
-    function solicitarPermissaoNotificacoes() {
-      window.OneSignalDeferred = window.OneSignalDeferred || [];
-      window.OneSignalDeferred.push(async function(OneSignal) {
-        try {
-          const permission = OneSignal.Notifications.permission;
-          if (permission) {
-            showToast("Alertas já estão ativos neste aparelho!", "🔔");
-          } else {
-            await OneSignal.Notifications.requestPermission();
+    // Função para forçar a abertura do pedido nativo de permissão
+    async function solicitarPermissaoNotificacoes() {
+      if (window.OneSignalDeferred) {
+        window.OneSignalDeferred.push(async function(OneSignal) {
+          try {
+            // Solicita permissão diretamente via OneSignal
+            const permission = await OneSignal.Notifications.requestPermission();
+            if (permission) {
+              showToast("Inscrição realizada com sucesso!", "🔔");
+            }
+          } catch (err) {
+            console.error("Erro ao solicitar permissão:", err);
+            // Fallback nativo do navegador caso o OneSignal falhe
+            if (typeof Notification !== "undefined") {
+              const res = await Notification.requestPermission();
+              if (res === "granted") {
+                showToast("Permissão concedida no navegador!", "🔔");
+              }
+            }
           }
-        } catch (err) {
-          console.error("Erro ao solicitar permissão:", err);
-          showToast("Aperte em Permitir no aviso do navegador.", "⚠️");
-        }
-      });
+        });
+      }
     }
   </script>
 
@@ -725,7 +729,7 @@
     <section class="action-card">
       <div class="section-title">🚨 Central de Protocolos</div>
       <div class="protocolos-grid">
-        <button class="btn-protocolo" onclick="solicitarAtivacao('🌧️ Vento / Chuva', 'Atenção às áreas abertas e à quadra. Protocolo ativo.')">🌧️️ Vento / Chuva</button>
+        <button class="btn-protocolo" onclick="solicitarAtivacao('🌧️ Vento / Chuva', 'Atenção às áreas abertas e à quadra. Protocolo ativo.')">🌧️ Vento / Chuva</button>
         <button class="btn-protocolo" onclick="solicitarAtivacao('🟡 Protocolo Julie', 'Apoio solicitado pela equipe. Verificar a central.')">🟡 P. Julie</button>
         <button class="btn-protocolo" onclick="solicitarAtivacao('🟠 Protocolo J. Lodi', 'Atendimento e acompanhamento necessário.')">🟠 P. J. Lodi</button>
         <button class="btn-protocolo" onclick="solicitarPersonalizado()">📝 Personalizado</button>
