@@ -416,7 +416,7 @@
 <body>
 
   <div id="toast" class="toast-notification">
-    <span id="toast-icon">⚠️️</span>
+    <span id="toast-icon">⚠️</span>
     <span id="toast-message">PIN incorreto. Ação cancelada.</span>
   </div>
 
@@ -606,12 +606,14 @@
       
       try {
         const SUPABASE_FUNCTION_URL = "https://rqnvrpsfxfueevxeeukv.supabase.co/functions/v1/swift-task";
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJxbnZycHNmeGZ1ZWV2eGVldWt2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEyOTQ0NTIsImV4cCI6MjEwNjg3MDQ1Mn0.URWgsCFjqmQh6WtrZXMnObzDmM4YTiC0iSdZ9pbP4GI";
         
-        // Chamada direta para a Edge Function sem exigir token de cabeçalho restrito
         const response = await fetch(SUPABASE_FUNCTION_URL, {
           method: "POST",
           headers: { 
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + SUPABASE_ANON_KEY,
+            "apikey": SUPABASE_ANON_KEY
           },
           body: JSON.stringify({ titulo, mensagem })
         });
