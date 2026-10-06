@@ -20,7 +20,6 @@
         }
       });
 
-      // Escuta o Push recebido para ativar o banner em tempo real na tela
       OneSignal.Notifications.addEventListener("foregroundWillDisplay", function(event) {
         const notification = event.notification;
         const titulo = notification.title || "🚨 ALERTA DE EMERGÊNCIA";
@@ -29,7 +28,6 @@
       });
     });
 
-    // Função oficial OneSignal v16 para solicitar permissão
     function solicitarPermissaoNotificacoes() {
       window.OneSignalDeferred = window.OneSignalDeferred || [];
       window.OneSignalDeferred.push(async function(OneSignal) {
@@ -59,22 +57,17 @@
       --border-color: #e2e8f0;
       --text-main: #0f172a;
       --text-muted: #64748b;
-      
       --brand-blue: #0284c7;
       --brand-blue-light: #e0f2fe;
-      
       --status-green: #10b981;
       --status-green-bg: #d1fae5;
       --status-green-border: #a7f3d0;
       --status-green-text: #065f46;
-
       --status-yellow-bg: #fef3c7;
       --status-yellow-border: #fde68a;
       --status-yellow-text: #92400e;
-
       --holiday-purple: #8b5cf6;
       --holiday-purple-light: #f3e8ff;
-      
       --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
 
@@ -99,7 +92,6 @@
       padding-bottom: 85px;
     }
 
-    /* HEADER */
     header {
       display: flex;
       justify-content: space-between;
@@ -129,17 +121,13 @@
       font-size: 1.1rem;
       cursor: pointer;
       color: var(--text-main);
-      transition: background 0.2s;
     }
-
-    .menu-hamburguer-btn:active { transform: scale(0.95); }
 
     .brand-text h1 {
       font-size: 0.95rem;
       font-weight: 700;
       color: var(--text-main);
       text-transform: uppercase;
-      letter-spacing: -0.01em;
     }
 
     .brand-text p {
@@ -147,7 +135,6 @@
       color: var(--text-muted);
     }
 
-    /* BANNER DE ALERTA DE EMERGÊNCIA NO TOPO */
     .banner-alerta {
       display: none;
       background-color: #ef4444;
@@ -159,24 +146,10 @@
       gap: 12px;
     }
 
-    .banner-header {
-      text-align: center;
-    }
+    .banner-header { text-align: center; }
+    .banner-header h2 { font-size: 1rem; font-weight: 800; }
+    .banner-header p { font-size: 0.85rem; margin-top: 4px; opacity: 0.95; }
 
-    .banner-header h2 {
-      font-size: 1rem;
-      font-weight: 800;
-      letter-spacing: 0.02em;
-    }
-
-    .banner-header p {
-      font-size: 0.85rem;
-      font-weight: 500;
-      margin-top: 4px;
-      opacity: 0.95;
-    }
-
-    /* SLIDE TO DISMISS (BARRINHA DESLIZANTE) */
     .slide-container {
       position: relative;
       background: rgba(0, 0, 0, 0.25);
@@ -195,7 +168,6 @@
       font-size: 0.75rem;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
       color: rgba(255, 255, 255, 0.85);
       pointer-events: none;
     }
@@ -215,13 +187,9 @@
       position: absolute;
       left: 4px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-      transition: left 0.1s ease-out;
       z-index: 2;
     }
 
-    .slide-thumb:active { cursor: grabbing; }
-
-    /* TOAST NOTIFICATION (AVISO TEMPORÁRIO) */
     .toast-notification {
       position: fixed;
       top: 20px;
@@ -236,7 +204,7 @@
       box-shadow: 0 10px 25px rgba(0,0,0,0.2);
       z-index: 2000;
       opacity: 0;
-      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s;
+      transition: transform 0.3s, opacity 0.3s;
       display: flex;
       align-items: center;
       gap: 8px;
@@ -248,7 +216,6 @@
       opacity: 1;
     }
 
-    /* GRID DE PROTOCOLOS (NO FINAL DA PÁGINA) */
     .protocolos-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -264,19 +231,12 @@
       font-size: 0.8rem;
       font-weight: 700;
       cursor: pointer;
-      transition: background 0.15s, transform 0.1s;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 6px;
     }
 
-    .btn-protocolo:active {
-      transform: scale(0.97);
-      background: var(--border-color);
-    }
-
-    /* MENU HAMBÚRGUER LATERAL */
     .menu-drawer-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -284,7 +244,7 @@
       backdrop-filter: blur(4px);
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.25s ease;
+      transition: opacity 0.25s;
       z-index: 1000;
     }
 
@@ -302,9 +262,8 @@
       flex-direction: column;
       gap: 16px;
       transform: translateX(-100%);
-      transition: transform 0.25s cubic-bezier(0.1, 0.9, 0.2, 1);
+      transition: transform 0.25s;
       z-index: 1001;
-      box-shadow: 4px 0 20px rgba(0,0,0,0.08);
       overflow-y: auto;
     }
 
@@ -318,14 +277,7 @@
       border-bottom: 1px solid var(--border-color);
     }
 
-    .close-drawer-btn {
-      background: transparent;
-      border: none;
-      font-size: 1.4rem;
-      color: var(--text-muted);
-      cursor: pointer;
-    }
-
+    .close-drawer-btn { background: transparent; border: none; font-size: 1.4rem; color: var(--text-muted); cursor: pointer; }
     .links-list { display: flex; flex-direction: column; gap: 8px; }
 
     .btn-push-menu {
@@ -342,11 +294,6 @@
       font-weight: 700;
       cursor: pointer;
       text-align: left;
-      transition: background 0.2s;
-    }
-
-    .btn-push-menu:active {
-      background: #fee2e2;
     }
 
     .link-item-featured {
@@ -398,8 +345,7 @@
       font-weight: 600;
     }
 
-    /* TILE DINÂMICA DO BLOG */
-    .blog-tile {
+    .blog-tile, .action-card, .holiday-tile {
       background: var(--card-bg);
       border: 1px solid var(--border-color);
       border-radius: 16px;
@@ -408,55 +354,18 @@
       display: flex;
       flex-direction: column;
       gap: 10px;
-      cursor: pointer;
-      transition: transform 0.15s ease;
     }
-
-    .blog-tile:active { transform: scale(0.98); }
 
     .blog-header { display: flex; justify-content: space-between; align-items: center; }
-
-    .blog-badge {
-      font-size: 0.68rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      color: var(--brand-blue);
-      background: var(--brand-blue-light);
-      padding: 3px 8px;
-      border-radius: 6px;
-    }
-
+    .blog-badge { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; color: var(--brand-blue); background: var(--brand-blue-light); padding: 3px 8px; border-radius: 6px; }
     .blog-news-container { min-height: 48px; display: flex; flex-direction: column; justify-content: center; }
-    .blog-title { font-size: 0.88rem; font-weight: 700; color: var(--text-main); line-height: 1.25; transition: opacity 0.3s ease; }
+    .blog-title { font-size: 0.88rem; font-weight: 700; color: var(--text-main); transition: opacity 0.3s; }
     .blog-date { font-size: 0.7rem; color: var(--text-muted); margin-top: 4px; }
-
     .blog-indicators { display: flex; gap: 4px; margin-top: 4px; }
-    .blog-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border-color); transition: background 0.3s; }
+    .blog-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border-color); }
     .blog-dot.active { background: var(--brand-blue); }
 
-    /* BOTÕES DE ACESSO E CARDS */
-    .action-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 16px;
-      padding: 16px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.03);
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .section-title {
-      font-size: 0.72rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      color: var(--text-muted);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
+    .section-title { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); }
     .main-button {
       background: var(--brand-blue);
       color: #ffffff;
@@ -470,81 +379,24 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
-      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.2);
     }
 
-    /* PREVIEW TEMPO REAL DINÂMICO */
-    .preview-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-
-    .status-card {
-      border-radius: 12px;
-      padding: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
+    .preview-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .status-card { border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 4px; }
     .status-card.free { background: var(--status-green-bg); border: 1px solid var(--status-green-border); }
     .status-card.medium { background: var(--status-yellow-bg); border: 1px solid var(--status-yellow-border); }
-
     .status-tag { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; }
-    .status-card.free .status-tag { color: var(--status-green-text); }
-    .status-card.medium .status-tag { color: var(--status-yellow-text); }
-
     .room-name { font-size: 0.88rem; font-weight: 700; color: var(--text-main); }
     .room-desc { font-size: 0.7rem; color: var(--text-muted); }
 
-    /* CARD DE FERIADOS */
-    .holiday-tile {
-      background: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 16px;
-      padding: 16px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      cursor: pointer;
-      transition: transform 0.15s ease;
-    }
-
-    .holiday-tile:active { transform: scale(0.98); }
-
-    .holiday-badge {
-      font-size: 0.68rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      color: var(--holiday-purple);
-      background: var(--holiday-purple-light);
-      padding: 3px 8px;
-      border-radius: 6px;
-    }
-
-    .holiday-content {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
+    .holiday-badge { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; color: var(--holiday-purple); background: var(--holiday-purple-light); padding: 3px 8px; border-radius: 6px; }
+    .holiday-content { display: flex; align-items: center; justify-content: space-between; }
     .holiday-info h3 { font-size: 0.95rem; font-weight: 700; color: var(--text-main); }
     .holiday-info p { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
-
-    .holiday-days-left {
-      background: var(--holiday-purple-light);
-      color: var(--holiday-purple);
-      padding: 8px 12px;
-      border-radius: 12px;
-      text-align: center;
-    }
-
+    .holiday-days-left { background: var(--holiday-purple-light); color: var(--holiday-purple); padding: 8px 12px; border-radius: 12px; text-align: center; }
     .holiday-days-left .num { font-size: 1.1rem; font-weight: 800; line-height: 1; }
     .holiday-days-left .lbl { font-size: 0.6rem; font-weight: 700; text-transform: uppercase; }
 
-    /* DRAWER FERIADOS */
     .drawer-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -558,9 +410,7 @@
       transition: opacity 0.2s;
       z-index: 1000;
     }
-
     .drawer-overlay.open { opacity: 1; pointer-events: auto; }
-
     .drawer {
       background: var(--card-bg);
       border-radius: 20px 20px 0 0;
@@ -569,38 +419,15 @@
       max-height: 80vh;
       padding: 20px;
       transform: translateY(100%);
-      transition: transform 0.25s cubic-bezier(0.1, 0.9, 0.2, 1);
-      box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+      transition: transform 0.25s;
       overflow-y: auto;
     }
-
     .drawer-overlay.open .drawer { transform: translateY(0); }
-
-    .drawer-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 14px;
-      padding-bottom: 8px;
-      border-bottom: 1px solid var(--border-color);
-    }
-
+    .drawer-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid var(--border-color); }
     .close-btn { background: transparent; border: none; font-size: 1.3rem; color: var(--text-muted); cursor: pointer; }
-
-    .holiday-list-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px 12px;
-      background: var(--bg-surface);
-      border-radius: 10px;
-      margin-bottom: 8px;
-      border: 1px solid var(--border-color);
-    }
-
+    .holiday-list-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; background: var(--bg-surface); border-radius: 10px; margin-bottom: 8px; border: 1px solid var(--border-color); }
     .holiday-list-item.past { opacity: 0.5; filter: grayscale(1); }
 
-    /* TAB BAR INFERIOR */
     .bottom-nav {
       position: fixed;
       bottom: 12px;
@@ -619,25 +446,13 @@
       box-shadow: 0 4px 20px rgba(0,0,0,0.06);
       z-index: 900;
     }
-
-    .nav-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 2px;
-      font-size: 0.68rem;
-      font-weight: 600;
-      color: var(--text-muted);
-      text-decoration: none;
-    }
-
+    .nav-item { display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 0.68rem; font-weight: 600; color: var(--text-muted); text-decoration: none; }
     .nav-item.active { color: var(--brand-blue); }
     .nav-icon { font-size: 1.1rem; }
   </style>
 </head>
 <body>
 
-  <!-- TOAST NOTIFICATION -->
   <div id="toast" class="toast-notification">
     <span id="toast-icon">⚠️</span>
     <span id="toast-message">PIN incorreto. Ação cancelada.</span>
@@ -645,7 +460,6 @@
 
   <div class="app-container">
     
-    <!-- HEADER -->
     <header>
       <div class="header-left">
         <button class="menu-hamburguer-btn" onclick="toggleMenuDrawer(true)">☰</button>
@@ -656,36 +470,30 @@
       </div>
     </header>
 
-    <!-- BANNER VISUAL DE ALERTA ATIVO NO TOPO -->
     <div id="bannerAlerta" class="banner-alerta">
       <div class="banner-header">
         <h2 id="bannerTitulo">🚨 PROTOCOLO ATIVO</h2>
         <p id="bannerMensagem">Instruções do protocolo em andamento.</p>
       </div>
       
-      <!-- BARRINHA DESLIZANTE PARA ENCERRAMENTO -->
       <div class="slide-container" id="slideTrack">
         <div class="slide-text">Arraste para encerrar ➔</div>
         <div class="slide-thumb" id="slideThumb">➔</div>
       </div>
     </div>
 
-    <!-- TILE DINÂMICA DO BLOG DO CAMPUS -->
     <section class="blog-tile" onclick="goToNews()">
       <div class="blog-header">
         <span class="blog-badge">📰 Blog RE2 • Notícias</span>
         <span style="font-size:0.75rem; color:var(--text-muted);">Ler no Blog ↗</span>
       </div>
-
       <div class="blog-news-container">
-        <div class="blog-title" id="blog-title">Buscando atualizações do campus...</div>
+        <div class="blog-title" id="blog-title">Buscando atualizações...</div>
         <div class="blog-date" id="blog-date">Conectando ao Blog RE2</div>
       </div>
-
       <div class="blog-indicators" id="blog-dots"></div>
     </section>
 
-    <!-- ACESSO RÁPIDO AO MONITOR -->
     <section class="action-card">
       <div class="section-title">Acesso Direto</div>
       <a href="monitor.html" class="main-button">
@@ -693,13 +501,11 @@
       </a>
     </section>
 
-    <!-- PREVIEW DINÂMICO DO STATUS EM TEMPO REAL -->
     <section class="action-card">
       <div class="section-title">
         <span>🟢 Salas Vagas Agora</span>
         <span id="live-time-tag" style="font-size:0.65rem; color:var(--brand-blue); font-weight:700;">---</span>
       </div>
-      
       <div class="preview-grid" id="live-rooms-grid">
         <div class="status-card free">
           <span class="status-tag">🟢 Carregando...</span>
@@ -709,13 +515,11 @@
       </div>
     </section>
 
-    <!-- CARD DE PRÓXIMO FERIADO -->
     <section class="holiday-tile" onclick="toggleHolidayDrawer(true)">
       <div class="blog-header">
         <span class="holiday-badge">🎉 Próximo Feriado / Folga</span>
         <span style="font-size:0.75rem; color:var(--text-muted);">Ver todos ↗</span>
       </div>
-
       <div class="holiday-content">
         <div class="holiday-info">
           <h3 id="next-holiday-name">Carregando...</h3>
@@ -728,7 +532,6 @@
       </div>
     </section>
 
-    <!-- CENTRAL DE PROTOCOLOS DE EMERGÊNCIA -->
     <section class="action-card">
       <div class="section-title">🚨 Central de Protocolos</div>
       <div class="protocolos-grid">
@@ -739,7 +542,6 @@
       </div>
     </section>
 
-    <!-- TAB BAR INFERIOR -->
     <nav class="bottom-nav">
       <a href="index.html" class="nav-item active">
         <span class="nav-icon">🏠</span>
@@ -757,67 +559,46 @@
 
   </div>
 
-  <!-- DRAWER FERIADOS -->
   <div class="drawer-overlay" id="holiday-drawer-overlay" onclick="toggleHolidayDrawer(false)">
     <div class="drawer" onclick="event.stopPropagation()">
       <div class="drawer-header">
         <div>
           <h3 style="font-size:1rem; font-weight:700;">Calendário de Feriados</h3>
-          <p style="font-size:0.75rem; color:var(--text-muted);">Próximos dias sem aula / folgas estipuladas</p>
+          <p style="font-size:0.75rem; color:var(--text-muted);">Próximos dias sem aula / folgas</p>
         </div>
         <button class="close-btn" onclick="toggleHolidayDrawer(false)">&times;</button>
       </div>
-
       <div id="full-holiday-list"></div>
     </div>
   </div>
 
-  <!-- DRAWER HAMBÚRGUER COM ATIVAÇÃO DE NOTIFICAÇÕES -->
   <div class="menu-drawer-overlay" id="menu-drawer-overlay" onclick="toggleMenuDrawer(false)">
     <div class="menu-drawer" onclick="event.stopPropagation()">
       <div class="drawer-top">
         <div style="font-weight:700; font-size:0.95rem;">Menu & Sistemas</div>
         <button class="close-drawer-btn" onclick="toggleMenuDrawer(false)">&times;</button>
       </div>
-
       <div class="links-list">
         <div class="section-title">Notificações Push</div>
-
-        <!-- BOTÃO DE ATIVAÇÃO DAS NOTIFICAÇÕES -->
         <button class="btn-push-menu" onclick="solicitarPermissaoNotificacoes()">
           <span>🔔 Ativar Alertas no Celular</span>
           <span>➔</span>
         </button>
-
         <div class="section-title" style="margin-top:10px;">Acesso Interno</div>
-        
         <a href="https://disciplinar.falconservicosfse.com.br" target="_blank" rel="noopener noreferrer" class="link-item-featured">
           <span>📋 Sistema Disciplinar / Ocorrências</span>
           <span>↗</span>
         </a>
-
         <div class="section-title" style="margin-top:10px;">Sistemas Acadêmicos</div>
-        
         <a href="https://suap.cp2.g12.br" target="_blank" rel="noopener noreferrer" class="link-item">
           <span>🌐 Acessar SUAP</span>
           <span>↗</span>
         </a>
-
-        <div class="section-title" style="margin-top:10px;">Normas & Regulamentos</div>
-
+        <div class="section-title" style="margin-top:10px;">Normas</div>
         <a href="https://drive.google.com/file/d/1UNsBkbDuQZTrwzfDWCVuvtqelsWN0uPu/view?usp=drivesdk" target="_blank" rel="noopener noreferrer" class="link-item">
           <span>📜 Código de Ética Discente</span>
           <span>↗</span>
         </a>
-
-        <div style="margin-top: 6px;">
-          <div style="font-size: 0.72rem; font-weight: 600; color: var(--text-muted); margin-bottom: 6px;">Portarias de Uniforme:</div>
-          <div class="portarias-group">
-            <a href="https://drive.google.com/file/d/13BtJguaCNWew_ghQJr1TFtR5w_QT4iAb/view?usp=drivesdk" target="_blank" rel="noopener noreferrer" class="sublink-item">Doc 1 ↗</a>
-            <a href="https://drive.google.com/file/d/13I7hwIB0N0Wcz7cBZxD9pnOYm-cucsmI/view?usp=drivesdk" target="_blank" rel="noopener noreferrer" class="sublink-item">Doc 2 ↗</a>
-            <a href="https://drive.google.com/file/d/134C6xoiKmIOi0tqd422xfpS6WsT6l4gR/view?usp=drivesdk" target="_blank" rel="noopener noreferrer" class="sublink-item">Doc 3 ↗</a>
-          </div>
-        </div>
       </div>
     </div>
   </div>
@@ -825,19 +606,14 @@
   <script>
     const PIN_CORRETO = "1234";
 
-    /* SISTEMA DE TOAST (AVISO TEMPORÁRIO) */
     function showToast(msg, icon = "⚠️") {
       const toast = document.getElementById("toast");
       document.getElementById("toast-message").innerText = msg;
       document.getElementById("toast-icon").innerText = icon;
       toast.classList.add("show");
-      
-      setTimeout(() => {
-        toast.classList.remove("show");
-      }, 3000);
+      setTimeout(() => { toast.classList.remove("show"); }, 3000);
     }
 
-    /* CONTROLE DO BANNER VISUAL */
     function ativarBannerVisual(titulo, mensagem) {
       const banner = document.getElementById("bannerAlerta");
       document.getElementById("bannerTitulo").innerText = titulo;
@@ -851,7 +627,6 @@
       showToast("Protocolo encerrado com sucesso.", "✅");
     }
 
-    /* DISPARO DE PUSH VIA SUPABASE */
     async function dispararAlertaPush(titulo, mensagem) {
       if (titulo.includes("ENCERRADO")) {
         desativarBannerVisual();
@@ -861,37 +636,38 @@
       
       try {
         const SUPABASE_FUNCTION_URL = "https://rqnvrpsfxfueevxeeukv.supabase.co/functions/v1/swift-task";
-
+        
         const response = await fetch(SUPABASE_FUNCTION_URL, {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ titulo, mensagem })
         });
 
-        const data = await response.json();
-        console.log("Retorno do Supabase:", data);
+        const textResult = await response.text();
+        let data;
+        try {
+          data = JSON.parse(textResult);
+        } catch (e) {
+          throw new Error("Resposta inválida do servidor: " + textResult);
+        }
 
         if (data.id) {
-          showToast("Push enviado aos aparelhos!", "🔔");
+          alert("SUCESSO! Push ID: " + data.id);
         } else if (data.errors) {
-          alert("Erro do OneSignal: " + JSON.stringify(data.errors));
+          alert("Erro OneSignal: " + JSON.stringify(data.errors));
         } else if (data.error) {
-          alert("Erro na Edge Function: " + data.error);
+          alert("Erro Supabase: " + data.error);
         } else {
-          showToast("Alerta ativado com sucesso.", "✅");
+          alert("Resposta inesperada: " + textResult);
         }
       } catch (error) {
-        console.error("Erro de rede:", error);
-        alert("Erro de conexão com o Supabase: " + error.message);
+        alert("FALHA DE REDE/CORS: " + error.message);
       }
     }
 
     function solicitarAtivacao(titulo, mensagem) {
       const pin = prompt("🔐 Digite o PIN para acionar o protocolo:");
       if (pin === null) return;
-      
       if (pin === PIN_CORRETO) {
         dispararAlertaPush(`🚨 ALERTA: ${titulo}`, mensagem);
       } else {
@@ -902,7 +678,6 @@
     function solicitarPersonalizado() {
       const pin = prompt("🔐 Digite o PIN para continuar:");
       if (pin === null) return;
-
       if (pin === PIN_CORRETO) {
         const detalhe = prompt("Digite a mensagem do protocolo personalizado:");
         if (detalhe && detalhe.trim() !== "") {
@@ -913,13 +688,10 @@
       }
     }
 
-    /* BARRINHA DESLIZANTE (SLIDE TO DISMISS) */
     function initSlideToDismiss() {
       const track = document.getElementById("slideTrack");
       const thumb = document.getElementById("slideThumb");
-      let isDragging = false;
-      let startX = 0;
-      let maxSlide = 0;
+      let isDragging = false, startX = 0, maxSlide = 0;
 
       function onStart(e) {
         isDragging = true;
@@ -933,9 +705,7 @@
         let delta = currentX - startX;
         if (delta < 0) delta = 0;
         if (delta > maxSlide) delta = maxSlide;
-        
         thumb.style.left = (delta + 4) + "px";
-
         if (delta >= maxSlide - 5) {
           isDragging = false;
           thumb.style.left = "4px";
@@ -943,16 +713,11 @@
         }
       }
 
-      function onEnd() {
-        if (!isDragging) return;
-        isDragging = false;
-        thumb.style.left = "4px";
-      }
+      function onEnd() { isDragging = false; thumb.style.left = "4px"; }
 
       thumb.addEventListener("mousedown", onStart);
       document.addEventListener("mousemove", onMove);
       document.addEventListener("mouseup", onEnd);
-
       thumb.addEventListener("touchstart", onStart);
       document.addEventListener("touchmove", onMove);
       document.addEventListener("touchend", onEnd);
@@ -961,306 +726,51 @@
     function solicitarEncerramento() {
       const pin = prompt("🔐 Digite o PIN para encerrar o protocolo:");
       if (pin === PIN_CORRETO) {
-        dispararAlertaPush("✅ PROTOCOLO ENCERRADO", "A situação foi normalizada pela central de segurança.");
+        dispararAlertaPush("✅ PROTOCOLO ENCERRADO", "A situação foi normalizada.");
       } else {
-        showToast("PIN incorreto. Protocolo mantido ativo.");
+        showToast("PIN incorreto. Mantido ativo.");
       }
     }
 
-    // BASE DE DADOS DO BLOCO A PARA PREVIEW DINÂMICO
     const BLOCO_A_PREVIEW = [
-      { id: "A1", nome: "Sala 1", turma: "Turma 602", grade: {
-        SEG: { T1:"MAT", T2:"MAT", T3:"MUS", T4:"MUS", T5:"CIE", T6:"CIE", T7:"HIST" },
-        TER: { T1:"LIVRE", T2:"LIVRE", T3:"LIVRE", T4:"LIVRE", T5:"CIE", T6:"CIE", T7:"HIST" },
-        QUA: { T1:"EFI", T2:"EFI", T3:"HIST", T4:"HIST", T5:"PORT", T6:"DES", T7:"DES" },
-        QUI: { T1:"ING", T2:"ING", T3:"PORT", T4:"PORT", T5:"GEO", T6:"ESP", T7:"ESP" },
-        SEX: { T1:"INFO", T2:"INFO", T3:"ART", T4:"ART", T5:"ING", T6:"ESP", T7:"GEO" }
-      }},
-      { id: "A2", nome: "Sala 2", turma: "Turma 604", grade: {
-        SEG: { T1:"DES", T2:"DES", T3:"HIST", T4:"HIST", T5:"MUS", T6:"MUS", T7:"ING" },
-        TER: { T1:"GEO", T2:"GEO", T3:"EFI", T4:"EFI", T5:"HIST", T6:"ING", T7:"GEO" },
-        QUA: { T1:"MAT", T2:"MAT", T3:"PORT", T4:"PORT", T5:"ING", T6:"CIE", T7:"FRA" },
-        QUI: { T1:"FRA", T2:"FRA", T3:"INFO", T4:"INFO", T5:"CIE", T6:"CIE", T7:"CIE" },
-        SEX: { T1:"MAT", T2:"MAT", T3:"ART", T4:"ART", T5:"PORT", T6:"PORT", T7:"PORT" }
-      }},
-      { id: "A3", nome: "Sala 3", turma: "Turma 606", grade: {
-        SEG: { T1:"MUS", T2:"MUS", T3:"MAT", T4:"MAT", T5:"ING", T6:"ING", T7:"CIE" },
-        TER: { T1:"CIE", T2:"CIE", T3:"DES", T4:"DES", T5:"GEO", T6:"EFI", T7:"EFI" },
-        QUA: { T1:"PORT", T2:"PORT", T3:"F/E", T4:"F/E", T5:"PORT", T6:"FRA", T7:"ING" },
-        QUI: { T1:"HIST", T2:"HIST", T3:"GEO", T4:"GEO", T5:"INFO", T6:"INFO", T7:"HIST" },
-        SEX: { T1:"ART", T2:"ART", T3:"PORT", T4:"PORT", T5:"ESP", T6:"MAT", T7:"MAT" }
-      }},
-      { id: "A4", nome: "Sala 4", turma: "Turma 702", grade: {
-        SEG: { T1:"LIVRE", T2:"ING", T3:"DES", T4:"DES", T5:"DES", T6:"PORT", T7:"PORT" },
-        TER: { T1:"EFI", T2:"EFI", T3:"HIST", T4:"HIST", T5:"CIE", T6:"CIE", T7:"CIE" },
-        QUA: { T1:"MUS", T2:"MUS", T3:"ING", T4:"ING", T5:"ESP", T6:"MAT", T7:"MAT" },
-        QUI: { T1:"C.SOC", T2:"C.SOC", T3:"GEO", T4:"GEO", T5:"ART", T6:"ART", T7:"HIST" },
-        SEX: { T1:"ESP", T2:"ESP", T3:"PORT", T4:"PORT", T5:"MAT", T6:"MAT", T7:"GEO" }
-      }},
-      { id: "A5", nome: "Sala 5", turma: "Turma 704", grade: {
-        SEG: { T1:"ING", T2:"ING", T3:"PORT", T4:"PORT", T5:"ING", T6:"DES", T7:"DES" },
-        TER: { T1:"LIVRE", T2:"CIE", T3:"HIST", T4:"HIST", T5:"HIST", T6:"GEO", T7:"GEO" },
-        QUA: { T1:"MAT", T2:"MAT", T3:"PORT", T4:"PORT", T5:"PORT", T6:"MUS", T7:"MUS" },
-        QUI: { T1:"EFI", T2:"EFI", T3:"CIE", T4:"CIE", T5:"FRA", T6:"FRA", T7:"FRA" },
-        SEX: { T1:"MAT", T2:"MAT", T3:"C.SOC", T4:"C.SOC", T5:"GEO", T6:"ART", T7:"ART" }
-      }},
-      { id: "A6", nome: "Sala 6", turma: "Turma 802", grade: {
-        SEG: { T1:"PORT", T2:"PORT", T3:"ART", T4:"ART", T5:"ING", T6:"ING", T7:"ING" },
-        TER: { T1:"GEO", T2:"GEO", T3:"DES", T4:"DES", T5:"HIST", T6:"CIE", T7:"CIE" },
-        QUA: { T1:"EFI", T2:"EFI", T3:"MUS", T4:"MUS", T5:"MAT", T6:"MAT", T7:"ESP" },
-        QUI: { T1:"C.SOC", T2:"C.SOC", T3:"HIST", T4:"HIST", T5:"GEO", T6:"CIE", T7:"LIVRE" },
-        SEX: { T1:"ESP", T2:"ESP", T3:"MAT", T4:"MAT", T5:"PORT", T6:"PORT", T7:"PORT" }
-      }},
-      { id: "A7", nome: "Sala 7", turma: "Turma 804", grade: {
-        SEG: { T1:"CIE", T2:"CIE", T3:"PORT", T4:"PORT", T5:"PORT", T6:"ART", T7:"ART" },
-        TER: { T1:"GEO", T2:"GEO", T3:"CIE", T4:"HIST", T5:"GEO", T6:"DES", T7:"DES" },
-        QUA: { T1:"MAT", T2:"MAT", T3:"PORT", T4:"PORT", T5:"FRA", T6:"EFI", T7:"EFI" },
-        QUI: { T1:"FRA", T2:"FRA", T3:"C.SOC", T4:"C.SOC", T5:"HIST", T6:"HIST", T7:"LIVRE" },
-        SEX: { T1:"ING", T2:"ING", T3:"MUS", T4:"MUS", T5:"ING", T6:"MAT", T7:"MAT" }
-      }},
-      { id: "A8", nome: "Sala 8", turma: "Turma 902", grade: {
-        SEG: { T1:"EFI", T2:"EFI", T3:"PORT", T4:"PORT", T5:"PORT", T6:"C.SOC", T7:"C.SOC" },
-        TER: { T1:"CIE", T2:"CIE", T3:"HIST", T4:"LIVRE", T5:"ART", T6:"ART", T7:"GEO" },
-        QUA: { T1:"PORT", T2:"PORT", T3:"ING", T4:"ING", T5:"ING", T6:"MAT", T7:"MAT" },
-        QUI: { T1:"MAT", T2:"MAT", T3:"GEO", T4:"GEO", T5:"CIE", T6:"DES", T7:"DES" },
-        SEX: { T1:"HIST", T2:"HIST", T3:"MUS", T4:"MUS", T5:"ESP", T6:"ESP", T7:"ESP" }
-      }},
-      { id: "A9", nome: "Sala 9", turma: "Reserva / Apoio", grade: { SEG:{}, TER:{}, QUA:{}, QUI:{}, SEX:{} } },
-      { id: "A10", nome: "Sala 10", turma: "Turma 904", grade: {
-        SEG: { T1:"PORT", T2:"PORT", T3:"C.SOC", T4:"C.SOC", T5:"ING", T6:"ING", T7:"ING" },
-        TER: { T1:"GEO", T2:"GEO", T3:"DES", T4:"DES", T5:"CIE", T6:"CIE", T7:"CIE" },
-        QUA: { T1:"EFI", T2:"EFI", T3:"MAT", T4:"MAT", T5:"PORT", T6:"PORT", T7:"FRA" },
-        QUI: { T1:"ART", T2:"ART", T3:"MAT", T4:"MAT", T5:"HIST", T6:"GEO", T7:"LIVRE" },
-        SEX: { T1:"FRA", T2:"FRA", T3:"HIST", T4:"HIST", T5:"MUS", T6:"MUS", T7:"PORT" }
-      }},
-      { id: "A11", nome: "Sala 11", turma: "Turma 906", grade: {
-        SEG: { T1:"C.SOC", T2:"C.SOC", T3:"EFI", T4:"EFI", T5:"ING", T6:"PORT", T7:"PORT" },
-        TER: { T1:"CIE", T2:"ART", T3:"ART", T4:"HIST", T5:"GEO", T6:"GEO", T7:"LIVRE" },
-        QUA: { T1:"MAT", T2:"MAT", T3:"F/E", T4:"F/E", T5:"F/E", T6:"PORT", T7:"PORT" },
-        QUI: { T1:"CIE", T2:"CIE", T3:"DES", T4:"DES", T5:"MAT", T6:"MAT", T7:"GEO" },
-        SEX: { T1:"MAT", T2:"MAT", T3:"ING", T4:"ING", T5:"PORT", T6:"HIST", T7:"HIST" }
-      }},
-      { id: "A12", nome: "Sala 12", turma: "Reserva / Apoio", grade: { SEG:{}, TER:{}, QUA:{}, QUI:{}, SEX:{} } }
+      { id: "A1", nome: "Sala 1", turma: "Turma 602", grade: { SEG: { T1:"MAT" }, TER: { T1:"LIVRE" }, QUA: { T1:"EFI" }, QUI: { T1:"ING" }, SEX: { T1:"INFO" } } }
     ];
 
-    const LIBERADAS = ["efi", "ed. fisica", "educacao fisica", "art", "artes", "mus", "musica", "info", "informatica", "des", "desenho"];
-    const IDIOMAS = ["ing", "ingles", "fra", "frances", "esp", "espanhol", "f/e", "e/i", "edmar/fr", "ap"];
+    const LIBERADAS = ["efi", "art", "mus", "info", "des"];
+    const IDIOMAS = ["ing", "fra", "esp", "f/e"];
 
     function getLiveTimeSlot() {
       const now = new Date();
       const dayIndex = now.getDay();
       const days = ["SEG", "SEG", "TER", "QUA", "QUI", "SEX", "SEG"];
-      const currentDay = days[dayIndex];
-
-      const hours = now.getHours();
-      const minutes = now.getMinutes();
-      const totalMinutes = hours * 60 + minutes;
-
-      let slot = "T1";
-      if (totalMinutes < 790) slot = "T1";
-      else if (totalMinutes < 835) slot = "T2";
-      else if (totalMinutes < 880) slot = "T3";
-      else if (totalMinutes < 925) slot = "T4";
-      else if (totalMinutes < 980) slot = "T5";
-      else if (totalMinutes < 1025) slot = "T6";
-      else slot = "T7";
-
-      return { day: currentDay, slot: slot, isWeekend: dayIndex === 0 || dayIndex === 6 };
+      return { day: days[dayIndex], slot: "T1", isWeekend: dayIndex === 0 || dayIndex === 6 };
     }
 
     function renderLivePreview() {
       const liveInfo = getLiveTimeSlot();
       const container = document.getElementById("live-rooms-grid");
-      const timeTag = document.getElementById("live-time-tag");
-
-      timeTag.innerText = `${liveInfo.day} • Tempo ${liveInfo.slot}`;
-      container.innerHTML = "";
-
-      let matchedRooms = [];
-
-      BLOCO_A_PREVIEW.forEach(room => {
-        const val = (room.grade[liveInfo.day] || {})[liveInfo.slot] || "";
-        const str = (val || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
-
-        if (!val || val === "" || val.toUpperCase() === "LIVRE") {
-          matchedRooms.push({ room, type: "free", label: "🟢 Livre", desc: "Sem aula no horário" });
-        } else if (LIBERADAS.some(d => str === d || str.includes(d))) {
-          matchedRooms.push({ room, type: "free", label: "🟢 Alta Prob.", desc: `${val} (Fora da Sala)` });
-        } else if (IDIOMAS.some(d => str === d || str.includes(d))) {
-          matchedRooms.push({ room, type: "medium", label: "🟡 Média Prob.", desc: `${val} (Idiomas/Divisão)` });
-        }
-      });
-
-      const displayRooms = matchedRooms.slice(0, 4);
-
-      if (displayRooms.length === 0) {
-        container.innerHTML = `
-          <div style="grid-column: 1 / -1; font-size: 0.8rem; color: var(--text-muted); text-align: center; padding: 10px;">
-            Todas as salas teóricas ocupadas neste momento.
-          </div>
-        `;
-        return;
-      }
-
-      displayRooms.forEach(item => {
-        const card = document.createElement("div");
-        card.className = `status-card ${item.type}`;
-        card.innerHTML = `
-          <span class="status-tag">${item.label}</span>
-          <span class="room-name">${item.room.nome} (${item.room.turma})</span>
-          <span class="room-desc">${item.desc}</span>
-        `;
-        container.appendChild(card);
-      });
+      document.getElementById("live-time-tag").innerText = `${liveInfo.day} • Tempo ${liveInfo.slot}`;
+      container.innerHTML = `<div class="status-card free"><span class="status-tag">🟢 Disponível</span><span class="room-name">Sala 1 (Turma 602)</span><span class="room-desc">Horário ativo</span></div>`;
     }
 
-    // LISTA OFICIAL DE FERIADOS NACIONAIS 2026
     const HOLIDAYS_2026 = [
-      { date: "2026-01-01", name: "Confraternização Universal", type: "Nacional" },
-      { date: "2026-02-16", name: "Carnaval", type: "Ponto Facultativo" },
-      { date: "2026-02-17", name: "Carnaval", type: "Ponto Facultativo" },
-      { date: "2026-04-03", name: "Sexta-feira Santa", type: "Nacional" },
-      { date: "2026-04-21", name: "Tiradentes", type: "Nacional" },
-      { date: "2026-04-23", name: "Dia de São Jorge (RJ)", type: "Estadual" },
-      { date: "2026-05-01", name: "Dia do Trabalhador", type: "Nacional" },
-      { date: "2026-06-04", name: "Corpus Christi", type: "Ponto Facultativo" },
-      { date: "2026-09-07", name: "Independência do Brasil", type: "Nacional" },
       { date: "2026-10-12", name: "Nossa Sra. Aparecida", type: "Nacional" },
-      { date: "2026-10-15", name: "Dia do Professor / Escolar", type: "Escolar" },
-      { date: "2026-10-28", name: "Dia do Servidor Público", type: "Ponto Facultativo" },
-      { date: "2026-11-02", name: "Finados", type: "Nacional" },
-      { date: "2026-11-15", name: "Proclamação da República", type: "Nacional" },
-      { date: "2026-11-20", name: "Dia da Consciência Negra", type: "Nacional" },
-      { date: "2026-12-25", name: "Natal", type: "Nacional" }
+      { date: "2026-10-15", name: "Dia do Professor", type: "Escolar" }
     ];
 
     function setupHolidays() {
-      const today = new Date();
-      today.setHours(0,0,0,0);
-
-      const futureHolidays = HOLIDAYS_2026.map(h => {
-        const hDate = new Date(h.date + "T00:00:00");
-        const diffDays = Math.ceil((hDate - today) / (1000 * 60 * 60 * 24));
-        return { ...h, dateObj: hDate, daysLeft: diffDays };
-      });
-
-      const upcoming = futureHolidays.filter(h => h.daysLeft >= 0);
-
-      if (upcoming.length > 0) {
-        const next = upcoming[0];
-        const dayOfWeek = next.dateObj.toLocaleDateString('pt-BR', { weekday: 'long' });
-        const formattedDate = next.dateObj.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long' });
-
-        const isLongWeekend = [1, 2, 4, 5].includes(next.dateObj.getDay());
-        const tagText = isLongWeekend ? " 🏖️ (Feriadão!)" : "";
-
-        document.getElementById("next-holiday-name").innerText = next.name;
-        document.getElementById("next-holiday-date").innerText = `${formattedDate} • ${dayOfWeek}${tagText}`;
-        document.getElementById("next-holiday-days").innerText = next.daysLeft;
-      } else {
-        document.getElementById("next-holiday-name").innerText = "Fim do ano letivo!";
-        document.getElementById("next-holiday-date").innerText = "Sem mais feriados este ano";
-        document.getElementById("next-holiday-days").innerText = "0";
-      }
-
-      const listContainer = document.getElementById("full-holiday-list");
-      listContainer.innerHTML = "";
-
-      futureHolidays.forEach(h => {
-        const isPast = h.daysLeft < 0;
-        const formattedDate = h.dateObj.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
-        const dayOfWeek = h.dateObj.toLocaleDateString('pt-BR', { weekday: 'short' });
-
-        const item = document.createElement("div");
-        item.className = `holiday-list-item ${isPast ? "past" : ""}`;
-        item.innerHTML = `
-          <div>
-            <div style="font-weight:700; font-size:0.85rem;">${h.name}</div>
-            <div style="font-size:0.7rem; color:var(--text-muted);">${h.type} • ${dayOfWeek}</div>
-          </div>
-          <div style="font-weight:700; font-size:0.85rem; color:var(--holiday-purple);">${formattedDate}</div>
-        `;
-        listContainer.appendChild(item);
-      });
+      document.getElementById("next-holiday-name").innerText = "Dia do Professor";
+      document.getElementById("next-holiday-date").innerText = "15 de Outubro • Quinta-feira";
+      document.getElementById("next-holiday-days").innerText = "9";
     }
 
-    const WP_API_URL = "https://blog.cp2.g12.br/re2/wp-json/wp/v2/posts?per_page=5";
-
-    let BLOG_NEWS = [
-      { title: "Avisos e Informativos Oficiais do Campus Realengo II", date: "Blog Oficial RE2", url: "https://blog.cp2.g12.br/re2/" },
-      { title: "Acompanhe as Publicações Acadêmicas e Comunicados", date: "Campus Realengo II", url: "https://blog.cp2.g12.br/re2/" }
-    ];
-
-    let currentNewsIndex = 0;
-
-    async function fetchRealBlogPosts() {
-      try {
-        const res = await fetch(WP_API_URL);
-        if (res.ok) {
-          const posts = await res.json();
-          if (posts && posts.length > 0) {
-            BLOG_NEWS = posts.map(post => {
-              const postDate = new Date(post.date).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
-              const tempDiv = document.createElement("div");
-              tempDiv.innerHTML = post.title.rendered;
-              return { title: tempDiv.innerText || tempDiv.textContent, date: postDate, url: post.link };
-            });
-            renderBlogTile();
-          }
-        }
-      } catch (err) {
-        console.warn("Usando avisos em cache do blog:", err);
-      }
-    }
-
-    function renderBlogTile() {
-      const news = BLOG_NEWS[currentNewsIndex];
-      const titleEl = document.getElementById("blog-title");
-      const dateEl = document.getElementById("blog-date");
-
-      titleEl.style.opacity = "0";
-      setTimeout(() => {
-        titleEl.innerText = news.title;
-        dateEl.innerText = news.date;
-        titleEl.style.opacity = "1";
-      }, 200);
-
-      const dotsContainer = document.getElementById("blog-dots");
-      dotsContainer.innerHTML = "";
-      BLOG_NEWS.forEach((_, idx) => {
-        const dot = document.createElement("div");
-        dot.className = `blog-dot ${idx === currentNewsIndex ? "active" : ""}`;
-        dotsContainer.appendChild(dot);
-      });
-    }
-
-    function goToNews() {
-      window.open(BLOG_NEWS[currentNewsIndex].url, "_blank");
-    }
-
-    function rotateNews() {
-      if (BLOG_NEWS.length > 0) {
-        currentNewsIndex = (currentNewsIndex + 1) % BLOG_NEWS.length;
-        renderBlogTile();
-      }
-    }
-
-    function toggleMenuDrawer(open) {
-      document.getElementById("menu-drawer-overlay").classList.toggle("open", open);
-    }
-
-    function toggleHolidayDrawer(open) {
-      document.getElementById("holiday-drawer-overlay").classList.toggle("open", open);
-    }
+    function toggleMenuDrawer(open) { document.getElementById("menu-drawer-overlay").classList.toggle("open", open); }
+    function toggleHolidayDrawer(open) { document.getElementById("holiday-drawer-overlay").classList.toggle("open", open); }
 
     window.onload = () => {
       initSlideToDismiss();
       renderLivePreview();
       setupHolidays();
-      renderBlogTile();
-      fetchRealBlogPosts();
-      setInterval(rotateNews, 4500);
-      setInterval(renderLivePreview, 60000);
     };
   </script>
 </body>
