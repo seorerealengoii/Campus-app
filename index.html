@@ -24,16 +24,7 @@
         const notification = event.notification;
         const titulo = notification.title || "🚨 ALERTA DE EMERGÊNCIA";
         const mensagem = notification.body || "Protocolo ativado na central.";
-        
-        if (titulo.includes("ENCERRADO")) {
-          const banner = document.getElementById("bannerAlerta");
-          if (banner) banner.style.display = "none";
-        } else {
-          ativarBannerVisual(titulo, mensagem);
-        }
-
-        // Notificaçãozinha rápida no topo que some sozinha
-        showToast(titulo, "🚨");
+        ativarBannerVisual(titulo, mensagem);
       });
     });
 
@@ -595,18 +586,14 @@
 
     function ativarBannerVisual(titulo, mensagem) {
       const banner = document.getElementById("bannerAlerta");
-      if (banner) {
-        document.getElementById("bannerTitulo").innerText = titulo;
-        document.getElementById("bannerMensagem").innerText = mensagem;
-        banner.style.display = "flex";
-      }
+      document.getElementById("bannerTitulo").innerText = titulo;
+      document.getElementById("bannerMensagem").innerText = mensagem;
+      banner.style.display = "flex";
     }
 
     function desativarBannerVisual() {
       const banner = document.getElementById("bannerAlerta");
-      if (banner) {
-        banner.style.display = "none";
-      }
+      banner.style.display = "none";
       showToast("Protocolo encerrado com sucesso.", "✅");
     }
 
@@ -619,7 +606,7 @@
       
       try {
         const SUPABASE_FUNCTION_URL = "https://rqnvrpsfxfueevxeeukv.supabase.co/functions/v1/swift-task";
-        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJxbnZycHNmeGZ1ZWV2eGVldWt2IkwSI6ImFub24iLCJpYXQiOjE3OTEyOTQ0NTIsImV4cCI6MjEwNjg3MDQ1Mn0.URWgsCFjqmQh6WtrZXMnObzDmM4YTiC0iSdZ9pbP4GI";
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJxbnZycHNmeGZ1ZWV2eGVldWt2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEyOTQ0NTIsImV4cCI6MjEwNjg3MDQ1Mn0.URWgsCFjqmQh6WtrZXMnObzDmM4YTiC0iSdZ9pbP4GI";
         
         const response = await fetch(SUPABASE_FUNCTION_URL, {
           method: "POST",
