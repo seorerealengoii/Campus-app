@@ -416,7 +416,7 @@
 <body>
 
   <div id="toast" class="toast-notification">
-    <span id="toast-icon">⚠️</span>
+    <span id="toast-icon">⚠️️</span>
     <span id="toast-message">PIN incorreto. Ação cancelada.</span>
   </div>
 
@@ -606,13 +606,12 @@
       
       try {
         const SUPABASE_FUNCTION_URL = "https://rqnvrpsfxfueevxeeukv.supabase.co/functions/v1/swift-task";
-        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJxbnZycHNmeGZ1ZWV2eGVldWt2Iiwicm9sZSI6ImFub24iLCJpYXQiOjQ3MTI4MDgyNzN9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJxbnZycHNmeGZ1ZWV2eGVldWt2Iiwicm9sZSI6ImFub24iLCJpYXQiOjQ3MTI4MDgyNzN9..."; // Chave pública anónima segura
         
+        // Chamada direta para a Edge Function sem exigir token de cabeçalho restrito
         const response = await fetch(SUPABASE_FUNCTION_URL, {
           method: "POST",
           headers: { 
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + SUPABASE_ANON_KEY
+            "Content-Type": "application/json"
           },
           body: JSON.stringify({ titulo, mensagem })
         });
@@ -626,13 +625,13 @@
         }
 
         if (data.id) {
-          showToast("Push enviado com sucesso!", "🔔");
+          alert("SUCESSO! Push ID: " + data.id);
         } else if (data.errors) {
           alert("Erro OneSignal: " + JSON.stringify(data.errors));
         } else if (data.error) {
           alert("Erro Supabase: " + data.error);
         } else {
-          showToast("Alerta ativado com sucesso.", "✅");
+          alert("Resposta inesperada: " + textResult);
         }
       } catch (error) {
         alert("FALHA DE REDE: " + error.message);
