@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Campus Monitor — Acesso Restrito</title>
+  
+  <script>
+    // Se o servidor já estiver logado, vai direto para a tela principal
+    if (localStorage.getItem("userAuthenticated") === "true") {
+      window.location.href = "inicio.html";
+    }
+  </script>
+
+  <style>
+    :root {
+      --bg-surface: #f1f5f9;
+      --card-bg: #ffffff;
+      --border-color: #e2e8f0;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --brand-blue: #0284c7;
+      --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+
+    body {
+      background-color: var(--bg-surface);
+      color: var(--text-main);
+      font-family: var(--font-family);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .login-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 28px 22px;
+      width: 100%;
+      max-width: 380px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      text-align: center;
+    }
+
+    .brand-icon {
+      width: 52px;
+      height: 52px;
+      background: #e0f2fe;
+      color: var(--brand-blue);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+    }
+
+    .login-card h1 { font-size: 1.15rem; font-weight: 700; color: var(--text-main); }
+    .login-card p { font-size: 0.78rem; color: var(--text-muted); }
+
+    .input-group { width: 100%; text-align: left; }
+    .input-group label { display: block; font-size: 0.72rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px; }
+    
+    .login-input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      font-size: 0.95rem;
+      outline: none;
+      background: var(--bg-surface);
+      color: var(--text-main);
+    }
+
+    .login-input:focus { border-color: var(--brand-blue); background: #ffffff; }
+
+    .btn-login {
+      width: 100%;
+      background: var(--brand-blue);
+      color: #ffffff;
+      border: none;
+      padding: 13px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 4px;
+    }
+
+    .error-msg { font-size: 0.75rem; color: #ef4444; font-weight: 600; display: none; }
+  </style>
+</head>
+<body>
+
+  <div class="login-card">
+    <div class="brand-icon">🔒</div>
+    <div>
+      <h1>Campus Monitor SEORE</h1>
+      <p>Acesso Exclusivo para Servidores Autorizados</p>
+    </div>
+
+    <div class="input-group">
+      <label>Nome do Servidor / Usuário</label>
+      <input type="text" id="userInput" class="login-input" placeholder="Ex: Ana Karla ou Ana Karla Baracal" autocomplete="off" />
+    </div>
+
+    <div class="input-group">
+      <label>Senha / Matrícula</label>
+      <input type="password" id="passInput" class="login-input" placeholder="••••••••" inputmode="numeric" />
+    </div>
+
+    <div id="errorMsg" class="error-msg">Usuário ou senha incorretos.</div>
+
+    <button class="btn-login" onclick="validarLogin()">Entrar no Sistema</button>
+  </div>
+
+  <script>
+    // Lista de logins criptografada/ofuscada em bloco sob medida
+    const DATA_VAULT = "U0VPS1JfVkFVTFQ6OkFuYSBLYXJsYSBCYXJhY2FsfDIxMTUzMDg7UFJJU0NJTEEgQkFSUkVUT3wxMjU5MTExO01BVEhFVVMgQ0FSVkFMSE98MzE2MjA2OTtBTEVYIENPUkxFVFR8MTcxMTc3NjtBTkRFUlNPTiBQRVJFSVJBFDIxMTY1MzY7S0FSSU5BIENBVkFMSEVJUk98MjE1MTU0NDtOT1JNQSBWSVJHSU5JQXwzOTQ2NTtQRURSTyBSRU5BVE98Mjk5ODE2NztBTEFOREVSU09OIEdPTkNBTFZFU3wzMDA2MTAxO0pBQ0tTT04gVEVJWExJUkF8MjEwNTkwMDtBRFJJQU5PIERBIFNJTFZBFDIxMTY0ODI7TFVJWiBIRU5SSVFVRXwyMTE4OTQ1O1NFQkFTVElBTyBTQU5UT1N8Mjk5ODE3NTtGSUxJUEUgREUgT0xJVkVJUkF8MzQxOTQ2MTtBTElORSBDQVJET05BfDE0MjY1NDA=";
+
+    function decryptVault(data) {
+      try {
+        const decoded = atob(data);
+        if (!decoded.startsWith("SEORE_VAULT::")) return [];
+        const rawList = decoded.replace("SEORE_VAULT::", "").split(";");
+        return rawList.map(item => {
+          const parts = item.split("|");
+          return { name: parts[0], pass: parts[1] };
+        });
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function normalizeStr(str) {
+      return (str || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+    }
+
+    function validarLogin() {
+      const userVal = normalizeStr(document.getElementById("userInput").value);
+      const passVal = document.getElementById("passInput").value.trim();
+      const errorMsg = document.getElementById("errorMsg");
+
+      if (!userVal || !passVal) {
+        errorMsg.innerText = "Por favor, preencha o usuário e a senha.";
+        errorMsg.style.display = "block";
+        return;
+      }
+
+      const db = decryptVault(DATA_VAULT);
+      
+      // Procura o servidor permitindo digitar o nome completo ou apenas o primeiro nome
+      const match = db.find(s => {
+        const dbNameNorm = normalizeStr(s.name);
+        const firstNameNorm = dbNameNorm.split(" ")[0];
+        const isNameMatch = (dbNameNorm === userVal) || (firstNameNorm === userVal);
+        return isNameMatch && s.pass === passVal;
+      });
+
+      if (match) {
+        // Formata o nome para exibição bonita (Ex: Ana Karla Baracal)
+        const nomeFormatado = match.name.toLowerCase().replace(/(?:^|\s)\S/g, a => a.toUpperCase());
+        
+        localStorage.setItem("userAuthenticated", "true");
+        localStorage.setItem("nomeServidor", nomeFormatado);
+        window.location.href = "inicio.html";
+      } else {
+        errorMsg.innerText = "Usuário ou senha incorretos.";
+        errorMsg.style.display = "block";
+        document.getElementById("passInput").value = "";
+      }
+    }
+
+    document.getElementById("passInput").addEventListener("keypress", function(e) {
+      if (e.key === "Enter") validarLogin();
+    });
+    document.getElementById("userInput").addEventListener("keypress", function(e) {
+      if (e.key === "Enter") document.getElementById("passInput").focus();
+    });
+  </script>
+</body>
+</html>
