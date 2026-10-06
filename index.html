@@ -828,7 +828,7 @@
     const ONESIGNAL_REST_KEY = "zti5oo5hq5aujkafqvprjed6e63wpo2guc4ex7ehromj4i7wqyuirui6ew2ay7fgxtbs55kx4nxjbdfnnbohupkkkjlq3kas767r5qq";
 
     /* SISTEMA DE TOAST (AVISO TEMPORÁRIO) */
-    function showToast(msg, icon = "⚠️") {
+    function showToast(msg, icon = "⚠️️") {
       const toast = document.getElementById("toast");
       document.getElementById("toast-message").innerText = msg;
       document.getElementById("toast-icon").innerText = icon;
@@ -853,7 +853,7 @@
       showToast("Protocolo encerrado com sucesso.", "✅");
     }
 
-    /* DISPARO DE PUSH E ATIVAÇÃO COM PIN (COM DEBBUGING DE ERROS) */
+    /* DISPARO DE PUSH COM PROXY CORS PARA CONTORNAR O BLOQUEIO DO NAVEGADOR */
     async function dispararAlertaPush(titulo, mensagem) {
       if (titulo.includes("ENCERRADO")) {
         desativarBannerVisual();
@@ -862,7 +862,10 @@
       }
       
       try {
-        const response = await fetch("https://onesignal.com/api/v1/notifications", {
+        const proxyUrl = "https://corsproxy.io/?";
+        const targetUrl = "https://onesignal.com/api/v1/notifications";
+
+        const response = await fetch(proxyUrl + encodeURIComponent(targetUrl), {
           method: "POST",
           headers: {
             "Content-Type": "application/json; charset=utf-8",
@@ -890,7 +893,7 @@
         }
       } catch (error) {
         console.error("Erro ao disparar Push:", error);
-        alert("Erro de rede/CORS: " + error.message);
+        alert("Erro de rede: " + error.message);
       }
     }
 
