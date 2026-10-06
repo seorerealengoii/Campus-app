@@ -12,8 +12,12 @@
     OneSignalDeferred.push(async function(OneSignal) {
       await OneSignal.init({
         appId: "ccd1d73b-a787-4144-a805-855f14907e27",
+        safari_web_id: "web.onesignal.auto.21eb64f1-a307-4b53-9fa9-5af0b410a31b",
         serviceWorkerPath: "/Campus-app/OneSignalSDKWorker.js",
-        serviceWorkerParam: { scope: "/Campus-app/" }
+        serviceWorkerParam: { scope: "/Campus-app/" },
+        notifyButton: {
+          enable: false
+        }
       });
 
       // Escuta o Push recebido para ativar o banner em tempo real na tela
