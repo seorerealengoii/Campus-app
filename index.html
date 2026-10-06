@@ -853,9 +853,8 @@
       showToast("Protocolo encerrado com sucesso.", "✅");
     }
 
-    /* DISPARO DE PUSH E ATIVAÇÃO COM PIN */
+      /* DISPARO DE PUSH E ATIVAÇÃO COM PIN */
     async function dispararAlertaPush(titulo, mensagem) {
-      // Atualiza o banner visual da tela imediatamente
       if (titulo.includes("ENCERRADO")) {
         desativarBannerVisual();
       } else {
@@ -878,6 +877,24 @@
             priority: 10
           })
         });
+
+        const data = await response.json();
+        console.log("Resposta do OneSignal:", data);
+
+        if (data.id) {
+          showToast("Push enviado aos aparelhos!", "🔔");
+        } else if (data.errors) {
+          // Mostra exatamente o erro que o OneSignal retornou na tela
+          alert("Erro do OneSignal: " + JSON.stringify(data.errors));
+        } else {
+          alert("Retorno desconhecido: " + JSON.stringify(data));
+        }
+      } catch (error) {
+        console.error("Erro ao disparar Push:", error);
+        alert("Erro de rede/CORS: " + error.message);
+      }
+    }
+
 
         const data = await response.json();
         console.log("Resposta do OneSignal:", data);
