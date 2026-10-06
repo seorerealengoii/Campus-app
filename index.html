@@ -828,7 +828,7 @@
     const ONESIGNAL_REST_KEY = "zti5oo5hq5aujkafqvprjed6e63wpo2guc4ex7ehromj4i7wqyuirui6ew2ay7fgxtbs55kx4nxjbdfnnbohupkkkjlq3kas767r5qq";
 
     /* SISTEMA DE TOAST (AVISO TEMPORÁRIO) */
-    function showToast(msg, icon = "⚠️️") {
+    function showToast(msg, icon = "⚠️") {
       const toast = document.getElementById("toast");
       document.getElementById("toast-message").innerText = msg;
       document.getElementById("toast-icon").innerText = icon;
@@ -853,7 +853,7 @@
       showToast("Protocolo encerrado com sucesso.", "✅");
     }
 
-      /* DISPARO DE PUSH E ATIVAÇÃO COM PIN */
+    /* DISPARO DE PUSH E ATIVAÇÃO COM PIN (COM DEBBUGING DE ERROS) */
     async function dispararAlertaPush(titulo, mensagem) {
       if (titulo.includes("ENCERRADO")) {
         desativarBannerVisual();
@@ -884,7 +884,6 @@
         if (data.id) {
           showToast("Push enviado aos aparelhos!", "🔔");
         } else if (data.errors) {
-          // Mostra exatamente o erro que o OneSignal retornou na tela
           alert("Erro do OneSignal: " + JSON.stringify(data.errors));
         } else {
           alert("Retorno desconhecido: " + JSON.stringify(data));
@@ -892,20 +891,6 @@
       } catch (error) {
         console.error("Erro ao disparar Push:", error);
         alert("Erro de rede/CORS: " + error.message);
-      }
-    }
-
-
-        const data = await response.json();
-        console.log("Resposta do OneSignal:", data);
-
-        if (data.id) {
-          showToast("Push enviado aos aparelhos!", "🔔");
-        } else if (data.errors) {
-          console.warn("Retorno com erro do OneSignal:", data.errors);
-        }
-      } catch (error) {
-        console.error("Erro ao disparar Push:", error);
       }
     }
 
