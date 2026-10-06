@@ -46,7 +46,7 @@
           }
         } catch (err) {
           console.error("Erro OneSignal:", err);
-          showToast("Aperte em Permitir no aviso do navegador.", "⚠️️");
+          showToast("Aperte em Permitir no aviso do navegador.", "⚠️");
         }
       });
     }
@@ -824,8 +824,6 @@
 
   <script>
     const PIN_CORRETO = "1234";
-    const ONESIGNAL_APP_ID = "ccd1d73b-a787-4144-a805-855f14907e27";
-    const ONESIGNAL_REST_KEY = "zti5oo5hq5aujkafqvprjed6e63wpo2guc4ex7ehromj4i7wqyuirui6ew2ay7fgxtbs55kx4nxjbdfnnbohupkkkjlq3kas767r5qq";
 
     /* SISTEMA DE TOAST (AVISO TEMPORÁRIO) */
     function showToast(msg, icon = "⚠️") {
@@ -839,7 +837,7 @@
       }, 3000);
     }
 
-    /* CONTROLE DO BANNER VISUAL */
+    /* CONTROLE DO BANNER VISUAL LOCAL */
     function ativarBannerVisual(titulo, mensagem) {
       const banner = document.getElementById("bannerAlerta");
       document.getElementById("bannerTitulo").innerText = titulo;
@@ -853,48 +851,13 @@
       showToast("Protocolo encerrado com sucesso.", "✅");
     }
 
-    /* DISPARO DE PUSH COM PROXY ALLORIGINS (CONTORNA CORS COM SEGURANÇA) */
-    async function dispararAlertaPush(titulo, mensagem) {
+    function dispararAlertaLocal(titulo, mensagem) {
       if (titulo.includes("ENCERRADO")) {
         desativarBannerVisual();
       } else {
         ativarBannerVisual(titulo, mensagem);
       }
-      
-      try {
-        const targetUrl = "https://onesignal.com/api/v1/notifications";
-        const proxyUrl = "https://api.allorigins.win/raw?url=" + encodeURIComponent(targetUrl);
-
-        const response = await fetch(proxyUrl, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json; charset=utf-8",
-            "Authorization": "Basic " + ONESIGNAL_REST_KEY.trim()
-          },
-          body: JSON.stringify({
-            app_id: ONESIGNAL_APP_ID,
-            included_segments: ["All"],
-            headings: { pt: titulo, en: titulo },
-            contents: { pt: mensagem, en: mensagem },
-            isAnyWeb: true,
-            priority: 10
-          })
-        });
-
-        const data = await response.json();
-        console.log("Resposta do OneSignal:", data);
-
-        if (data.id) {
-          showToast("Push enviado aos aparelhos!", "🔔");
-        } else if (data.errors) {
-          alert("Erro do OneSignal: " + JSON.stringify(data.errors));
-        } else {
-          alert("Retorno desconhecido: " + JSON.stringify(data));
-        }
-      } catch (error) {
-        console.error("Erro ao disparar Push:", error);
-        alert("Erro de rede: " + error.message);
-      }
+      showToast("Protocolo acionado localmente!", "🔔");
     }
 
     function solicitarAtivacao(titulo, mensagem) {
@@ -902,7 +865,7 @@
       if (pin === null) return;
       
       if (pin === PIN_CORRETO) {
-        dispararAlertaPush(`🚨 ALERTA: ${titulo}`, mensagem);
+        dispararAlertaLocal(`🚨 ALERTA: ${titulo}`, mensagem);
       } else {
         showToast("PIN incorreto. Ação cancelada.");
       }
@@ -915,7 +878,7 @@
       if (pin === PIN_CORRETO) {
         const detalhe = prompt("Digite a mensagem do protocolo personalizado:");
         if (detalhe && detalhe.trim() !== "") {
-          dispararAlertaPush("🚨 ALERTA DE EMERGÊNCIA", detalhe);
+          dispararAlertaLocal("🚨 ALERTA DE EMERGÊNCIA", detalhe);
         }
       } else {
         showToast("PIN incorreto. Ação cancelada.");
@@ -970,7 +933,7 @@
     function solicitarEncerramento() {
       const pin = prompt("🔐 Digite o PIN para encerrar o protocolo:");
       if (pin === PIN_CORRETO) {
-        dispararAlertaPush("✅ PROTOCOLO ENCERRADO", "A situação foi normalizada pela central de segurança.");
+        dispararAlertaLocal("✅ PROTOCOLO ENCERRADO", "A situação foi normalizada pela central de segurança.");
       } else {
         showToast("PIN incorreto. Protocolo mantido ativo.");
       }
