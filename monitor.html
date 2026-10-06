@@ -13,6 +13,14 @@
       await OneSignal.init({
         appId: "ccd1d73b-a787-4144-a805-855f14907e27",
       });
+
+      // Escuta a chegada do Push em tempo real para exibir a barra vermelha de alerta
+      OneSignal.Notifications.addEventListener("foregroundWillDisplay", function(event) {
+        const notification = event.notification;
+        const titulo = notification.title || "🚨 ALERTA DE EMERGÊNCIA";
+        const mensagem = notification.body || "Protocolo ativado na central.";
+        exibirAlertaVisual(titulo, mensagem);
+      });
     });
   </script>
 
@@ -128,6 +136,37 @@
       font-size: 0.8rem;
       text-decoration: none;
       font-weight: 600;
+    }
+
+    /* BARRA VERMELHA DE ALERTA NO TOPO DO MONITOR */
+    .banner-alerta {
+      display: none;
+      background-color: #ef4444;
+      color: white;
+      padding: 14px 16px;
+      border-radius: 14px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+      animation: pulse 2s infinite;
+    }
+
+    .banner-alerta h2 {
+      font-size: 0.95rem;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+    }
+
+    .banner-alerta p {
+      font-size: 0.82rem;
+      font-weight: 500;
+      margin-top: 2px;
+      opacity: 0.95;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+      70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
     }
 
     /* BLOCOS - NAVEGAÇÃO PRINCIPAL */
@@ -405,6 +444,12 @@
       <a href="index.html" class="back-btn">← Início</a>
     </header>
 
+    <!-- BARRA VERMELHA DE ALERTA (APARECE SOMENTE QUANDO UM PROTOCOLO ESTIVER ATIVO) -->
+    <div id="bannerAlerta" class="banner-alerta">
+      <h2 id="bannerTitulo">🚨 PROTOCOLO ATIVO</h2>
+      <p id="bannerMensagem">Instruções da emergência em andamento.</p>
+    </div>
+
     <!-- SELEÇÃO DE BLOCOS -->
     <nav class="block-selector">
       <button class="btn-block active" onclick="setBlock('A', this)">Bloco A</button>
@@ -493,31 +538,12 @@
   </nav>
 
   <script>
-    // CHAVE DE API DO ONESIGNAL DIVIDIDA PARA EVITAR BLOQUEIO DE SEGURANÇA
-    const ONESIGNAL_APP_ID = "ccd1d73b-a787-4144-a805-855f14907e27";
-    const ONESIGNAL_REST_KEY = "os_v2_app_" + "zti5oo5hq5aujkafqvprjed6e7vqox25iw4ezgubmomtjm32prhpztvxgckpoefvxw7qmxsrgygsnidikt3n4tetrqkw7qodglwgnvq";
-
-    async function dispararAlertaPush(titulo, mensagem) {
-      try {
-        const response = await fetch("https://onesignal.com/api/v1/notifications", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json; charset=utf-8",
-            "Authorization": "Key " + ONESIGNAL_REST_KEY
-          },
-          body: JSON.stringify({
-            app_id: ONESIGNAL_APP_ID,
-            included_segments: ["Subscribed Users"],
-            headings: { pt: titulo, en: titulo },
-            contents: { pt: mensagem, en: mensagem },
-            vibrate: [500, 100, 500, 100, 500]
-          })
-        });
-        const data = await response.json();
-        console.log("Push disparado com sucesso:", data);
-      } catch (error) {
-        console.error("Erro ao disparar Push:", error);
-      }
+    /* FUNÇÃO QUE EXIBE A BARRA VERMELHA QUANDO O PUSH CHEGA */
+    function exibirAlertaVisual(titulo, mensagem) {
+      const banner = document.getElementById("bannerAlerta");
+      document.getElementById("bannerTitulo").innerText = titulo;
+      document.getElementById("bannerMensagem").innerText = mensagem;
+      banner.style.display = "block";
     }
 
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyMh66nq8XPvoFTKVYHS_40ad3dLF4E4iwbLG1DrFrPRpPjxUyUVPpXFtPixxMRv2yU/exec";
@@ -536,7 +562,6 @@
     const LIBERADAS = ["efi", "ed. fisica", "educacao fisica", "art", "artes", "mus", "musica", "info", "informatica", "des", "desenho"];
     const IDIOMAS = ["ing", "ingles", "fra", "frances", "esp", "espanhol", "f/e", "e/i", "edmar/fr", "ap"];
 
-    // Base de Salas Estáticas (Turno da Tarde - Bloco A)
     let CAMPUS_DATA = [
       { id: "A1", bloco: "A", nome: "Sala 1", turma: "Turma 602", shift: "TARDE", grade: {
         SEG: { T1:"MAT", T2:"MAT", T3:"MUS", T4:"MUS", T5:"CIE", T6:"CIE", T7:"HIST" },
@@ -612,7 +637,6 @@
       { id: "A12", bloco: "A", nome: "Sala 12", turma: "Reserva / Apoio", shift: "TARDE", grade: { SEG:{}, TER:{}, QUA:{}, QUI:{}, SEX:{} } }
     ];
 
-    // Preenche Blocos B e C
     ["A", "B", "C"].forEach(block => {
       for(let i = 1; i <= 12; i++) {
         let roomId = block + i;
@@ -629,11 +653,10 @@
       }
     });
 
-    // DETECTA DIA DA SEMANA E TEMPO ATUAL AUTOMATICAMENTE
     function autoDetectCurrentTimeSlot() {
       const now = new Date();
-      const dayIndex = now.getDay(); // 0 = Dom, 1 = Seg, 2 = Ter, 3 = Qua, 4 = Qui, 5 = Sex, 6 = Sáb
-      const dayMap = ["SEG", "SEG", "TER", "QUA", "QUI", "SEX", "SEG"]; // Fim de semana ajusta para SEG
+      const dayIndex = now.getDay();
+      const dayMap = ["SEG", "SEG", "TER", "QUA", "QUI", "SEX", "SEG"];
       
       currentDay = dayMap[dayIndex];
 
@@ -641,16 +664,14 @@
       const minutes = now.getMinutes();
       const totalMinutes = hours * 60 + minutes;
 
-      // Mapeamento automático dos tempos da Tarde (12:30 às 18:00)
-      if (totalMinutes < 790) currentTimeSlot = "T1";       // Até 13:10
-      else if (totalMinutes < 835) currentTimeSlot = "T2";  // 13:10 - 13:55
-      else if (totalMinutes < 880) currentTimeSlot = "T3";  // 13:55 - 14:40
-      else if (totalMinutes < 925) currentTimeSlot = "T4";  // 14:40 - 15:25
-      else if (totalMinutes < 980) currentTimeSlot = "T5";  // 15:25 - 16:20
-      else if (totalMinutes < 1025) currentTimeSlot = "T6"; // 16:20 - 17:05
-      else currentTimeSlot = "T7";                          // Após 17:05
+      if (totalMinutes < 790) currentTimeSlot = "T1";
+      else if (totalMinutes < 835) currentTimeSlot = "T2";
+      else if (totalMinutes < 880) currentTimeSlot = "T3";
+      else if (totalMinutes < 925) currentTimeSlot = "T4";
+      else if (totalMinutes < 980) currentTimeSlot = "T5";
+      else if (totalMinutes < 1025) currentTimeSlot = "T6";
+      else currentTimeSlot = "T7";
 
-      // Destaca visualmente o botão do dia correto
       document.querySelectorAll(".day-btn").forEach(btn => btn.classList.remove("active"));
       const activeDayBtn = document.getElementById(`day-btn-${currentDay}`);
       if (activeDayBtn) activeDayBtn.classList.add("active");
