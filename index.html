@@ -24,7 +24,16 @@
         const notification = event.notification;
         const titulo = notification.title || "🚨 ALERTA DE EMERGÊNCIA";
         const mensagem = notification.body || "Protocolo ativado na central.";
-        ativarBannerVisual(titulo, mensagem);
+        
+        if (titulo.includes("ENCERRADO")) {
+          const banner = document.getElementById("bannerAlerta");
+          if (banner) banner.style.display = "none";
+        } else {
+          ativarBannerVisual(titulo, mensagem);
+        }
+
+        // Notificaçãozinha rápida no topo que some sozinha
+        showToast(titulo, "🚨");
       });
     });
 
@@ -586,14 +595,18 @@
 
     function ativarBannerVisual(titulo, mensagem) {
       const banner = document.getElementById("bannerAlerta");
-      document.getElementById("bannerTitulo").innerText = titulo;
-      document.getElementById("bannerMensagem").innerText = mensagem;
-      banner.style.display = "flex";
+      if (banner) {
+        document.getElementById("bannerTitulo").innerText = titulo;
+        document.getElementById("bannerMensagem").innerText = mensagem;
+        banner.style.display = "flex";
+      }
     }
 
     function desativarBannerVisual() {
       const banner = document.getElementById("bannerAlerta");
-      banner.style.display = "none";
+      if (banner) {
+        banner.style.display = "none";
+      }
       showToast("Protocolo encerrado com sucesso.", "✅");
     }
 
@@ -853,15 +866,81 @@
       });
     }
 
-    const HOLIDAYS_2026 = [
+    // Lista Completa dos Feriados e Recessos
+    const HOLIDAYS_LIST = [
+      { date: "2026-01-01", name: "Confraternização Universal", type: "Nacional" },
+      { date: "2026-02-16", name: "Recesso de Carnaval", type: "Escolar" },
+      { date: "2026-02-17", name: "Carnaval", type: "Nacional" },
+      { date: "2026-02-18", name: "Quarta-feira de Cinzas", type: "Ponto Facultativo" },
+      { date: "2026-04-03", name: "Sexta-feira Santa", type: "Nacional" },
+      { date: "2026-04-21", name: "Tiradentes", type: "Nacional" },
+      { date: "2026-04-23", name: "Dia de São Jorge", type: "Estadual (RJ)" },
+      { date: "2026-05-01", name: "Dia do Trabalhador", type: "Nacional" },
+      { date: "2026-06-04", name: "Corpus Christi", type: "Nacional" },
+      { date: "2026-09-07", name: "Independência do Brasil", type: "Nacional" },
       { date: "2026-10-12", name: "Nossa Sra. Aparecida", type: "Nacional" },
-      { date: "2026-10-15", name: "Dia do Professor / Escolar", type: "Escolar" }
+      { date: "2026-10-15", name: "Dia do Professor", type: "Escolar" },
+      { date: "2026-11-02", name: "Finados", type: "Nacional" },
+      { date: "2026-11-15", name: "Proclamação da República", type: "Nacional" },
+      { date: "2026-11-20", name: "Dia da Consciência Negra", type: "Nacional" },
+      { date: "2026-12-25", name: "Natal", type: "Nacional" }
     ];
 
     function setupHolidays() {
-      document.getElementById("next-holiday-name").innerText = "Dia do Professor";
-      document.getElementById("next-holiday-date").innerText = "15 de Outubro • Quinta-feira";
-      document.getElementById("next-holiday-days").innerText = "9";
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const diasSemana = ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"];
+      const meses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+
+      let proximoFeriado = null;
+      let diasRestantes = -1;
+
+      const fullListContainer = document.getElementById("full-holiday-list");
+      if (fullListContainer) fullListContainer.innerHTML = "";
+
+      HOLIDAYS_LIST.forEach(f => {
+        const [ano, mes, dia] = f.date.split("-").map(Number);
+        const fDate = new Date(ano, mes - 1, dia);
+        fDate.setHours(0, 0, 0, 0);
+
+        const diffTime = fDate - today;
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+        const isPast = diffDays < 0;
+
+        if (!isPast && (proximoFeriado === null || diffDays < diasRestantes)) {
+          proximoFeriado = { ...f, fDate, diffDays };
+          diasRestantes = diffDays;
+        }
+
+        if (fullListContainer) {
+          const item = document.createElement("div");
+          item.className = `holiday-list-item ${isPast ? "past" : ""}`;
+          
+          let diaStr = `${dia} de ${meses[mes - 1]}`;
+          let statusText = isPast ? "Já passou" : diffDays === 0 ? "Hoje!" : `em ${diffDays} dias`;
+
+          item.innerHTML = `
+            <div>
+              <strong style="font-size:0.85rem; color:var(--text-main);">${f.name}</strong>
+              <div style="font-size:0.72rem; color:var(--text-muted);">${diaStr} • ${diasSemana[fDate.getDay()]} (${f.type})</div>
+            </div>
+            <span style="font-size:0.75rem; font-weight:700; color:${isPast ? 'var(--text-muted)' : 'var(--holiday-purple)'};">${statusText}</span>
+          `;
+          fullListContainer.appendChild(item);
+        }
+      });
+
+      if (proximoFeriado) {
+        document.getElementById("next-holiday-name").innerText = proximoFeriado.name;
+        document.getElementById("next-holiday-date").innerText = `${proximoFeriado.fDate.getDate()} de ${meses[proximoFeriado.fDate.getMonth()]} • ${diasSemana[proximoFeriado.fDate.getDay()]}`;
+        document.getElementById("next-holiday-days").innerText = proximoFeriado.diffDays;
+      } else {
+        document.getElementById("next-holiday-name").innerText = "Fim dos Feriados do Ano";
+        document.getElementById("next-holiday-date").innerText = "Boas Festas!";
+        document.getElementById("next-holiday-days").innerText = "0";
+      }
     }
 
     const WP_API_URL = "https://blog.cp2.g12.br/re2/wp-json/wp/v2/posts?per_page=5";
