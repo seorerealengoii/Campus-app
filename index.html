@@ -12,9 +12,8 @@
     OneSignalDeferred.push(async function(OneSignal) {
       await OneSignal.init({
         appId: "ccd1d73b-a787-4144-a805-855f14907e27",
-        serviceWorkerPath: "OneSignalSDKWorker.js",
-        serviceWorkerParam: { scope: "/Campus-app/" },
-        allowLocalhostAsSecureOrigin: true
+        serviceWorkerPath: "/Campus-app/OneSignalSDKWorker.js",
+        serviceWorkerParam: { scope: "/Campus-app/" }
       });
 
       // Escuta o Push recebido para ativar o banner em tempo real na tela
@@ -26,38 +25,26 @@
       });
     });
 
-    // Função de clique direto sem bloqueio do navegador
-    async function solicitarPermissaoNotificacoes() {
-      if (!("Notification" in window)) {
-        alert("Este navegador não suporta notificações.");
-        return;
-      }
-
-      if (Notification.permission === "granted") {
-        showToast("Alertas já estão ativos neste aparelho!", "🔔");
-        return;
-      }
-
-      if (Notification.permission === "denied") {
-        alert("As notificações estão bloqueadas no seu navegador. Toque no ícone de cadeado 🔒 ao lado da URL para permitir.");
-        return;
-      }
-
-      // Força a janela nativa do navegador no clique do usuário
-      try {
-        const permission = await Notification.requestPermission();
-        if (permission === "granted") {
-          showToast("Notificações ativadas com sucesso!", "🔔");
-          window.OneSignalDeferred = window.OneSignalDeferred || [];
-          window.OneSignalDeferred.push(function(OneSignal) {
-            OneSignal.Notifications.requestPermission();
-          });
-        } else {
-          showToast("Permissão não concedida.", "⚠️");
+    // Função oficial OneSignal v16 para solicitar permissão
+    function solicitarPermissaoNotificacoes() {
+      window.OneSignalDeferred = window.OneSignalDeferred || [];
+      window.OneSignalDeferred.push(async function(OneSignal) {
+        try {
+          const isEnabled = OneSignal.Notifications.permission;
+          if (isEnabled) {
+            showToast("Alertas já estão ativos neste aparelho!", "🔔");
+          } else {
+            if (OneSignal.Slidedown) {
+              await OneSignal.Slidedown.promptPush();
+            } else {
+              await OneSignal.Notifications.requestPermission();
+            }
+          }
+        } catch (err) {
+          console.error("Erro OneSignal:", err);
+          showToast("Aperte em Permitir no aviso do navegador.", "⚠️");
         }
-      } catch (err) {
-        console.error("Erro:", err);
-      }
+      });
     }
   </script>
 
@@ -646,7 +633,7 @@
 </head>
 <body>
 
-  <!-- TOAST NOTIFICATION (Avisos de PIN e Notificações) -->
+  <!-- TOAST NOTIFICATION -->
   <div id="toast" class="toast-notification">
     <span id="toast-icon">⚠️</span>
     <span id="toast-message">PIN incorreto. Ação cancelada.</span>
@@ -737,7 +724,7 @@
       </div>
     </section>
 
-    <!-- CENTRAL DE PROTOCOLOS DE EMERGÊNCIA (NO FINAL DA PÁGINA) -->
+    <!-- CENTRAL DE PROTOCOLOS DE EMERGÊNCIA -->
     <section class="action-card">
       <div class="section-title">🚨 Central de Protocolos</div>
       <div class="protocolos-grid">
