@@ -13,7 +13,7 @@
       await OneSignal.init({
         appId: "ccd1d73b-a787-4144-a805-855f14907e27",
         serviceWorkerParam: { scope: "/Campus-app/" },
-        serviceWorkerPath: "Campus-app/OneSignalSDKWorker.js"
+        serviceWorkerPath: "OneSignalSDKWorker.js"
       });
 
       // Escuta o Push recebido para ativar o banner em tempo real na tela
@@ -820,7 +820,7 @@
     const ONESIGNAL_REST_KEY = "os_v2_app_" + "zti5oo5hq5aujkafqvprjed6e7vqox25iw4ezgubmomtjm32prhpztvxgckpoefvxw7qmxsrgygsnidikt3n4tetrqkw7qodglwgnvq";
 
     /* SISTEMA DE TOAST (AVISO TEMPORÁRIO) */
-    function showToast(msg, icon = "⚠️") {
+    function showToast(msg, icon = "⚠️️") {
       const toast = document.getElementById("toast");
       document.getElementById("toast-message").innerText = msg;
       document.getElementById("toast-icon").innerText = icon;
