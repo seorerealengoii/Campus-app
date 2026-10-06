@@ -851,7 +851,7 @@
       showToast("Protocolo encerrado com sucesso.", "✅");
     }
 
-    /* DISPARO DE PUSH COM FEEDBACK DE ERRO DETALHADO */
+    /* DISPARO DE PUSH VIA SUPABASE */
     async function dispararAlertaPush(titulo, mensagem) {
       if (titulo.includes("ENCERRADO")) {
         desativarBannerVisual();
