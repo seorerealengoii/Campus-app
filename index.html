@@ -12,8 +12,7 @@
     OneSignalDeferred.push(async function(OneSignal) {
       await OneSignal.init({
         appId: "ccd1d73b-a787-4144-a805-855f14907e27",
-        serviceWorkerPath: "OneSignalSDKWorker.js",
-        serviceWorkerParam: { scope: "/" }
+        serviceWorkerPath: "OneSignalSDKWorker.js"
       });
 
       // Escuta o Push recebido para ativar o banner em tempo real na tela
@@ -25,18 +24,21 @@
       });
     });
 
-    // Função para solicitar permissão de notificações pelo menu hambúrguer
-    async function solicitarPermissaoNotificacoes() {
-      if (window.OneSignalDeferred) {
-        OneSignalDeferred.push(async function(OneSignal) {
-          try {
+    // Função corrigida do botão de permissão do menu
+    function solicitarPermissaoNotificacoes() {
+      window.OneSignalDeferred = window.OneSignalDeferred || [];
+      window.OneSignalDeferred.push(async function(OneSignal) {
+        try {
+          if (OneSignal.Notifications.permission) {
+            showToast("Alertas já estão ativos neste aparelho!", "🔔");
+          } else {
             await OneSignal.Notifications.requestPermission();
-          } catch (err) {
-            console.error("Erro ao solicitar permissão:", err);
-            showToast("Não foi possível solicitar a permissão.", "⚠️");
           }
-        });
-      }
+        } catch (err) {
+          console.error("Erro ao solicitar permissão:", err);
+          showToast("Aperte em Permitir no aviso do navegador.", "⚠️️");
+        }
+      });
     }
   </script>
 
