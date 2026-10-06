@@ -843,24 +843,34 @@
       showToast("Protocolo encerrado com sucesso.", "✅");
     }
 
-    /* DISPARO DE PUSH E ATIVAÇÃO COM PIN */
+    /* DISPARO DE PUSH CORRIGIDO E ATIVAÇÃO COM PIN */
     async function dispararAlertaPush(titulo, mensagem) {
       ativarBannerVisual(titulo, mensagem);
+      
       try {
-        await fetch("https://onesignal.com/api/v1/notifications", {
+        const response = await fetch("https://onesignal.com/api/v1/notifications", {
           method: "POST",
           headers: {
             "Content-Type": "application/json; charset=utf-8",
-            "Authorization": "Key " + ONESIGNAL_REST_KEY
+            "Authorization": "Basic " + ONESIGNAL_REST_KEY.replace("os_v2_app_", "")
           },
           body: JSON.stringify({
             app_id: ONESIGNAL_APP_ID,
-            included_segments: ["Subscribed Users"],
+            included_segments: ["All"],
             headings: { pt: titulo, en: titulo },
             contents: { pt: mensagem, en: mensagem },
-            vibrate: [500, 100, 500, 100, 500]
+            isAnyWeb: true
           })
         });
+
+        const data = await response.json();
+        console.log("Resposta do OneSignal:", data);
+
+        if (data.id) {
+          showToast("Push enviado aos aparelhos!", "🔔");
+        } else {
+          console.warn("Retorno da API sem ID:", data);
+        }
       } catch (error) {
         console.error("Erro ao disparar Push:", error);
       }
