@@ -855,7 +855,12 @@
 
     /* DISPARO DE PUSH E ATIVAÇÃO COM PIN */
     async function dispararAlertaPush(titulo, mensagem) {
-      ativarBannerVisual(titulo, mensagem);
+      // Atualiza o banner visual da tela imediatamente
+      if (titulo.includes("ENCERRADO")) {
+        desativarBannerVisual();
+      } else {
+        ativarBannerVisual(titulo, mensagem);
+      }
       
       try {
         const response = await fetch("https://onesignal.com/api/v1/notifications", {
@@ -869,7 +874,8 @@
             included_segments: ["All"],
             headings: { pt: titulo, en: titulo },
             contents: { pt: mensagem, en: mensagem },
-            isAnyWeb: true
+            isAnyWeb: true,
+            priority: 10
           })
         });
 
@@ -959,7 +965,7 @@
     function solicitarEncerramento() {
       const pin = prompt("🔐 Digite o PIN para encerrar o protocolo:");
       if (pin === PIN_CORRETO) {
-        desativarBannerVisual();
+        dispararAlertaPush("✅ PROTOCOLO ENCERRADO", "A situação foi normalizada pela central de segurança.");
       } else {
         showToast("PIN incorreto. Protocolo mantido ativo.");
       }
