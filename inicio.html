@@ -334,7 +334,30 @@
     .portarias-group { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 4px; }
     .sublink-item { display: flex; align-items: center; justify-content: center; padding: 8px; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 8px; text-decoration: none; color: var(--text-main); font-size: 0.75rem; font-weight: 600; }
 
-    .blog-tile, .action-card, .holiday-tile {
+    /* CARD DO BLOG COM SWIPE */
+    .blog-tile {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      cursor: pointer;
+      touch-action: pan-y;
+    }
+
+    .blog-header { display: flex; justify-content: space-between; align-items: center; }
+    .blog-badge { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; color: var(--brand-blue); background: var(--brand-blue-light); padding: 3px 8px; border-radius: 6px; }
+    .blog-news-container { min-height: 48px; display: flex; flex-direction: column; justify-content: center; }
+    .blog-title { font-size: 0.88rem; font-weight: 700; color: var(--text-main); transition: opacity 0.2s; }
+    .blog-date { font-size: 0.7rem; color: var(--text-muted); margin-top: 4px; }
+    .blog-indicators { display: flex; gap: 6px; margin-top: 4px; justify-content: center; }
+    .blog-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border-color); transition: background 0.2s, transform 0.2s; }
+    .blog-dot.active { background: var(--brand-blue); transform: scale(1.3); }
+
+    .action-card, .holiday-tile {
       background: var(--card-bg);
       border: 1px solid var(--border-color);
       border-radius: 16px;
@@ -344,15 +367,6 @@
       flex-direction: column;
       gap: 10px;
     }
-
-    .blog-header { display: flex; justify-content: space-between; align-items: center; }
-    .blog-badge { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; color: var(--brand-blue); background: var(--brand-blue-light); padding: 3px 8px; border-radius: 6px; }
-    .blog-news-container { min-height: 48px; display: flex; flex-direction: column; justify-content: center; }
-    .blog-title { font-size: 0.88rem; font-weight: 700; color: var(--text-main); transition: opacity 0.3s; }
-    .blog-date { font-size: 0.7rem; color: var(--text-muted); margin-top: 4px; }
-    .blog-indicators { display: flex; gap: 4px; margin-top: 4px; }
-    .blog-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border-color); }
-    .blog-dot.active { background: var(--brand-blue); }
 
     .section-title { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); }
     .main-button {
@@ -480,7 +494,8 @@
       </div>
     </div>
 
-    <section class="blog-tile" onclick="goToNews()">
+    <!-- CARD DO BLOG COM SUPORTE A SWIPE E CLIQUE DIRETO -->
+    <section class="blog-tile" id="blog-tile">
       <div class="blog-header">
         <span class="blog-badge">📰 Blog RE2 • Notícias</span>
         <span style="font-size:0.75rem; color:var(--text-muted);">Ler no Blog ↗</span>
@@ -994,6 +1009,7 @@
       }
     }
 
+    /* MÓDULO DO BLOG RE2 (API REST + CLIQUE DIRETO + CARROSSEL SWIPE) */
     const WP_API_URL = "https://blog.cp2.g12.br/re2/wp-json/wp/v2/posts?per_page=5";
     let BLOG_NEWS = [
       { title: "Avisos e Informativos Oficiais do Campus Realengo II", date: "Blog Oficial RE2", url: "https://blog.cp2.g12.br/re2/" }
@@ -1022,13 +1038,79 @@
       const news = BLOG_NEWS[currentNewsIndex];
       const titleEl = document.getElementById("blog-title");
       const dateEl = document.getElementById("blog-date");
+      const dotsEl = document.getElementById("blog-dots");
+
       if (titleEl && dateEl) {
-        titleEl.innerText = news.title;
-        dateEl.innerText = news.date;
+        titleEl.style.opacity = 0;
+        setTimeout(() => {
+          titleEl.innerText = news.title;
+          dateEl.innerText = news.date;
+          titleEl.style.opacity = 1;
+        }, 150);
+      }
+
+      if (dotsEl) {
+        dotsEl.innerHTML = "";
+        BLOG_NEWS.forEach((_, idx) => {
+          const dot = document.createElement("div");
+          dot.className = `blog-dot ${idx === currentNewsIndex ? "active" : ""}`;
+          dotsEl.appendChild(dot);
+        });
       }
     }
 
-    function goToNews() { window.open(BLOG_NEWS[currentNewsIndex].url, "_blank"); }
+    function goToNews() {
+      const news = BLOG_NEWS[currentNewsIndex];
+      if (news && news.url) {
+        window.open(news.url, "_blank");
+      }
+    }
+
+    /* SISTEMA DE GESTOS (SWIPE) NO CARD DO BLOG */
+    function initBlogSwipe() {
+      const tile = document.getElementById("blog-tile");
+      let startX = 0, startY = 0, distX = 0, distY = 0;
+      let isSwiping = false;
+
+      tile.addEventListener("touchstart", (e) => {
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+        distX = 0;
+        distY = 0;
+        isSwiping = false;
+      }, { passive: true });
+
+      tile.addEventListener("touchmove", (e) => {
+        distX = e.touches[0].clientX - startX;
+        distY = e.touches[0].clientY - startY;
+        if (Math.abs(distX) > Math.abs(distY) && Math.abs(distX) > 10) {
+          isSwiping = true;
+        }
+      }, { passive: true });
+
+      tile.addEventListener("touchend", (e) => {
+        if (isSwiping && Math.abs(distX) > 40) {
+          if (distX < 0) {
+            // Arrastou pra esquerda: Próxima notícia
+            currentNewsIndex = (currentNewsIndex + 1) % BLOG_NEWS.length;
+          } else {
+            // Arrastou pra direita: Notícia anterior
+            currentNewsIndex = (currentNewsIndex - 1 + BLOG_NEWS.length) % BLOG_NEWS.length;
+          }
+          renderBlogTile();
+        } else if (!isSwiping && Math.abs(distX) < 10 && Math.abs(distY) < 10) {
+          // Clique simples abre a notícia atual
+          goToNews();
+        }
+      });
+
+      // Clique com mouse no computador
+      tile.addEventListener("click", (e) => {
+        if (!('ontouchstart' in window)) {
+          goToNews();
+        }
+      });
+    }
 
     function toggleMenuDrawer(open) { document.getElementById("menu-drawer-overlay").classList.toggle("open", open); }
     function toggleHolidayDrawer(open) { document.getElementById("holiday-drawer-overlay").classList.toggle("open", open); }
@@ -1036,6 +1118,7 @@
     window.onload = () => {
       carregarBoasVindas();
       initSlideToDismiss();
+      initBlogSwipe();
       renderLivePreview();
       setupHolidays();
       renderBlogTile();
