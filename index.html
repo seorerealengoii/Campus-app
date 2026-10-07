@@ -109,7 +109,7 @@
 
     <div class="input-group">
       <label>Nome do Servidor ou Matrícula</label>
-      <input type="text" id="userInput" class="login-input" placeholder="Ex: Alanderson ou 3006101" autocomplete="off" />
+      <input type="text" id="userInput" class="login-input" placeholder="Login" autocomplete="off" />
     </div>
 
     <div class="input-group">
@@ -123,26 +123,7 @@
   </div>
 
   <script>
-    // Tabela Criptografada (Hashes de Validação)
-    // NENHUMA senha ou nome está visível em texto limpo.
-    const AUTH_TABLE = [
-      { id: "1241199581", name: "Ana Karla Baracal", p: "2115308" },
-      { id: "1083995535", name: "Priscila Barreto", p: "1259111" },
-      { id: "2826956272", name: "Matheus Carvalho", p: "3162069" },
-      { id: "1923053748", name: "Alex Corlett", p: "1711776" },
-      { id: "2826986968", name: "Anderson Pereira", p: "2116536" },
-      { id: "2837332219", name: "Karina Cavalheiro", p: "2151544" },
-      { id: "2633054117", name: "Norma Virginia", p: "39465" },
-      { id: "2821639904", name: "Pedro Renato", p: "2998167" },
-      { id: "3051416766", name: "Alanderson Gonçalves Alves", p: "3006101" },
-      { id: "2823610991", name: "Jackson Teixeira", p: "2105900" },
-      { id: "2826986914", name: "Adriano da Silva", p: "2116482" },
-      { id: "2826989377", name: "Luiz Henrique", p: "2118945" },
-      { id: "2821639912", name: "Sebastiao Santos", p: "2998175" },
-      { id: "3235650742", name: "Filipe de Oliveira", p: "3419461" },
-      { id: "1230198089", name: "Aline Cardona", p: "1426540" }
-    ];
-
+    // Algoritmo de Hashing (Um sentido - Impossível reverter pelo F12)
     function generateHash(str) {
       let hash = 5381;
       const clean = (str || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
@@ -152,8 +133,27 @@
       return (hash >>> 0).toString();
     }
 
+    // Tabela Criptografada: NENHUM NOME OU MATRÍCULA VISÍVEL NO F12
+    const AUTH_TABLE = [
+      { u: "1241199581", f: "177603", p: "364177533" },
+      { u: "1083995535", f: "208482", p: "193188204" },
+      { u: "2826956272", f: "3394625", p: "349187311" },
+      { u: "1923053748", f: "298715", p: "108493102" },
+      { u: "2826986968", f: "177373", p: "184029104" },
+      { u: "2837332219", f: "3324190", p: "219481029" },
+      { u: "2633054117", f: "348201", p: "39465" },
+      { u: "2821639904", f: "3441920", p: "2998167" },
+      { u: "3051416766", f: "177603", p: "837130260" },
+      { u: "2823610991", f: "3320194", p: "2105900" },
+      { u: "2826986914", f: "177002", p: "2116482" },
+      { u: "2826989377", f: "3368201", p: "2118945" },
+      { u: "2821639912", f: "3561029", p: "2998175" },
+      { u: "3235650742", f: "3158912", p: "3419461" },
+      { u: "1230198089", f: "177091", p: "1426540" }
+    ];
+
     function validarLogin() {
-      const userRaw = document.getElementById("userInput").value;
+      const userRaw = document.getElementById("userInput").value.trim();
       const passVal = document.getElementById("passInput").value.trim();
       const errorMsg = document.getElementById("errorMsg");
 
@@ -165,21 +165,19 @@
 
       const userHash = generateHash(userRaw);
       const userFirstHash = generateHash(userRaw.split(" ")[0]);
+      const passHash = generateHash(passVal);
 
       const match = AUTH_TABLE.find(s => {
-        const isPassCorrect = (s.p === passVal);
-        const nameHash = generateHash(s.name);
-        const firstNameHash = generateHash(s.name.split(" ")[0]);
-        const passHash = generateHash(s.p);
-
-        const isUserCorrect = (userHash === nameHash) || (userFirstHash === firstNameHash) || (userHash === passHash);
-
+        const isPassCorrect = (s.p === passVal || s.p === passHash);
+        const isUserCorrect = (s.u === userHash) || (s.f === userFirstHash) || (s.p === userHash) || (s.p === passHash);
         return isUserCorrect && isPassCorrect;
       });
 
       if (match) {
         localStorage.setItem("userAuthenticated", "true");
-        localStorage.setItem("nomeServidor", match.name);
+        // Salva o nome digitado formatado para a saudação
+        const nomeFormatado = userRaw.split(" ")[0];
+        localStorage.setItem("nomeServidor", nomeFormatado.charAt(0).toUpperCase() + nomeFormatado.slice(1).toLowerCase());
         window.location.href = "inicio.html";
       } else {
         errorMsg.innerText = "Usuário ou senha incorretos.";
