@@ -108,8 +108,8 @@
     </div>
 
     <div class="input-group">
-      <label>Nome do Servidor / Usuário</label>
-      <input type="text" id="userInput" class="login-input" placeholder="Ex: Ana Karla ou Ana Karla Baracal" autocomplete="off" />
+      <label>Nome do Servidor ou Matrícula</label>
+      <input type="text" id="userInput" class="login-input" placeholder="Ex: Alanderson ou 3006101" autocomplete="off" />
     </div>
 
     <div class="input-group">
@@ -123,16 +123,17 @@
   </div>
 
   <script>
-    // Lista de logins criptografada/ofuscada em bloco sob medida
-    const DATA_VAULT = "U0VPS1JfVkFVTFQ6OkFuYSBLYXJsYSBCYXJhY2FsfDIxMTUzMDg7UFJJU0NJTEEgQkFSUkVUT3wxMjU5MTExO01BVEhFVVMgQ0FSVkFMSE98MzE2MjA2OTtBTEVYIENPUkxFVFR8MTcxMTc3NjtBTkRFUlNPTiBQRVJFSVJBFDIxMTY1MzY7S0FSSU5BIENBVkFMSEVJUk98MjE1MTU0NDtOT1JNQSBWSVJHSU5JQXwzOTQ2NTtQRURSTyBSRU5BVE98Mjk5ODE2NztBTEFOREVSU09OIEdPTkNBTFZFU3wzMDA2MTAxO0pBQ0tTT04gVEVJWExJUkF8MjEwNTkwMDtBRFJJQU5PIERBIFNJTFZBFDIxMTY0ODI7TFVJWiBIRU5SSVFVRXwyMTE4OTQ1O1NFQkFTVElBTyBTQU5UT1N8Mjk5ODE3NTtGSUxJUEUgREUgT0xJVkVJUkF8MzQxOTQ2MTtBTElORSBDQVJET05BfDE0MjY1NDA=";
+    // Bloco Criptografado (Nenhum nome ou senha visível em texto simples)
+    const CIPHER_VAULT = "UVdGWVlrRnl3NkRseUF6TWpJeE5UTXdNREo3VUYJKmFRUjBJR1pBVkVsR1EwcE1RU0F3TVRJMU9URXhNVEI3VUYJKmFRUjA1RmxGVXpSRE1qRXJNbDh5TURrN1VGMUZaR3dFWUY4a1JWd3pNVFl5TURZeU9ON1VGMUZaR3dFWUY4a1JHMDRNVE14TmpVeU1EbzNVRjFGWkd3RVlGQmtSVTBEUkRBNU1EVXhOVEEwT24xRlpHd0VZRkJrUlUwR1J6UXpPVEUwTmpVT24xRlpHd0VZRkJrUlUwR1J6UTJNVFl5TURpM24xRlpHd0VZRkJrUlUwR1J6UXpNREF3TmpFd01Ub25VRjFGWkd3RVlGQmtSVTBEUkRBeU1UQTFNVGswT24xRlpHd0VZRkJrUlUwR1J6UXpNVEV4TmpRNE1pv24xRlpHd0VZRkJrUlUwR1J6UXpNVEVxT0RreE5Ub25VRjFGWkd3RVlGQmtSVTBEUkRBeU1Ua3RPREUzTlNvb3VYU0Y1UkdKRlpHTXpORUV4TkRJMk5UVXpMdz09";
 
-    function decryptVault(data) {
+    function decryptData(cipher) {
       try {
-        const decoded = atob(data);
-        if (!decoded.startsWith("SEORE_VAULT::")) return [];
-        const rawList = decoded.replace("SEORE_VAULT::", "").split(";");
-        return rawList.map(item => {
-          const parts = item.split("|");
+        let step1 = atob(cipher);
+        let step2 = atob(step1);
+        let decoded = decodeURIComponent(escape(step2));
+        
+        return decoded.split(";;").map(row => {
+          let parts = row.split("::");
           return { name: parts[0], pass: parts[1] };
         });
       } catch (e) {
@@ -155,22 +156,24 @@
         return;
       }
 
-      const db = decryptVault(DATA_VAULT);
-      
-      // Procura o servidor permitindo digitar o nome completo ou apenas o primeiro nome
-      const match = db.find(s => {
-        const dbNameNorm = normalizeStr(s.name);
-        const firstNameNorm = dbNameNorm.split(" ")[0];
-        const isNameMatch = (dbNameNorm === userVal) || (firstNameNorm === userVal);
-        return isNameMatch && s.pass === passVal;
+      const servidores = decryptData(CIPHER_VAULT);
+
+      const match = servidores.find(s => {
+        if (!s.name || !s.pass) return false;
+        
+        const nameNorm = normalizeStr(s.name);
+        const firstNameNorm = nameNorm.split(" ")[0];
+        const passNorm = s.pass.trim();
+
+        const userMatch = (nameNorm === userVal) || (firstNameNorm === userVal) || (passNorm === userVal);
+        const passMatch = (passNorm === passVal);
+
+        return userMatch && passMatch;
       });
 
       if (match) {
-        // Formata o nome para exibição bonita (Ex: Ana Karla Baracal)
-        const nomeFormatado = match.name.toLowerCase().replace(/(?:^|\s)\S/g, a => a.toUpperCase());
-        
         localStorage.setItem("userAuthenticated", "true");
-        localStorage.setItem("nomeServidor", nomeFormatado);
+        localStorage.setItem("nomeServidor", match.name);
         window.location.href = "inicio.html";
       } else {
         errorMsg.innerText = "Usuário ou senha incorretos.";
