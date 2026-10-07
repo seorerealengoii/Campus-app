@@ -123,20 +123,20 @@
   </div>
 
   <script>
-    // Bloco Criptografado (Nenhum nome ou senha visível em texto simples)
-    const CIPHER_VAULT = "UVdGWVlrRnl3NkRseUF6TWpJeE5UTXdNREo3VUYJKmFRUjBJR1pBVkVsR1EwcE1RU0F3TVRJMU9URXhNVEI3VUYJKmFRUjA1RmxGVXpSRE1qRXJNbDh5TURrN1VGMUZaR3dFWUY4a1JWd3pNVFl5TURZeU9ON1VGMUZaR3dFWUY4a1JHMDRNVE14TmpVeU1EbzNVRjFGWkd3RVlGQmtSVTBEUkRBNU1EVXhOVEEwT24xRlpHd0VZRkJrUlUwR1J6UXpPVEUwTmpVT24xRlpHd0VZRkJrUlUwR1J6UTJNVFl5TURpM24xRlpHd0VZRkJrUlUwR1J6UXpNREF3TmpFd01Ub25VRjFGWkd3RVlGQmtSVTBEUkRBeU1UQTFNVGswT24xRlpHd0VZRkJrUlUwR1J6UXpNVEV4TmpRNE1pv24xRlpHd0VZRkJrUlUwR1J6UXpNVEVxT0RreE5Ub25VRjFGWkd3RVlGQmtSVTBEUkRBeU1Ua3RPREUzTlNvb3VYU0Y1UkdKRlpHTXpORUV4TkRJMk5UVXpMdz09";
+    // Bloco criptografado com a lista inteira dos 15 servidores
+    const CIPHER_VAULT = "ISksLSksLTAoIjc4JiInMzo1OTomJio0KSs1NyA2NzkvJyEqNDUqMyotICg2Jy0sJjo1PSc1ISYnKzUnNjYpOSssJi4iOCEqNCYoISomOy0sOCAtLiUoIiknNScqLSInMS0vJyMnKCgtKCAtLiUqLCYtMC0jISAnOCAtNSotICsnOSUnIy8jMyY2KyAoLiY1LC0vJi40ISAmKDM4JSAsNSotLycjLyg0Jy0kNy0sOCAtLiUjKCcoJzAnOy0mJjs0NTAnI2AnMzc2Lyk1JyotJyA5JSAnNyMtM3AnOic0NyonLzcpKSg/JzMnKjg6JiI/OSY2LyInIyp0LSAnOSY3JDAgMiY0OicoJyg6NSotLzMnKjk6OiA/JScqLScpODAmJyAnLSotJSAnNyc/JCYoLCAnKScnOistJzY2NSozIyknNzMnKC84KC00NTE=";
+    const KEY = "SEORE_RE2_SECRET_KEY";
 
-    function decryptData(cipher) {
+    function decryptVault(cipherText, key) {
       try {
-        let step1 = atob(cipher);
-        let step2 = atob(step1);
-        let decoded = decodeURIComponent(escape(step2));
-        
-        return decoded.split(";;").map(row => {
-          let parts = row.split("::");
-          return { name: parts[0], pass: parts[1] };
-        });
+        const raw = atob(cipherText);
+        let decoded = "";
+        for (let i = 0; i < raw.length; i++) {
+          decoded += String.fromCharCode(raw.charCodeAt(i) ^ key.charCodeAt(i % key.length));
+        }
+        return JSON.parse(decoded);
       } catch (e) {
+        console.error("Erro ao decodificar cofre:", e);
         return [];
       }
     }
@@ -156,14 +156,12 @@
         return;
       }
 
-      const servidores = decryptData(CIPHER_VAULT);
+      const db = decryptVault(CIPHER_VAULT, KEY);
 
-      const match = servidores.find(s => {
-        if (!s.name || !s.pass) return false;
-        
+      const match = db.find(s => {
         const nameNorm = normalizeStr(s.name);
         const firstNameNorm = nameNorm.split(" ")[0];
-        const passNorm = s.pass.trim();
+        const passNorm = String(s.pass).trim();
 
         const userMatch = (nameNorm === userVal) || (firstNameNorm === userVal) || (passNorm === userVal);
         const passMatch = (passNorm === passVal);
