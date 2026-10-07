@@ -494,7 +494,7 @@
       </div>
     </div>
 
-    <!-- CARD DO BLOG COM SUPORTE A SWIPE E CLIQUE DIRETO -->
+    <!-- CARD DO BLOG COM SWIPE -->
     <section class="blog-tile" id="blog-tile">
       <div class="blog-header">
         <span class="blog-badge">📰 Blog RE2 • Notícias</span>
@@ -1009,8 +1009,9 @@
       }
     }
 
-    /* MÓDULO DO BLOG RE2 (API REST + CLIQUE DIRETO + CARROSSEL SWIPE) */
+    /* MÓDULO DO BLOG RE2 (API REST DIRETA ORIGINAL + CLIQUE DIRETO + SWIPE) */
     const WP_API_URL = "https://blog.cp2.g12.br/re2/wp-json/wp/v2/posts?per_page=5";
+
     let BLOG_NEWS = [
       { title: "Avisos e Informativos Oficiais do Campus Realengo II", date: "Blog Oficial RE2", url: "https://blog.cp2.g12.br/re2/" }
     ];
@@ -1021,7 +1022,7 @@
         const res = await fetch(WP_API_URL);
         if (res.ok) {
           const posts = await res.json();
-          if (posts && posts.length > 0) {
+          if (posts && Array.isArray(posts) && posts.length > 0) {
             BLOG_NEWS = posts.map(post => {
               const postDate = new Date(post.date).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
               const tempDiv = document.createElement("div");
@@ -1031,7 +1032,9 @@
             renderBlogTile();
           }
         }
-      } catch (err) {}
+      } catch (err) {
+        console.error("Erro ao buscar notícias do blog:", err);
+      }
     }
 
     function renderBlogTile() {
