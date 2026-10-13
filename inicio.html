@@ -377,7 +377,23 @@
       gap: 8px;
     }
 
-    /* NOVO: GRADE DE ATALHOS RÁPIDOS */
+    .event-button {
+      background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+      color: #ffffff;
+      border: none;
+      border-radius: 12px;
+      padding: 14px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
+    }
+
+    /* GRADE DE ATALHOS RÁPIDOS */
     .shortcuts-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
     .shortcut-item {
       background: var(--bg-surface);
@@ -518,9 +534,14 @@
       <a href="monitor.html" class="main-button">
         <span>🖥️ Monitor de Salas ao Vivo</span>
       </a>
+      
+      <!-- BOTÃO EM DESTAQUE: SEMANA CULTURAL -->
+      <a href="semana-cultural.html" class="event-button">
+        <span>🎨 Programação — Semana Cultural RE2</span>
+      </a>
     </section>
 
-    <!-- NOVO: ATALHOS RÁPIDOS EM SUBSTITUIÇÃO À PRÉ-VISUALIZAÇÃO DE SALAS -->
+    <!-- ATALHOS RÁPIDOS -->
     <section class="action-card">
       <div class="section-title">Atalhos Rápidos</div>
       <div class="shortcuts-grid">
