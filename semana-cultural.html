@@ -98,9 +98,7 @@
       box-shadow: 0 1px 3px rgba(0,0,0,0.02);
     }
 
-    .search-input:focus {
-      border-color: var(--brand-blue);
-    }
+    .search-input:focus { border-color: var(--brand-blue); }
 
     .search-icon {
       position: absolute;
@@ -165,6 +163,22 @@
       align-items: center;
     }
 
+    .badges-group {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .badge-dia {
+      font-size: 0.65rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: var(--brand-purple-light);
+      color: var(--brand-purple);
+    }
+
     .badge-turno {
       font-size: 0.65rem;
       font-weight: 800;
@@ -175,7 +189,6 @@
 
     .badge-manha { background: #e0f2fe; color: #0284c7; }
     .badge-tarde { background: #fef3c7; color: #92400e; }
-    .badge-noite { background: #f3e8ff; color: #7e22ce; }
 
     .event-time {
       font-size: 0.75rem;
@@ -249,7 +262,7 @@
         <a href="inicio.html" class="btn-back">⬅ Voltar</a>
         <div class="brand-text">
           <h1>Semana Cultural</h1>
-          <p>Programação & Horários</p>
+          <p>Programação por Dias & Horários</p>
         </div>
       </div>
       <span style="font-size: 1.3rem;">🎨</span>
@@ -258,16 +271,19 @@
     <!-- PESQUISA EM TEMPO REAL -->
     <div class="search-box">
       <span class="search-icon">🔍</span>
-      <input type="text" id="searchInput" class="search-input" placeholder="Pesquisar atividade, sala, palestrante..." oninput="filtrarEventos()" />
+      <input type="text" id="searchInput" class="search-input" placeholder="Pesquisar atividade, sala, dia, palestrante..." oninput="filtrarEventos()" />
     </div>
 
-    <!-- FILTROS POR TURNO / DIA -->
+    <!-- FILTROS POR DIA E TURNO -->
     <div class="filters-scroll">
-      <button class="filter-chip active" onclick="setFiltro('TODOS', this)">Todos</button>
+      <button class="filter-chip active" onclick="setFiltro('TODOS', this)">Todos os Dias</button>
+      <button class="filter-chip" onclick="setFiltro('SEG', this)">Segunda</button>
+      <button class="filter-chip" onclick="setFiltro('TER', this)">Terça</button>
+      <button class="filter-chip" onclick="setFiltro('QUA', this)">Quarta</button>
+      <button class="filter-chip" onclick="setFiltro('QUI', this)">Quinta</button>
+      <button class="filter-chip" onclick="setFiltro('SEX', this)">Sexta</button>
       <button class="filter-chip" onclick="setFiltro('MANHA', this)">☀️ Manhã</button>
       <button class="filter-chip" onclick="setFiltro('TARDE', this)">🌤️ Tarde</button>
-      <button class="filter-chip" onclick="setFiltro('AUDITORIO', this)">🎭 Auditório / Teatro</button>
-      <button class="filter-chip" onclick="setFiltro('QUADRA', this)">🏀 Quadra / Pátio</button>
     </div>
 
     <!-- LISTA DE EVENTOS -->
@@ -293,82 +309,96 @@
   </div>
 
   <script>
-    // BASE DE DADOS DA PROGRAMAÇÃO DA SEMANA CULTURAL
+    // BASE DE DADOS ORGANIZADA POR DIAS DA SEMANA CULTURAL
     const PROGRAMACAO = [
-      // TURNO MANHÃ
+      // SEGUNDA-FEIRA
       {
         id: 1,
+        dia: "SEG",
+        diaRotulo: "Segunda",
         titulo: "Abertura Oficial & Apresentação Musical 'Sons de Realengo'",
         turno: "MANHA",
         horario: "08:00 - 09:30",
         local: "Auditório / Teatro",
-        responsavel: "Prof. Leonardo Stefano & Alunos",
-        categoria: "AUDITORIO"
+        responsavel: "Prof. Leonardo Stefano & Alunos"
       },
       {
         id: 2,
-        titulo: "Oficina de Fotografia e Linguagem Visual",
-        turno: "MANHA",
-        horario: "09:45 - 11:15",
-        local: "Sala de Artes (Bloco A)",
-        responsavel: "Equipe de Artes",
-        categoria: "SALAS"
-      },
-      {
-        id: 3,
-        titulo: "Mostra de Curtas-Metragens e Debates",
-        turno: "MANHA",
-        horario: "10:00 - 12:00",
-        local: "Auditório / Teatro",
-        responsavel: "Grêmio Estudantil & Convidados",
-        categoria: "AUDITORIO"
-      },
-      {
-        id: 4,
-        titulo: "Torneio Cultural e Jogos de Raciocínio",
-        turno: "MANHA",
-        horario: "08:30 - 11:30",
-        local: "Quadra Poliesportiva",
-        responsavel: "Educação Física",
-        categoria: "QUADRA"
-      },
-
-      // TURNO TARDE
-      {
-        id: 5,
+        dia: "SEG",
+        diaRotulo: "Segunda",
         titulo: "Show Musical: Banda Sonhos Reais (BSR)",
         turno: "TARDE",
         horario: "12:00 - 13:00",
         local: "Auditório de Música",
-        responsavel: "Banda Sonhos Reais CPII",
-        categoria: "AUDITORIO"
+        responsavel: "Banda Sonhos Reais CPII"
+      },
+
+      // TERÇA-FEIRA
+      {
+        id: 3,
+        dia: "TER",
+        diaRotulo: "Terça",
+        titulo: "Oficina de Fotografia e Linguagem Visual",
+        turno: "MANHA",
+        horario: "09:45 - 11:15",
+        local: "Sala de Artes (Bloco A)",
+        responsavel: "Equipe de Artes"
       },
       {
-        id: 6,
+        id: 4,
+        dia: "TER",
+        diaRotulo: "Terça",
         titulo: "Feira de Ciências & Robótica Estudantil",
         turno: "TARDE",
         horario: "13:30 - 15:30",
         local: "Pátio Central / Bloco B",
-        responsavel: "Professores da Área de Exatas",
-        categoria: "QUADRA"
+        responsavel: "Professores da Área de Exatas"
+      },
+
+      // QUARTA-FEIRA
+      {
+        id: 5,
+        dia: "QUA",
+        diaRotulo: "Quarta",
+        titulo: "Mostra de Curtas-Metragens e Debates",
+        turno: "MANHA",
+        horario: "10:00 - 12:00",
+        local: "Auditório / Teatro",
+        responsavel: "Grêmio Estudantil & Convidados"
       },
       {
-        id: 7,
+        id: 6,
+        dia: "QUA",
+        diaRotulo: "Quarta",
         titulo: "Roda de Conversa: Literatura e Periferia",
         turno: "TARDE",
         horario: "14:00 - 15:30",
         local: "Biblioteca do Campus",
-        responsavel: "Equipe da Biblioteca & Autores",
-        categoria: "SALAS"
+        responsavel: "Equipe da Biblioteca & Autores"
       },
+
+      // QUINTA-FEIRA
+      {
+        id: 7,
+        dia: "QUI",
+        diaRotulo: "Quinta",
+        titulo: "Torneio Cultural e Jogos de Raciocínio",
+        turno: "MANHA",
+        horario: "08:30 - 11:30",
+        local: "Quadra Poliesportiva",
+        responsavel: "Educação Física"
+      },
+
+      // SEXTA-FEIRA
       {
         id: 8,
-        titulo: "Apresentação de Dança e Encerramento do Dia",
+        dia: "SEX",
+        diaRotulo: "Sexta",
+        titulo: "Apresentação de Dança e Encerramento Cultural",
         turno: "TARDE",
-        horario: "16:00 - 17:00",
+        horario: "15:00 - 17:00",
         local: "Quadra Poliesportiva",
-        responsavel: "Grupos Culturais do CPII",
-        categoria: "QUADRA"
+        responsavel: "Grupos Culturais do CPII"
       }
     ];
 
@@ -383,17 +413,16 @@
 
     function filtrarEventos() {
       const termo = document.getElementById("searchInput").value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
-      const container = document.getElementById("eventsContainer");
 
       const eventosFiltrados = PROGRAMACAO.filter(ev => {
-        // Filtro por categoria/turno
+        // Filtro por dia ou turno
         const passaFiltroChip = 
           filtroAtual === "TODOS" ||
-          ev.turno === filtroAtual ||
-          ev.categoria === filtroAtual;
+          ev.dia === filtroAtual ||
+          ev.turno === filtroAtual;
 
-        // Filtro por pesquisa de texto
-        const textoBusca = `${ev.titulo} ${ev.local} ${ev.responsavel} ${ev.horario}`
+        // Filtro por busca de texto
+        const textoBusca = `${ev.titulo} ${ev.local} ${ev.responsavel} ${ev.horario} ${ev.diaRotulo}`
           .toLowerCase()
           .normalize("NFD")
           .replace(/[\u0300-\u036f]/g, "");
@@ -427,7 +456,10 @@
         card.className = "event-card";
         card.innerHTML = `
           <div class="event-header">
-            <span class="badge-turno ${badgeClass}">${turnoRotulo}</span>
+            <div class="badges-group">
+              <span class="badge-dia">📅 ${ev.diaRotulo}</span>
+              <span class="badge-turno ${badgeClass}">${turnoRotulo}</span>
+            </div>
             <span class="event-time">⏰ ${ev.horario}</span>
           </div>
           <div class="event-title">${ev.titulo}</div>
@@ -440,9 +472,18 @@
       });
     }
 
-    // Inicializa a renderização
+    // Seleciona automaticamente o dia de hoje ao abrir se for dia útil
     window.onload = () => {
-      filtrarEventos();
+      const hoje = new Date().getDay();
+      const mapaDias = { 1: "SEG", 2: "TER", 3: "QUA", 4: "QUI", 5: "SEX" };
+      
+      if (mapaDias[hoje]) {
+        const chip = Array.from(document.querySelectorAll('.filter-chip')).find(c => c.textContent.toUpperCase().includes(mapaDias[hoje]));
+        if (chip) setFiltro(mapaDias[hoje], chip);
+        else filtrarEventos();
+      } else {
+        filtrarEventos();
+      }
     };
   </script>
 </body>
