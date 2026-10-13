@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Campus Monitor — Semana Cultural</title>
+
+  <!-- Trava de Segurança: Exige Login -->
+  <script>
+    if (localStorage.getItem("userAuthenticated") !== "true") {
+      window.location.href = "index.html";
+    }
+  </script>
+
+  <style>
+    :root {
+      --bg-surface: #f1f5f9;
+      --card-bg: #ffffff;
+      --border-color: #e2e8f0;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --brand-blue: #0284c7;
+      --brand-blue-light: #e0f2fe;
+      --brand-purple: #8b5cf6;
+      --brand-purple-light: #f3e8ff;
+      --amber-bg: #fef3c7;
+      --amber-text: #92400e;
+      --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+
+    body {
+      background-color: var(--bg-surface);
+      color: var(--text-main);
+      font-family: var(--font-family);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 520px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      padding-bottom: 85px;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--card-bg);
+      padding: 12px 16px;
+      border-radius: 16px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+
+    .header-left { display: flex; align-items: center; gap: 12px; }
+
+    .btn-back {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 8px 12px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      color: var(--text-main);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .brand-text h1 { font-size: 0.95rem; font-weight: 700; color: var(--text-main); text-transform: uppercase; }
+    .brand-text p { font-size: 0.7rem; color: var(--text-muted); }
+
+    /* BARRA DE PESQUISA */
+    .search-box {
+      position: relative;
+      width: 100%;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 12px 16px 12px 40px;
+      border-radius: 14px;
+      border: 1px solid var(--border-color);
+      background: var(--card-bg);
+      font-size: 0.88rem;
+      color: var(--text-main);
+      outline: none;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    }
+
+    .search-input:focus {
+      border-color: var(--brand-blue);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1rem;
+      color: var(--text-muted);
+    }
+
+    /* FILTROS (DIAS E TURNOS) */
+    .filters-scroll {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      scrollbar-width: none;
+    }
+
+    .filters-scroll::-webkit-scrollbar { display: none; }
+
+    .filter-chip {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 8px 14px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.15s;
+    }
+
+    .filter-chip.active {
+      background: var(--brand-blue);
+      color: #ffffff;
+      border-color: var(--brand-blue);
+    }
+
+    /* CARDS DA PROGRAMAÇÃO */
+    .events-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .event-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    }
+
+    .event-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .badge-turno {
+      font-size: 0.65rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+
+    .badge-manha { background: #e0f2fe; color: #0284c7; }
+    .badge-tarde { background: #fef3c7; color: #92400e; }
+    .badge-noite { background: #f3e8ff; color: #7e22ce; }
+
+    .event-time {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    .event-title {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1.3;
+    }
+
+    .event-details {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .detail-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 30px 16px;
+      background: var(--card-bg);
+      border: 1px dashed var(--border-color);
+      border-radius: 16px;
+      color: var(--text-muted);
+      font-size: 0.82rem;
+    }
+
+    /* BOTTOM NAV */
+    .bottom-nav {
+      position: fixed;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 32px);
+      max-width: 480px;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 8px 12px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+      z-index: 900;
+    }
+
+    .nav-item { display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 0.68rem; font-weight: 600; color: var(--text-muted); text-decoration: none; }
+    .nav-item.active { color: var(--brand-blue); }
+    .nav-icon { font-size: 1.1rem; }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <header>
+      <div class="header-left">
+        <a href="inicio.html" class="btn-back">⬅ Voltar</a>
+        <div class="brand-text">
+          <h1>Semana Cultural</h1>
+          <p>Programação & Horários</p>
+        </div>
+      </div>
+      <span style="font-size: 1.3rem;">🎨</span>
+    </header>
+
+    <!-- PESQUISA EM TEMPO REAL -->
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="searchInput" class="search-input" placeholder="Pesquisar atividade, sala, palestrante..." oninput="filtrarEventos()" />
+    </div>
+
+    <!-- FILTROS POR TURNO / DIA -->
+    <div class="filters-scroll">
+      <button class="filter-chip active" onclick="setFiltro('TODOS', this)">Todos</button>
+      <button class="filter-chip" onclick="setFiltro('MANHA', this)">☀️ Manhã</button>
+      <button class="filter-chip" onclick="setFiltro('TARDE', this)">🌤️ Tarde</button>
+      <button class="filter-chip" onclick="setFiltro('AUDITORIO', this)">🎭 Auditório / Teatro</button>
+      <button class="filter-chip" onclick="setFiltro('QUADRA', this)">🏀 Quadra / Pátio</button>
+    </div>
+
+    <!-- LISTA DE EVENTOS -->
+    <div class="events-list" id="eventsContainer">
+      <!-- Inserido dinamicamente pelo JavaScript -->
+    </div>
+
+    <nav class="bottom-nav">
+      <a href="inicio.html" class="nav-item">
+        <span class="nav-icon">🏠</span>
+        <span>Início</span>
+      </a>
+      <a href="semana-cultural.html" class="nav-item active">
+        <span class="nav-icon">🎨</span>
+        <span>S. Cultural</span>
+      </a>
+      <a href="monitor.html" class="nav-item">
+        <span class="nav-icon">📊</span>
+        <span>Monitor</span>
+      </a>
+    </nav>
+
+  </div>
+
+  <script>
+    // BASE DE DADOS DA PROGRAMAÇÃO DA SEMANA CULTURAL
+    const PROGRAMACAO = [
+      // TURNO MANHÃ
+      {
+        id: 1,
+        titulo: "Abertura Oficial & Apresentação Musical 'Sons de Realengo'",
+        turno: "MANHA",
+        horario: "08:00 - 09:30",
+        local: "Auditório / Teatro",
+        responsavel: "Prof. Leonardo Stefano & Alunos",
+        categoria: "AUDITORIO"
+      },
+      {
+        id: 2,
+        titulo: "Oficina de Fotografia e Linguagem Visual",
+        turno: "MANHA",
+        horario: "09:45 - 11:15",
+        local: "Sala de Artes (Bloco A)",
+        responsavel: "Equipe de Artes",
+        categoria: "SALAS"
+      },
+      {
+        id: 3,
+        titulo: "Mostra de Curtas-Metragens e Debates",
+        turno: "MANHA",
+        horario: "10:00 - 12:00",
+        local: "Auditório / Teatro",
+        responsavel: "Grêmio Estudantil & Convidados",
+        categoria: "AUDITORIO"
+      },
+      {
+        id: 4,
+        titulo: "Torneio Cultural e Jogos de Raciocínio",
+        turno: "MANHA",
+        horario: "08:30 - 11:30",
+        local: "Quadra Poliesportiva",
+        responsavel: "Educação Física",
+        categoria: "QUADRA"
+      },
+
+      // TURNO TARDE
+      {
+        id: 5,
+        titulo: "Show Musical: Banda Sonhos Reais (BSR)",
+        turno: "TARDE",
+        horario: "12:00 - 13:00",
+        local: "Auditório de Música",
+        responsavel: "Banda Sonhos Reais CPII",
+        categoria: "AUDITORIO"
+      },
+      {
+        id: 6,
+        titulo: "Feira de Ciências & Robótica Estudantil",
+        turno: "TARDE",
+        horario: "13:30 - 15:30",
+        local: "Pátio Central / Bloco B",
+        responsavel: "Professores da Área de Exatas",
+        categoria: "QUADRA"
+      },
+      {
+        id: 7,
+        titulo: "Roda de Conversa: Literatura e Periferia",
+        turno: "TARDE",
+        horario: "14:00 - 15:30",
+        local: "Biblioteca do Campus",
+        responsavel: "Equipe da Biblioteca & Autores",
+        categoria: "SALAS"
+      },
+      {
+        id: 8,
+        titulo: "Apresentação de Dança e Encerramento do Dia",
+        turno: "TARDE",
+        horario: "16:00 - 17:00",
+        local: "Quadra Poliesportiva",
+        responsavel: "Grupos Culturais do CPII",
+        categoria: "QUADRA"
+      }
+    ];
+
+    let filtroAtual = "TODOS";
+
+    function setFiltro(filtro, elemento) {
+      filtroAtual = filtro;
+      document.querySelectorAll(".filter-chip").forEach(chip => chip.classList.remove("active"));
+      elemento.classList.add("active");
+      filtrarEventos();
+    }
+
+    function filtrarEventos() {
+      const termo = document.getElementById("searchInput").value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+      const container = document.getElementById("eventsContainer");
+
+      const eventosFiltrados = PROGRAMACAO.filter(ev => {
+        // Filtro por categoria/turno
+        const passaFiltroChip = 
+          filtroAtual === "TODOS" ||
+          ev.turno === filtroAtual ||
+          ev.categoria === filtroAtual;
+
+        // Filtro por pesquisa de texto
+        const textoBusca = `${ev.titulo} ${ev.local} ${ev.responsavel} ${ev.horario}`
+          .toLowerCase()
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "");
+
+        const passaBusca = !termo || textoBusca.includes(termo);
+
+        return passaFiltroChip && passaBusca;
+      });
+
+      renderizarLista(eventosFiltrados);
+    }
+
+    function renderizarLista(lista) {
+      const container = document.getElementById("eventsContainer");
+      container.innerHTML = "";
+
+      if (lista.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            Nenhuma atividade encontrada com os termos ou filtros selecionados.
+          </div>
+        `;
+        return;
+      }
+
+      lista.forEach(ev => {
+        const badgeClass = ev.turno === "MANHA" ? "badge-manha" : "badge-tarde";
+        const turnoRotulo = ev.turno === "MANHA" ? "☀️ Manhã" : "🌤️ Tarde";
+
+        const card = document.createElement("div");
+        card.className = "event-card";
+        card.innerHTML = `
+          <div class="event-header">
+            <span class="badge-turno ${badgeClass}">${turnoRotulo}</span>
+            <span class="event-time">⏰ ${ev.horario}</span>
+          </div>
+          <div class="event-title">${ev.titulo}</div>
+          <div class="event-details">
+            <span class="detail-item">📍 ${ev.local}</span>
+            <span class="detail-item">👤 ${ev.responsavel}</span>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // Inicializa a renderização
+    window.onload = () => {
+      filtrarEventos();
+    };
+  </script>
+</body>
+</html>
