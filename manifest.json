@@ -1,0 +1,25 @@
+{
+  "name": "SEORE Pátio Digital",
+  "short_name": "SEORE Pátio",
+  "description": "Sistema de gestão e monitoramento em campo do SEORE - Colégio Pedro II Campus Realengo II",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f1f5f9",
+  "theme_color": "#f1f5f9",
+  "orientation": "portrait",
+  "scope": "./",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/2643/2643506.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/2643/2643506.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
