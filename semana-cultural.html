@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Campus Monitor — Semana Cultural</title>
+  <title>Campus Monitor — Semana Cultural 2026</title>
 
   <!-- Trava de Segurança: Exige Login -->
   <script>
@@ -25,6 +25,8 @@
       --brand-purple-light: #f3e8ff;
       --amber-bg: #fef3c7;
       --amber-text: #92400e;
+      --emerald-bg: #d1fae5;
+      --emerald-text: #065f46;
       --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
 
@@ -189,6 +191,7 @@
 
     .badge-manha { background: #e0f2fe; color: #0284c7; }
     .badge-tarde { background: #fef3c7; color: #92400e; }
+    .badge-entre { background: #d1fae5; color: #065f46; }
 
     .event-time {
       font-size: 0.75rem;
@@ -197,16 +200,16 @@
     }
 
     .event-title {
-      font-size: 0.92rem;
+      font-size: 0.90rem;
       font-weight: 700;
       color: var(--text-main);
-      line-height: 1.3;
+      line-height: 1.35;
     }
 
     .event-details {
       display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
+      flex-direction: column;
+      gap: 4px;
       font-size: 0.75rem;
       color: var(--text-muted);
       margin-top: 2px;
@@ -214,8 +217,9 @@
 
     .detail-item {
       display: flex;
-      align-items: center;
-      gap: 4px;
+      align-items: flex-start;
+      gap: 6px;
+      line-height: 1.3;
     }
 
     .empty-state {
@@ -261,28 +265,26 @@
       <div class="header-left">
         <a href="inicio.html" class="btn-back">⬅ Voltar</a>
         <div class="brand-text">
-          <h1>Semana Cultural</h1>
-          <p>Programação por Dias & Horários</p>
+          <h1>Semana Cultural 2026</h1>
+          <p>Programação Oficial Completa</p>
         </div>
       </div>
-      <span style="font-size: 1.3rem;">🎨</span>
+      <span style="font-size: 1.3rem;">🎭</span>
     </header>
 
     <!-- PESQUISA EM TEMPO REAL -->
     <div class="search-box">
       <span class="search-icon">🔍</span>
-      <input type="text" id="searchInput" class="search-input" placeholder="Pesquisar atividade, sala, dia, palestrante..." oninput="filtrarEventos()" />
+      <input type="text" id="searchInput" class="search-input" placeholder="Pesquisar atividade, sala, turma, horário..." oninput="filtrarEventos()" />
     </div>
 
     <!-- FILTROS POR DIA E TURNO -->
     <div class="filters-scroll">
-      <button class="filter-chip active" onclick="setFiltro('TODOS', this)">Todos os Dias</button>
-      <button class="filter-chip" onclick="setFiltro('SEG', this)">Segunda</button>
-      <button class="filter-chip" onclick="setFiltro('TER', this)">Terça</button>
-      <button class="filter-chip" onclick="setFiltro('QUA', this)">Quarta</button>
-      <button class="filter-chip" onclick="setFiltro('QUI', this)">Quinta</button>
-      <button class="filter-chip" onclick="setFiltro('SEX', this)">Sexta</button>
+      <button class="filter-chip active" onclick="setFiltro('TODOS', this)">Todas as Atividades</button>
+      <button class="filter-chip" onclick="setFiltro('13/10', this)">📅 13/10 (Terça)</button>
+      <button class="filter-chip" onclick="setFiltro('14/10', this)">📅 14/10 (Quarta)</button>
       <button class="filter-chip" onclick="setFiltro('MANHA', this)">☀️ Manhã</button>
+      <button class="filter-chip" onclick="setFiltro('ENTRE', this)">🍃 Entre Turnos</button>
       <button class="filter-chip" onclick="setFiltro('TARDE', this)">🌤️ Tarde</button>
     </div>
 
@@ -309,96 +311,536 @@
   </div>
 
   <script>
-    // BASE DE DADOS ORGANIZADA POR DIAS DA SEMANA CULTURAL
+    // PROGRAMAÇÃO OFICIAL COMPLETA MAPEADA DO DOCUMENTO (13/10 E 14/10)
     const PROGRAMACAO = [
-      // SEGUNDA-FEIRA
+      // ==================== DIA 13/10 (TERÇA) - MANHÃ ====================
       {
         id: 1,
-        dia: "SEG",
-        diaRotulo: "Segunda",
-        titulo: "Abertura Oficial & Apresentação Musical 'Sons de Realengo'",
+        dia: "13/10",
+        diaRotulo: "13/10 (Terça)",
+        titulo: "Apresentação teatral/vídeos sobre Enfrentamento da violência de gênero",
         turno: "MANHA",
-        horario: "08:00 - 09:30",
-        local: "Auditório / Teatro",
-        responsavel: "Prof. Leonardo Stefano & Alunos"
+        horario: "07:00 - 10:00",
+        local: "Sala 1 Bloco B",
+        publico: "Turmas do 1º ano"
       },
       {
         id: 2,
-        dia: "SEG",
-        diaRotulo: "Segunda",
-        titulo: "Show Musical: Banda Sonhos Reais (BSR)",
-        turno: "TARDE",
-        horario: "12:00 - 13:00",
-        local: "Auditório de Música",
-        responsavel: "Banda Sonhos Reais CPII"
+        dia: "13/10",
+        diaRotulo: "13/10 (Terça)",
+        titulo: "Cinedebate \"O dia que durou 21 anos\"",
+        turno: "MANHA",
+        horario: "07:20 - 10:00",
+        local: "Auditório Bloco C",
+        publico: "Turma de 3º ano do Ensino Médio"
       },
-
-      // TERÇA-FEIRA
       {
         id: 3,
-        dia: "TER",
-        diaRotulo: "Terça",
-        titulo: "Oficina de Fotografia e Linguagem Visual",
+        dia: "13/10",
+        diaRotulo: "13/10 (Terça)",
+        titulo: "Esquetes e apresentações musicais - Mulheres Africanas, Mulheres Abolicionistas e cancioneiro popular com temática africana/antirracista",
         turno: "MANHA",
-        horario: "09:45 - 11:15",
-        local: "Sala de Artes (Bloco A)",
-        responsavel: "Equipe de Artes"
+        horario: "07:30 - 10:00",
+        local: "Sala 2 Bloco B",
+        publico: "Turmas de 1ª e 2ª série do Ensino Médio"
       },
       {
         id: 4,
-        dia: "TER",
-        diaRotulo: "Terça",
-        titulo: "Feira de Ciências & Robótica Estudantil",
-        turno: "TARDE",
-        horario: "13:30 - 15:30",
-        local: "Pátio Central / Bloco B",
-        responsavel: "Professores da Área de Exatas"
+        dia: "13/10",
+        diaRotulo: "13/10 (Terça)",
+        titulo: "Atividade \"Incluir é fazer parte\"",
+        turno: "MANHA",
+        horario: "08:00 - 09:30",
+        local: "Sala 3 Bloco A",
+        publico: "Toda a comunidade escolar"
       },
-
-      // QUARTA-FEIRA
       {
         id: 5,
-        dia: "QUA",
-        diaRotulo: "Quarta",
-        titulo: "Mostra de Curtas-Metragens e Debates",
+        dia: "13/10",
+        diaRotulo: "13/10 (Terça)",
+        titulo: "Apresentação de pesquisas sobre Mulheres Africanas e Mulheres Abolicionistas",
         turno: "MANHA",
-        horario: "10:00 - 12:00",
-        local: "Auditório / Teatro",
-        responsavel: "Grêmio Estudantil & Convidados"
+        horario: "08:20 - 10:00",
+        local: "Sala 8 Bloco B",
+        publico: "Turma de 1ª série do Ensino Médio"
       },
       {
         id: 6,
-        dia: "QUA",
-        diaRotulo: "Quarta",
-        titulo: "Roda de Conversa: Literatura e Periferia",
-        turno: "TARDE",
-        horario: "14:00 - 15:30",
-        local: "Biblioteca do Campus",
-        responsavel: "Equipe da Biblioteca & Autores"
+        dia: "13/10",
+        diaRotulo: "13/10 (Terça)",
+        titulo: "Roda de conversa: \"Suave como um furacão: poéticas e violência de gênero\"",
+        turno: "MANHA",
+        horario: "10:00",
+        local: "Sala de Artes Bloco C",
+        publico: "Ensino Médio"
       },
-
-      // QUINTA-FEIRA
       {
         id: 7,
-        dia: "QUI",
-        diaRotulo: "Quinta",
-        titulo: "Torneio Cultural e Jogos de Raciocínio",
+        dia: "13/10",
+        diaRotulo: "13/10 (Terça)",
+        titulo: "Exposição Robótica",
         turno: "MANHA",
-        horario: "08:30 - 11:30",
-        local: "Quadra Poliesportiva",
-        responsavel: "Educação Física"
+        horario: "10:00 - 12:00",
+        local: "Bloco A",
+        publico: "Toda a comunidade escolar"
       },
-
-      // SEXTA-FEIRA
       {
         id: 8,
-        dia: "SEX",
-        diaRotulo: "Sexta",
-        titulo: "Apresentação de Dança e Encerramento Cultural",
+        dia: "13/10",
+        diaRotulo: "13/10 (Terça)",
+        titulo: "Oficina de Jogos e História",
+        turno: "MANHA",
+        horario: "10:00 - 12:00",
+        local: "Biblioteca",
+        publico: "Turmas de 7º e 8º anos"
+      },
+      {
+        id: 9,
+        dia: "13/10",
+        diaRotulo: "13/10 (Terça)",
+        titulo: "Oficina: Política e sistema político",
+        turno: "MANHA",
+        horario: "10:00 - 12:00",
+        local: "Salas do 9º ano - Bloco A",
+        publico: "Turmas de 9º ano"
+      },
+      {
+        id: 10,
+        dia: "13/10",
+        diaRotulo: "13/10 (Terça)",
+        titulo: "A Pequena África apresentada ao campus Realengo II",
+        turno: "MANHA",
+        horario: "10:00",
+        local: "Sala 9 Bloco B",
+        publico: "Turmas 1201, 1203, 1205 e 1209"
+      },
+
+      // ==================== DIA 13/10 (TERÇA) - TARDE ====================
+      {
+        id: 11,
+        dia: "13/10",
+        diaRotulo: "13/10 (Terça)",
+        titulo: "Esquetes e apresentações musicais - Mulheres Africanas, Mulheres Abolicionistas e cancioneiro popular com temática africana/antirracista",
         turno: "TARDE",
-        horario: "15:00 - 17:00",
-        local: "Quadra Poliesportiva",
-        responsavel: "Grupos Culturais do CPII"
+        horario: "13:00 - 15:00",
+        local: "Auditório Música",
+        publico: "Turmas de 1ª e 2ª série do Ensino Médio"
+      },
+      {
+        id: 12,
+        dia: "13/10",
+        diaRotulo: "13/10 (Terça)",
+        titulo: "Oficina de Jogos e História",
+        turno: "TARDE",
+        horario: "13:00 - 15:00",
+        local: "Biblioteca",
+        publico: "Turmas de 7º e 8º anos"
+      },
+      {
+        id: 13,
+        dia: "13/10",
+        diaRotulo: "13/10 (Terça)",
+        titulo: "Oficina de Lettering: grafia do grafite",
+        turno: "TARDE",
+        horario: "13:00",
+        local: "Sala 3 Bloco A",
+        publico: "Toda a comunidade escolar"
+      },
+      {
+        id: 14,
+        dia: "13/10",
+        diaRotulo: "13/10 (Terça)",
+        titulo: "A Pequena África apresentada ao campus Realengo II",
+        turno: "TARDE",
+        horario: "13:00",
+        local: "Sala 9 Bloco B",
+        publico: "Turma 2204"
+      },
+      {
+        id: 15,
+        dia: "13/10",
+        diaRotulo: "13/10 (Terça)",
+        titulo: "Violência de gênero trans: de Xica Manicongo a todas nós",
+        turno: "TARDE",
+        horario: "14:00 - 16:00",
+        local: "Auditório Bloco C",
+        publico: "Toda a comunidade escolar"
+      },
+      {
+        id: 16,
+        dia: "13/10",
+        diaRotulo: "13/10 (Terça)",
+        titulo: "Equidade de gênero na cultura e nas artes",
+        turno: "TARDE",
+        horario: "14:00 - 17:00",
+        local: "Sala 7 Bloco A",
+        publico: "Ensino Fundamental"
+      },
+      {
+        id: 17,
+        dia: "13/10",
+        diaRotulo: "13/10 (Terça)",
+        titulo: "Apresentação sobre \"Mulheres Africanas, Mulheres Abolicionistas e cancioneiro popular com temática africana/antirracista\"",
+        turno: "TARDE",
+        horario: "15:20 - 16:20",
+        local: "Sala 3 Bloco B",
+        publico: "Turmas de 1ª e 2ª série do Ensino Médio"
+      },
+      {
+        id: 18,
+        dia: "13/10",
+        diaRotulo: "13/10 (Terça)",
+        titulo: "Roda de conversa sobre hip-hop, juventude e criatividade",
+        turno: "TARDE",
+        horario: "15:30",
+        local: "Auditório Música",
+        publico: "Toda a comunidade escolar"
+      },
+      {
+        id: 19,
+        dia: "13/10",
+        diaRotulo: "13/10 (Terça)",
+        titulo: "Mostra Cinema e Ditadura (LACE-UFF)",
+        turno: "TARDE",
+        horario: "14:00 - 17:00",
+        local: "Sala 5 Bloco B",
+        publico: "Ensino Médio"
+      },
+      {
+        id: 20,
+        dia: "13/10",
+        diaRotulo: "13/10 (Terça)",
+        titulo: "Projeto Baquaqua",
+        turno: "TARDE",
+        horario: "16:00",
+        local: "Sala 11 Bloco B",
+        publico: "Turma 2210"
+      },
+
+      // ==================== DIA 14/10 (QUARTA) - MANHÃ ====================
+      {
+        id: 21,
+        dia: "14/10",
+        diaRotulo: "14/10 (Quarta)",
+        titulo: "Roda de conversa \"A cultura surda.\"",
+        turno: "MANHA",
+        horario: "07:30 - 09:00",
+        local: "Sala 1 Bloco A",
+        publico: "6º e 7º anos"
+      },
+      {
+        id: 22,
+        dia: "14/10",
+        diaRotulo: "14/10 (Quarta)",
+        titulo: "V Mostra Cultural Nós e a Francofonia",
+        turno: "MANHA",
+        horario: "07:00 - 12:00",
+        local: "Quadra coberta do complexo esportivo",
+        publico: "20 turmas de Francês (manhã e tarde)"
+      },
+      {
+        id: 23,
+        dia: "14/10",
+        diaRotulo: "14/10 (Quarta)",
+        titulo: "Oficina de redação",
+        turno: "MANHA",
+        horario: "07:00 - 09:30",
+        local: "Auditório Bloco C",
+        publico: "Turmas 1301, 1305, 1309 e 3º ano técnico"
+      },
+      {
+        id: 24,
+        dia: "14/10",
+        diaRotulo: "14/10 (Quarta)",
+        titulo: "Apresentação teatral Alessandra",
+        turno: "MANHA",
+        horario: "07:30",
+        local: "Salas do Bloco B",
+        publico: "Turmas de 1º ano"
+      },
+      {
+        id: 25,
+        dia: "14/10",
+        diaRotulo: "14/10 (Quarta)",
+        titulo: "Prêmio Antenor de Veras Nascentes",
+        turno: "MANHA",
+        horario: "08:00 - 12:00",
+        local: "Mediateca de Espanhol Antenor de Veras Nascentes",
+        publico: "Toda a comunidade escolar"
+      },
+      {
+        id: 26,
+        dia: "14/10",
+        diaRotulo: "14/10 (Quarta)",
+        titulo: "Exposição de trabalhos sobre as Vanguardas europeias",
+        turno: "MANHA",
+        horario: "08:00 - 09:30",
+        local: "Corredor do bloco C - 2º andar",
+        publico: "Toda a comunidade escolar"
+      },
+      {
+        id: 27,
+        dia: "14/10",
+        diaRotulo: "14/10 (Quarta)",
+        titulo: "Apresentação de trabalhos \"La cultura hispánica: expresiones y tradiciones\"",
+        turno: "MANHA",
+        horario: "09:00 - 11:00",
+        local: "2 salas + corredor do bloco C - 2º andar",
+        publico: "Turmas 1203, 1205, 1305 e 1309"
+      },
+      {
+        id: 28,
+        dia: "14/10",
+        diaRotulo: "14/10 (Quarta)",
+        titulo: "Apresentação de trabalhos \"La cultura hispánica: expresiones y tradiciones\"",
+        turno: "MANHA",
+        horario: "09:00 - 11:00",
+        local: "Sala do Bloco A",
+        publico: "Turma 903"
+      },
+      {
+        id: 29,
+        dia: "14/10",
+        diaRotulo: "14/10 (Quarta)",
+        titulo: "Exposição de trabalho \"Realengo y el Colégio Pedro II\"",
+        turno: "MANHA",
+        horario: "09:00 - 11:00",
+        local: "Sala do Bloco A",
+        publico: "Turma 703"
+      },
+      {
+        id: 30,
+        dia: "14/10",
+        diaRotulo: "14/10 (Quarta)",
+        titulo: "Exposição de trabalhos \"Mi barrio en el mundo\"",
+        turno: "MANHA",
+        horario: "09:00 - 11:00",
+        local: "Sala do Bloco B",
+        publico: "Turma 1103"
+      },
+      {
+        id: 31,
+        dia: "14/10",
+        diaRotulo: "14/10 (Quarta)",
+        titulo: "Atividade Português Teatro",
+        turno: "MANHA",
+        horario: "10:00 - 12:00",
+        local: "Auditório Bloco C",
+        publico: "Todas as turmas"
+      },
+      {
+        id: 32,
+        dia: "14/10",
+        diaRotulo: "14/10 (Quarta)",
+        titulo: "Exposição de trabalho \"Encanto\"",
+        turno: "MANHA",
+        horario: "10:00",
+        local: "Sala do Bloco A",
+        publico: "Turma 603"
+      },
+      {
+        id: 33,
+        dia: "14/10",
+        diaRotulo: "14/10 (Quarta)",
+        titulo: "Exposição de trabalho \"Migraciones en el mundo hispánico\"",
+        turno: "MANHA",
+        horario: "10:00",
+        local: "Sala do Bloco A",
+        publico: "Turmas 803 e 805"
+      },
+
+      // ==================== DIA 14/10 (QUARTA) - ENTRE TURNOS ====================
+      {
+        id: 34,
+        dia: "14/10",
+        diaRotulo: "14/10 (Quarta)",
+        titulo: "Bosque Cultural - Intervalo e integração entre os turnos",
+        turno: "ENTRE",
+        horario: "12:00",
+        local: "Bosque",
+        publico: "Toda a comunidade escolar"
+      },
+
+      // ==================== DIA 14/10 (QUARTA) - TARDE ====================
+      {
+        id: 35,
+        dia: "14/10",
+        diaRotulo: "14/10 (Quarta)",
+        titulo: "Oficina de Pintura com Stencil",
+        turno: "TARDE",
+        horario: "13:00",
+        local: "Sala de Artes",
+        publico: "Turma de 1º ano do Ensino Médio"
+      },
+      {
+        id: 36,
+        dia: "14/10",
+        diaRotulo: "14/10 (Quarta)",
+        titulo: "Atividade \"Incluir é fazer parte\"",
+        turno: "TARDE",
+        horario: "13:00 - 14:30",
+        local: "Sala 5 Bloco A",
+        publico: "Toda a comunidade escolar"
+      },
+      {
+        id: 37,
+        dia: "14/10",
+        diaRotulo: "14/10 (Quarta)",
+        titulo: "Prêmio Antenor de Veras Nascentes",
+        turno: "TARDE",
+        horario: "13:00 - 16:00",
+        local: "Mediateca de Espanhol Antenor de Veras Nascentes",
+        publico: "Toda a comunidade escolar"
+      },
+      {
+        id: 38,
+        dia: "14/10",
+        diaRotulo: "14/10 (Quarta)",
+        titulo: "Apresentação de trabalhos \"La cultura hispánica: expresiones y tradiciones\"",
+        turno: "TARDE",
+        horario: "13:00 - 15:00",
+        local: "Sala 4 Bloco C",
+        publico: "Turma 2206"
+      },
+      {
+        id: 39,
+        dia: "14/10",
+        diaRotulo: "14/10 (Quarta)",
+        titulo: "Exposição de trabalho \"Colores de España\"",
+        turno: "TARDE",
+        horario: "13:00 - 15:00",
+        local: "Sala 3 Bloco A",
+        publico: "Turma 606"
+      },
+      {
+        id: 40,
+        dia: "14/10",
+        diaRotulo: "14/10 (Quarta)",
+        titulo: "Exposição de trabalho \"Dia de los muertos\"",
+        turno: "TARDE",
+        horario: "13:00 - 15:00",
+        local: "Sala 5 Bloco A",
+        publico: "Turma 702"
+      },
+      {
+        id: 41,
+        dia: "14/10",
+        diaRotulo: "14/10 (Quarta)",
+        titulo: "Exposição de trabalhos \"La cultura hispánica: expresiones y tradiciones\"",
+        turno: "TARDE",
+        horario: "13:00 - 15:00",
+        local: "Sala 7 Bloco A",
+        publico: "Turmas 902 e 906"
+      },
+      {
+        id: 42,
+        dia: "14/10",
+        diaRotulo: "14/10 (Quarta)",
+        titulo: "Exposição de trabalhos \"Mi barrio en el mundo\"",
+        turno: "TARDE",
+        horario: "13:00 - 15:00",
+        local: "Sala 2 Bloco B",
+        publico: "Turmas 2104 e 2108"
+      },
+      {
+        id: 43,
+        dia: "14/10",
+        diaRotulo: "14/10 (Quarta)",
+        titulo: "Exposição de trabalho \"Migraciones en el mundo hispánico\"",
+        turno: "TARDE",
+        horario: "13:00 - 15:00",
+        local: "Sala do Bloco A",
+        publico: "Turma 802"
+      },
+      {
+        id: 44,
+        dia: "14/10",
+        diaRotulo: "14/10 (Quarta)",
+        titulo: "Representações do feminino na lírica camoniana",
+        turno: "TARDE",
+        horario: "13:00 - 14:30",
+        local: "Sala 4 Bloco B",
+        publico: "Turma 2108"
+      },
+      {
+        id: 45,
+        dia: "14/10",
+        diaRotulo: "14/10 (Quarta)",
+        titulo: "Atividade oficina Redação ENEM",
+        turno: "TARDE",
+        horario: "13:00 - 15:30",
+        local: "Auditório Bloco C",
+        publico: "Ensino Médio"
+      },
+      {
+        id: 46,
+        dia: "14/10",
+        diaRotulo: "14/10 (Quarta)",
+        titulo: "Palestra sobre planejamento de carreira",
+        turno: "TARDE",
+        horario: "14:00",
+        local: "Sala 3 Bloco A",
+        publico: "Ensino Médio"
+      },
+      {
+        id: 47,
+        dia: "14/10",
+        diaRotulo: "14/10 (Quarta)",
+        titulo: "Roda de conversa: \"Vidas LGBTQIAPN+ na escola: possibilidades de acolher, existir e resistir\"",
+        turno: "TARDE",
+        horario: "14:00 - 16:00",
+        local: "Sala 12 Bloco A",
+        publico: "Toda a comunidade escolar"
+      },
+      {
+        id: 48,
+        dia: "14/10",
+        diaRotulo: "14/10 (Quarta)",
+        titulo: "Oficina \"O subúrbio é dentro da gente\" com Bea Machado",
+        turno: "TARDE",
+        horario: "14:20",
+        local: "Sala de Artes",
+        publico: "Turmas de 1º ano"
+      },
+      {
+        id: 49,
+        dia: "14/10",
+        diaRotulo: "14/10 (Quarta)",
+        titulo: "Representações do feminino na lírica camoniana",
+        turno: "TARDE",
+        horario: "14:20 - 15:00",
+        local: "Sala 8 Bloco B",
+        publico: "Turma AD2110"
+      },
+      {
+        id: 50,
+        dia: "14/10",
+        diaRotulo: "14/10 (Quarta)",
+        titulo: "Atividade oficina Redação ENEM",
+        turno: "TARDE",
+        horario: "15:30 - 18:00",
+        local: "Sala de Português",
+        publico: "Ensino Médio"
+      },
+      {
+        id: 51,
+        dia: "14/10",
+        diaRotulo: "14/10 (Quarta)",
+        titulo: "Representações do feminino na lírica camoniana",
+        turno: "TARDE",
+        horario: "16:00 - 17:20",
+        local: "Sala 3 Bloco B",
+        publico: "Turma 2106"
+      },
+      {
+        id: 52,
+        dia: "14/10",
+        diaRotulo: "14/10 (Quarta)",
+        titulo: "Movimento operário no século XIX",
+        turno: "TARDE",
+        horario: "16:00",
+        local: "Salas de aula",
+        publico: "Turmas 2202 e 2206"
       }
     ];
 
@@ -415,14 +857,14 @@
       const termo = document.getElementById("searchInput").value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
 
       const eventosFiltrados = PROGRAMACAO.filter(ev => {
-        // Filtro por dia ou turno
+        // Filtro por chip
         const passaFiltroChip = 
           filtroAtual === "TODOS" ||
           ev.dia === filtroAtual ||
           ev.turno === filtroAtual;
 
-        // Filtro por busca de texto
-        const textoBusca = `${ev.titulo} ${ev.local} ${ev.responsavel} ${ev.horario} ${ev.diaRotulo}`
+        // Filtro de pesquisa de texto
+        const textoBusca = `${ev.titulo} ${ev.local} ${ev.publico} ${ev.horario} ${ev.diaRotulo} ${ev.dia}`
           .toLowerCase()
           .normalize("NFD")
           .replace(/[\u0300-\u036f]/g, "");
@@ -449,38 +891,47 @@
       }
 
       lista.forEach(ev => {
-        const badgeClass = ev.turno === "MANHA" ? "badge-manha" : "badge-tarde";
-        const turnoRotulo = ev.turno === "MANHA" ? "☀️ Manhã" : "🌤️ Tarde";
+        let badgeClass = "badge-manha";
+        let turnoRotulo = "☀️ Manhã";
+
+        if (ev.turno === "TARDE") {
+          badgeClass = "badge-tarde";
+          turnoRotulo = "🌤️ Tarde";
+        } else if (ev.turno === "ENTRE") {
+          badgeClass = "badge-entre";
+          turnoRotulo = "🍃 Entre Turnos";
+        }
 
         const card = document.createElement("div");
         card.className = "event-card";
         card.innerHTML = `
           <div class="event-header">
             <div class="badges-group">
-              <span class="badge-dia">📅 ${ev.diaRotulo}</span>
+              <span class="badge-dia">${ev.diaRotulo}</span>
               <span class="badge-turno ${badgeClass}">${turnoRotulo}</span>
             </div>
             <span class="event-time">⏰ ${ev.horario}</span>
           </div>
           <div class="event-title">${ev.titulo}</div>
           <div class="event-details">
-            <span class="detail-item">📍 ${ev.local}</span>
-            <span class="detail-item">👤 ${ev.responsavel}</span>
+            <span class="detail-item">📍 <strong>Local:</strong> ${ev.local}</span>
+            <span class="detail-item">👥 <strong>Público/Turmas:</strong> ${ev.publico}</span>
           </div>
         `;
         container.appendChild(card);
       });
     }
 
-    // Seleciona automaticamente o dia de hoje ao abrir se for dia útil
+    // Seleciona o filtro automaticamente pelo dia de hoje (13/10 ou 14/10)
     window.onload = () => {
-      const hoje = new Date().getDay();
-      const mapaDias = { 1: "SEG", 2: "TER", 3: "QUA", 4: "QUI", 5: "SEX" };
+      const hoje = new Date();
+      const diaMes = `${hoje.getDate().toString().padStart(2, '0')}/${(hoje.getMonth() + 1).toString().padStart(2, '0')}`;
       
-      if (mapaDias[hoje]) {
-        const chip = Array.from(document.querySelectorAll('.filter-chip')).find(c => c.textContent.toUpperCase().includes(mapaDias[hoje]));
-        if (chip) setFiltro(mapaDias[hoje], chip);
-        else filtrarEventos();
+      const chips = Array.from(document.querySelectorAll('.filter-chip'));
+      const chipHoje = chips.find(c => c.textContent.includes(diaMes));
+
+      if (chipHoje) {
+        setFiltro(diaMes, chipHoje);
       } else {
         filtrarEventos();
       }
