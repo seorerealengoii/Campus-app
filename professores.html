@@ -510,7 +510,6 @@
     const DIAS_LABEL = { SEG: "Segunda-feira", TER: "Terça-feira", QUA: "Quarta-feira", QUI: "Quinta-feira", SEX: "Sexta-feira" };
 
     // MAPA DAS TURMAS COM SALAS E PROFESSORES POR SIGLA DE MATÉRIA
-    // (Mesma base oficial do monitor.html — fácil de adicionar novas turmas aqui)
     const TURMAS_PROFESSORES = [
       {
         turma: "602",
@@ -535,6 +534,56 @@
         }
       },
       {
+        turma: "604",
+        sala: "Sala 2 (Bloco A)",
+        professores: {
+          DES: { nome: "Isabel", materia: "Desenho" },
+          HIST: { nome: "Bruno", materia: "História" },
+          MUS: { nome: "Edu Prestes", materia: "Música" },
+          GEO: { nome: "Rafael", materia: "Geografia" },
+          EFI: { nome: "Dora", materia: "Ed. Física" },
+          MAT: { nome: "Alexander", materia: "Matemática" },
+          PORT: { nome: "Amanda Dib", materia: "Português" },
+          ING: { nome: "Francisco", materia: "Inglês" },
+          FRA: { nome: "Aline", materia: "Francês" },
+          CIE: { nome: "Cláudia Vargas", materia: "Ciências" },
+          ART: { nome: "Gil", materia: "Artes" }
+        },
+        grade: {
+          SEG: { T1:"DES", T2:"DES", T3:"HIST", T4:"HIST", T5:"MUS", T6:"MUS", T7:"ING" },
+          TER: { T1:"GEO", T2:"GEO", T3:"EFI", T4:"EFI", T5:"HIST", T6:"ING", T7:"GEO" },
+          QUA: { T1:"MAT", T2:"MAT", T3:"PORT", T4:"PORT", T5:"ING", T6:"CIE", T7:"FRA" },
+          QUI: { T1:"FRA", T2:"FRA", T3:"INFO", T4:"INFO", T5:"CIE", T6:"PORT", T7:"CIE" },
+          SEX: { T1:"MAT", T2:"MAT", T3:"ART", T4:"ART", T5:"PORT", T6:"PORT", T7:"PORT" }
+        }
+      },
+      {
+        turma: "606",
+        sala: "Sala 3 (Bloco A)",
+        professores: {
+          DES: { nome: "Isabel", materia: "Desenho" },
+          HIST: { nome: "Bruno", materia: "História" },
+          MUS: { nome: "Edu Prestes", materia: "Música" },
+          GEO: { nome: "Rafael", materia: "Geografia" },
+          EFI: { nome: "Dora", materia: "Ed. Física" },
+          MAT: { nome: "Alexander", materia: "Matemática" },
+          PORT: { nome: "Amanda Dib", materia: "Português" },
+          ING: { nome: "Francisco", materia: "Inglês" },
+          FRA: { nome: "Aline", materia: "Francês" },
+          ESP: { nome: "Aline", materia: "Espanhol" },
+          "F/E": { nome: "Aline", materia: "Francês/Espanhol" },
+          CIE: { nome: "Cláudia Vargas", materia: "Ciências" },
+          ART: { nome: "Gil", materia: "Artes" }
+        },
+        grade: {
+          SEG: { T1:"MUS", T2:"MUS", T3:"MAT", T4:"MAT", T5:"ING", T6:"ING", T7:"CIE" },
+          TER: { T1:"CIE", T2:"CIE", T3:"DES", T4:"DES", T5:"GEO", T6:"EFI", T7:"EFI" },
+          QUA: { T1:"PORT", T2:"PORT", T3:"F/E", T4:"F/E", T5:"PORT", T6:"FRA", T7:"ING" },
+          QUI: { T1:"HIST", T2:"HIST", T3:"GEO", T4:"GEO", T5:"INFO", T6:"INFO", T7:"HIST" },
+          SEX: { T1:"ART", T2:"ART", T3:"PORT", T4:"PORT", T5:"ESP", T6:"MAT", T7:"MAT" }
+        }
+      },
+      {
         turma: "702",
         sala: "Sala 4 (Bloco A)",
         professores: {
@@ -552,6 +601,72 @@
           QUI: { T1:"C.SOC", T2:"C.SOC", T3:"GEO", T4:"GEO", T5:"ART", T6:"ART", T7:"HIST" },
           SEX: { T1:"ESP", T2:"ESP", T3:"PORT", T4:"PORT", T5:"MAT", T6:"MAT", T7:"GEO" }
         }
+      },
+      {
+        turma: "704",
+        sala: "Sala 5 (Bloco A)",
+        professores: {
+          ING: { nome: "Vitor", materia: "Inglês" },
+          PORT: { nome: "Thiago", materia: "Português" },
+          DES: { nome: "Érica", materia: "Desenho" },
+          CIE: { nome: "Marcos", materia: "Ciências" },
+          HIST: { nome: "Pedro", materia: "História" },
+          GEO: { nome: "Gil", materia: "Geografia" },
+          MAT: { nome: "João Luiz", materia: "Matemática" },
+          ART: { nome: "Gil", materia: "Artes" }
+        },
+        grade: {
+          SEG: { T1:"ING", T2:"ING", T3:"PORT", T4:"PORT", T5:"ING", T6:"DES", T7:"DES" },
+          TER: { T1:"LIVRE", T2:"CIE", T3:"HIST", T4:"HIST", T5:"HIST", T6:"GEO", T7:"GEO" },
+          QUA: { T1:"MAT", T2:"MAT", T3:"PORT", T4:"PORT", T5:"PORT", T6:"MUS", T7:"MUS" },
+          QUI: { T1:"EFI", T2:"EFI", T3:"CIE", T4:"CIE", T5:"FRA", T6:"FRA", T7:"FRA" },
+          SEX: { T1:"MAT", T2:"MAT", T3:"C.SOC", T4:"C.SOC", T5:"GEO", T6:"ART", T7:"ART" }
+        }
+      },
+      {
+        turma: "802",
+        sala: "Sala 6 (Bloco A)",
+        professores: {
+          PORT: { nome: "Thiago", materia: "Português" },
+          ART: { nome: "Ingrid", materia: "Artes" },
+          ING: { nome: "Edson", materia: "Inglês" },
+          GEO: { nome: "Ariane/Adriano", materia: "Geografia" },
+          CIE: { nome: "Filipe", materia: "Ciências" },
+          EFI: { nome: "Miguel", materia: "Ed. Física" },
+          MAT: { nome: "Marcela", materia: "Matemática" },
+          ESP: { nome: "Evânia", materia: "Espanhol" },
+          "C.SOC": { nome: "Rodolfo", materia: "C. Sociais" },
+          HIST: { nome: "Guido", materia: "História" }
+        },
+        grade: {
+          SEG: { T1:"PORT", T2:"PORT", T3:"ART", T4:"ART", T5:"ING", T6:"ING", T7:"ING" },
+          TER: { T1:"GEO", T2:"GEO", T3:"DES", T4:"DES", T5:"HIST", T6:"CIE", T7:"CIE" },
+          QUA: { T1:"EFI", T2:"EFI", T3:"MUS", T4:"MUS", T5:"MAT", T6:"MAT", T7:"ESP" },
+          QUI: { T1:"C.SOC", T2:"C.SOC", T3:"HIST", T4:"HIST", T5:"GEO", T6:"CIE", T7:"LIVRE" },
+          SEX: { T1:"ESP", T2:"ESP", T3:"MAT", T4:"MAT", T5:"PORT", T6:"PORT", T7:"PORT" }
+        }
+      },
+      {
+        turma: "804",
+        sala: "Sala 7 (Bloco A)",
+        professores: {
+          CIE: { nome: "Bianca", materia: "Ciências" },
+          PORT: { nome: "Gabriela", materia: "Português" },
+          ART: { nome: "Ingrid", materia: "Artes" },
+          GEO: { nome: "Ariane/Adriano", materia: "Geografia" },
+          HIST: { nome: "Guido", materia: "História" },
+          DES: { nome: "Eliane", materia: "Desenho" },
+          MAT: { nome: "Gabriela", materia: "Matemática" },
+          "C.SOC": { nome: "Rodolfo", materia: "C. Sociais" },
+          ING: { nome: "Luciana Sá", materia: "Inglês" }
+        },
+        grade: {
+          SEG: { T1:"CIE", T2:"CIE", T3:"PORT", T4:"PORT", T5:"PORT", T6:"ART", T7:"ART" },
+          TER: { T1:"GEO", T2:"GEO", T3:"CIE", T4:"HIST", T5:"GEO", T6:"DES", T7:"DES" },
+          QUA: { T1:"MAT", T2:"MAT", T3:"PORT", T4:"PORT", T5:"FRA", T6:"EFI", T7:"EFI" },
+          QUI: { T1:"FRA", T2:"FRA", T3:"C.SOC", T4:"C.SOC", T5:"HIST", T6:"HIST", T7:"LIVRE" },
+          SEX: { T1:"ING", T2:"ING", T3:"MUS", T4:"MUS", T5:"ING", T6:"MAT", T7:"MAT" }
+        }
       }
     ];
 
@@ -560,7 +675,6 @@
     let onlyInClass = false;
     let PROFESSORES_INDEX = [];
 
-    // Constrói automaticamente a lista unificada de cada professor a partir das turmas
     function buildProfessoresIndex() {
       const mapa = {};
 
@@ -663,7 +777,6 @@
 
         if (!termo) return true;
 
-        // Permite buscar por nome, matéria, turma ou sala
         const salasDoProf = Object.values(prof.horarios)
           .flatMap(d => Object.values(d))
           .map(a => `${a.sala} ${a.turma} ${a.sigla}`)
@@ -673,7 +786,6 @@
         return textoGeral.includes(termo);
       });
 
-      // Ordena colocando quem está em sala agora no topo
       filtrados.sort((a, b) => {
         const aAtivo = a.horarios[currentDay][currentTime] ? 0 : 1;
         const bAtivo = b.horarios[currentDay][currentTime] ? 0 : 1;
@@ -699,7 +811,6 @@
           .map(m => `<span class="subject-badge">📚 ${m}</span>`)
           .join("");
 
-        // Barra rápida dos 7 tempos do dia selecionado
         const slotsHtml = SLOTS.map(slot => {
           const aula = prof.horarios[currentDay][slot];
           const isSelected = slot === currentTime ? "selected-time" : "";
