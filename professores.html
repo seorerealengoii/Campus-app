@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SEORE Pátio Digital — Busca de Professores</title>
+  <title>SEORE Pátio Digital — Professores & Turmas</title>
 
   <!-- Configurações PWA (SEORE Pátio Digital) -->
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#f8fafc">
+  <meta name="theme-color" content="#f1f5f9">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -22,7 +22,7 @@
 
   <style>
     :root {
-      --bg-surface: #f8fafc;
+      --bg-surface: #f1f5f9;
       --card-bg: #ffffff;
       --border-color: #e2e8f0;
       --text-main: #0f172a;
@@ -31,13 +31,16 @@
       --brand-blue: #0284c7;
       --brand-blue-light: #e0f2fe;
 
-      --status-green-bg: #d1fae5;
-      --status-green-border: #a7f3d0;
-      --status-green-text: #065f46;
-      --status-green-dot: #10b981;
+      --green-bg: #dcfce7;
+      --green-border: #86efac;
+      --green-text: #166534;
+      --green-dot: #16a34a;
 
-      --status-gray-bg: #f1f5f9;
-      --status-gray-text: #64748b;
+      --amber-bg: #fef3c7;
+      --amber-text: #92400e;
+
+      --gray-bg: #f8fafc;
+      --gray-text: #64748b;
 
       --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
@@ -51,12 +54,12 @@
       min-height: 100vh;
       display: flex;
       justify-content: center;
-      padding: 16px;
+      padding: 14px;
     }
 
     .app-container {
       width: 100%;
-      max-width: 600px;
+      max-width: 560px;
       display: flex;
       flex-direction: column;
       gap: 12px;
@@ -69,21 +72,17 @@
       justify-content: space-between;
       align-items: center;
       background: var(--card-bg);
-      padding: 14px 18px;
+      padding: 12px 16px;
       border-radius: 16px;
       border: 1px solid var(--border-color);
-      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.03);
     }
 
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
+    .brand { display: flex; align-items: center; gap: 10px; }
 
     .brand-icon {
-      width: 34px;
-      height: 34px;
+      width: 36px;
+      height: 36px;
       background: var(--brand-blue-light);
       color: var(--brand-blue);
       border-radius: 10px;
@@ -93,237 +92,292 @@
       font-size: 1.15rem;
     }
 
-    .brand-text h1 {
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: var(--text-main);
-    }
-
-    .brand-text p {
-      font-size: 0.72rem;
-      color: var(--text-muted);
-    }
+    .brand-text h1 { font-size: 0.95rem; font-weight: 800; color: var(--text-main); }
+    .brand-text p { font-size: 0.72rem; font-weight: 600; color: var(--brand-blue); margin-top: 1px; }
 
     .back-btn {
       background: var(--bg-surface);
       border: 1px solid var(--border-color);
       color: var(--text-main);
       padding: 7px 12px;
-      border-radius: 8px;
-      font-size: 0.8rem;
+      border-radius: 10px;
+      font-size: 0.78rem;
       text-decoration: none;
-      font-weight: 600;
+      font-weight: 700;
     }
 
-    /* BUSCA RÁPIDA */
-    .search-box {
-      position: relative;
-      width: 100%;
+    /* SELETOR DE MODO (PROFESSOR VS TURMA) */
+    .mode-switcher {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      background: var(--card-bg);
+      padding: 5px;
+      border-radius: 14px;
+      border: 1px solid var(--border-color);
     }
+
+    .mode-btn {
+      background: transparent;
+      border: none;
+      padding: 10px;
+      border-radius: 10px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .mode-btn.active {
+      background: var(--brand-blue);
+      color: #ffffff;
+      box-shadow: 0 2px 6px rgba(2, 132, 199, 0.25);
+    }
+
+    /* BUSCA + CHIP DE FILTRO RÁPIDO */
+    .search-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .search-box { position: relative; flex: 1; }
 
     .search-input {
       width: 100%;
-      padding: 12px 16px 12px 40px;
-      border-radius: 14px;
+      padding: 11px 14px 11px 36px;
+      border-radius: 12px;
       border: 1px solid var(--border-color);
       background: var(--card-bg);
-      font-size: 0.88rem;
+      font-size: 0.85rem;
       color: var(--text-main);
       outline: none;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.02);
     }
 
     .search-input:focus { border-color: var(--brand-blue); }
 
     .search-icon {
       position: absolute;
-      left: 14px;
+      left: 12px;
       top: 50%;
       transform: translateY(-50%);
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       color: var(--text-muted);
     }
 
-    /* PAINEL DE FILTROS (DIA E TEMPO) */
-    .filters-card {
+    .toggle-active-btn {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      padding: 11px 12px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.15s;
+    }
+
+    .toggle-active-btn.active {
+      background: var(--green-bg);
+      border-color: var(--green-border);
+      color: var(--green-text);
+    }
+
+    /* BARRA COMPACTA DE DIA E TEMPO */
+    .time-controls {
       background: var(--card-bg);
       border: 1px solid var(--border-color);
       border-radius: 14px;
-      padding: 12px 14px;
+      padding: 10px 12px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+      gap: 8px;
     }
 
-    .control-row {
+    .control-strip {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
       overflow-x: auto;
       scrollbar-width: none;
     }
-    .control-row::-webkit-scrollbar { display: none; }
+    .control-strip::-webkit-scrollbar { display: none; }
 
-    .row-label {
-      font-size: 0.68rem;
-      font-weight: 700;
+    .strip-label {
+      font-size: 0.65rem;
+      font-weight: 800;
       color: var(--text-muted);
       text-transform: uppercase;
-      min-width: 46px;
+      min-width: 42px;
     }
 
-    .pill-btn {
+    .pill {
+      flex: 1;
+      text-align: center;
       background: var(--bg-surface);
-      border: 1px solid var(--border-color);
+      border: 1px solid transparent;
       color: var(--text-muted);
-      padding: 6px 11px;
-      font-size: 0.76rem;
-      font-weight: 600;
+      padding: 6px 8px;
+      font-size: 0.75rem;
+      font-weight: 700;
       border-radius: 8px;
       cursor: pointer;
       white-space: nowrap;
       transition: all 0.15s;
     }
 
-    .pill-btn.active {
-      background: var(--brand-blue);
-      border-color: var(--brand-blue);
-      color: #ffffff;
-    }
-
-    .pill-btn.active-soft {
+    .pill.active {
       background: var(--brand-blue-light);
       border-color: var(--brand-blue);
       color: var(--brand-blue);
     }
 
-    /* LISTA DE PROFESSORES */
-    .prof-list {
+    /* CONTADOR DE RESULTADOS */
+    .results-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 4px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    /* CARDS LIMPOS (PROFESSOR E TURMA) */
+    .cards-list {
       display: flex;
       flex-direction: column;
       gap: 10px;
     }
 
-    .prof-card {
+    .item-card {
       background: var(--card-bg);
       border: 1px solid var(--border-color);
       border-radius: 16px;
-      padding: 14px 16px;
+      padding: 14px;
       display: flex;
       flex-direction: column;
       gap: 10px;
       cursor: pointer;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-      transition: transform 0.1s ease;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+      transition: transform 0.1s ease, border-color 0.15s;
     }
 
-    .prof-card:active { transform: scale(0.985); }
+    .item-card:active { transform: scale(0.985); }
 
-    .prof-card.in-class {
-      border-left: 4px solid var(--status-green-dot);
+    .item-card.is-live {
+      border-left: 4px solid var(--green-dot);
     }
 
-    .prof-header {
+    .card-top {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      gap: 8px;
+      gap: 10px;
     }
 
-    .prof-name {
+    .card-title {
       font-size: 0.98rem;
-      font-weight: 700;
+      font-weight: 800;
       color: var(--text-main);
+      line-height: 1.2;
     }
 
-    .prof-subjects {
+    .card-subtitle {
       display: flex;
       flex-wrap: wrap;
       gap: 5px;
-      margin-top: 4px;
+      margin-top: 5px;
     }
 
-    .subject-badge {
+    .tag-chip {
       font-size: 0.68rem;
       font-weight: 700;
       padding: 2px 8px;
       border-radius: 6px;
+      background: var(--bg-surface);
+      color: var(--text-muted);
+      border: 1px solid var(--border-color);
+    }
+
+    .tag-chip.blue {
       background: var(--brand-blue-light);
       color: var(--brand-blue);
+      border-color: transparent;
     }
 
-    .location-pill {
+    .status-pill {
       font-size: 0.72rem;
-      font-weight: 700;
+      font-weight: 800;
       padding: 5px 10px;
-      border-radius: 8px;
+      border-radius: 10px;
       white-space: nowrap;
-      display: flex;
-      align-items: center;
-      gap: 5px;
+      text-align: right;
     }
 
-    .location-pill.active-room {
-      background: var(--status-green-bg);
-      color: var(--status-green-text);
-      border: 1px solid var(--status-green-border);
+    .status-pill.live {
+      background: var(--green-bg);
+      color: var(--green-text);
+      border: 1px solid var(--green-border);
     }
 
-    .location-pill.free-room {
-      background: var(--status-gray-bg);
-      color: var(--status-gray-text);
+    .status-pill.idle {
+      background: var(--gray-bg);
+      color: var(--gray-text);
+      border: 1px solid var(--border-color);
     }
 
-    /* MINI GRADE DO DIA NO CARD */
-    .day-slots-bar {
+    /* LINHA DO TEMPO T1 - T7 */
+    .slots-grid {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
       gap: 4px;
-      padding-top: 4px;
-      border-top: 1px dashed var(--border-color);
     }
 
-    .mini-slot {
+    .slot-box {
       background: var(--bg-surface);
       border: 1px solid var(--border-color);
       border-radius: 8px;
       padding: 5px 2px;
       text-align: center;
-      font-size: 0.65rem;
-      color: var(--text-muted);
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
     }
 
-    .mini-slot.has-class {
+    .slot-box.busy {
       background: #f0fdf4;
       border-color: #bbf7d0;
       color: #166534;
-      font-weight: 700;
     }
 
-    .mini-slot.selected-time {
-      outline: 2px solid var(--brand-blue);
-      outline-offset: -1px;
+    .slot-box.now {
+      background: var(--brand-blue);
+      border-color: var(--brand-blue);
+      color: #ffffff;
+      box-shadow: 0 2px 6px rgba(2, 132, 199, 0.25);
     }
 
-    .mini-slot-time { font-size: 0.62rem; opacity: 0.8; }
-    .mini-slot-turma { font-size: 0.68rem; margin-top: 1px; }
+    .slot-t { font-size: 0.6rem; font-weight: 700; opacity: 0.8; }
+    .slot-v { font-size: 0.67rem; font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
     .empty-msg {
       text-align: center;
-      padding: 30px 16px;
+      padding: 32px 16px;
       background: var(--card-bg);
       border: 1px dashed var(--border-color);
-      border-radius: 14px;
+      border-radius: 16px;
       color: var(--text-muted);
       font-size: 0.84rem;
     }
 
-    /* DRAWER DETALHES DA SEMANA */
+    /* DRAWER DETALHES */
     .drawer-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(15, 23, 42, 0.4);
+      background: rgba(15, 23, 42, 0.45);
       backdrop-filter: blur(4px);
       display: flex;
       justify-content: center;
@@ -338,15 +392,15 @@
 
     .drawer {
       background: var(--card-bg);
-      border-radius: 20px 20px 0 0;
+      border-radius: 22px 22px 0 0;
       width: 100%;
-      max-width: 520px;
-      max-height: 82vh;
+      max-width: 540px;
+      max-height: 84vh;
       overflow-y: auto;
       padding: 20px;
       transform: translateY(100%);
       transition: transform 0.25s cubic-bezier(0.1, 0.9, 0.2, 1);
-      box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+      box-shadow: 0 -4px 24px rgba(0,0,0,0.12);
     }
 
     .drawer-overlay.open .drawer { transform: translateY(0); }
@@ -354,16 +408,41 @@
     .drawer-header {
       display: flex;
       justify-content: space-between;
-      align-items: center;
+      align-items: flex-start;
       margin-bottom: 14px;
       padding-bottom: 10px;
       border-bottom: 1px solid var(--border-color);
     }
 
-    .close-btn { background: transparent; border: none; font-size: 1.4rem; color: var(--text-muted); cursor: pointer; }
+    .close-btn { background: transparent; border: none; font-size: 1.5rem; color: var(--text-muted); cursor: pointer; line-height: 1; }
+
+    .drawer-section-title {
+      font-size: 0.7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin: 12px 0 6px;
+    }
+
+    .prof-roster-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    .roster-item {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 7px 10px;
+      font-size: 0.74rem;
+    }
+
+    .roster-item strong { color: var(--brand-blue); display: block; font-size: 0.68rem; text-transform: uppercase; }
 
     .week-day-block {
-      margin-bottom: 10px;
+      margin-bottom: 8px;
       background: var(--bg-surface);
       padding: 10px 12px;
       border-radius: 10px;
@@ -378,11 +457,7 @@
       margin-bottom: 4px;
     }
 
-    .week-day-items {
-      font-size: 0.78rem;
-      color: var(--text-main);
-      line-height: 1.45;
-    }
+    .week-day-items { font-size: 0.78rem; color: var(--text-main); line-height: 1.45; }
 
     /* BOTTOM NAV */
     .bottom-nav {
@@ -392,7 +467,7 @@
       transform: translateX(-50%);
       width: calc(100% - 32px);
       max-width: 480px;
-      background: rgba(255, 255, 255, 0.92);
+      background: rgba(255, 255, 255, 0.94);
       backdrop-filter: blur(8px);
       border: 1px solid var(--border-color);
       border-radius: 20px;
@@ -426,66 +501,75 @@
     <!-- HEADER -->
     <header>
       <div class="brand">
-        <div class="brand-icon">👩‍🏫</div>
+        <div class="brand-icon">🧭</div>
         <div class="brand-text">
-          <h1>Busca de Professores</h1>
-          <p id="headerSubtitle">Localização por tempo e matéria</p>
+          <h1>Grade & Docentes</h1>
+          <p id="headerSubtitle">Segunda-feira • Tempo T1</p>
         </div>
       </div>
       <a href="inicio.html" class="back-btn">← Início</a>
     </header>
 
-    <!-- CAMPO DE PESQUISA -->
-    <div class="search-box">
-      <span class="search-icon">🔍</span>
-      <input type="text" id="searchInput" class="search-input" placeholder="Buscar professor, matéria (Ex: Mat), turma ou sala..." oninput="renderizarProfessores()" />
+    <!-- ABAS: POR PROFESSOR OU POR TURMA -->
+    <div class="mode-switcher">
+      <button class="mode-btn active" id="mode-PROF" onclick="setMode('PROF')">👩‍🏫 Por Professor</button>
+      <button class="mode-btn" id="mode-TURMA" onclick="setMode('TURMA')">🏫 Por Turma</button>
     </div>
 
-    <!-- FILTROS DE DIA, TEMPO E STATUS -->
-    <section class="filters-card">
-      <div class="control-row">
-        <span class="row-label">Dia</span>
-        <button class="pill-btn day-btn" id="day-SEG" onclick="setDay('SEG', this)">Seg</button>
-        <button class="pill-btn day-btn" id="day-TER" onclick="setDay('TER', this)">Ter</button>
-        <button class="pill-btn day-btn" id="day-QUA" onclick="setDay('QUA', this)">Qua</button>
-        <button class="pill-btn day-btn" id="day-QUI" onclick="setDay('QUI', this)">Qui</button>
-        <button class="pill-btn day-btn" id="day-SEX" onclick="setDay('SEX', this)">Sex</button>
+    <!-- BUSCA + FILTRO RÁPIDO -->
+    <div class="search-row">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" class="search-input" placeholder="Professor, matéria, turma ou sala..." oninput="render()" />
+      </div>
+      <button class="toggle-active-btn" id="btnOnlyLive" onclick="toggleOnlyLive()">🟢 Em aula</button>
+    </div>
+
+    <!-- SELETOR DE DIA E TEMPO -->
+    <section class="time-controls">
+      <div class="control-strip">
+        <span class="strip-label">Dia</span>
+        <button class="pill day-btn" id="day-SEG" onclick="setDay('SEG')">Seg</button>
+        <button class="pill day-btn" id="day-TER" onclick="setDay('TER')">Ter</button>
+        <button class="pill day-btn" id="day-QUA" onclick="setDay('QUA')">Qua</button>
+        <button class="pill day-btn" id="day-QUI" onclick="setDay('QUI')">Qui</button>
+        <button class="pill day-btn" id="day-SEX" onclick="setDay('SEX')">Sex</button>
       </div>
 
-      <div class="control-row">
-        <span class="row-label">Tempo</span>
-        <button class="pill-btn time-btn" id="time-T1" onclick="setTime('T1', this)">T1</button>
-        <button class="pill-btn time-btn" id="time-T2" onclick="setTime('T2', this)">T2</button>
-        <button class="pill-btn time-btn" id="time-T3" onclick="setTime('T3', this)">T3</button>
-        <button class="pill-btn time-btn" id="time-T4" onclick="setTime('T4', this)">T4</button>
-        <button class="pill-btn time-btn" id="time-T5" onclick="setTime('T5', this)">T5</button>
-        <button class="pill-btn time-btn" id="time-T6" onclick="setTime('T6', this)">T6</button>
-        <button class="pill-btn time-btn" id="time-T7" onclick="setTime('T7', this)">T7</button>
-      </div>
-
-      <div class="control-row">
-        <span class="row-label">Exibir</span>
-        <button class="pill-btn filter-btn active-soft" id="filter-ALL" onclick="setOnlyInClass(false, this)">Todos os Professores</button>
-        <button class="pill-btn filter-btn" id="filter-INCLASS" onclick="setOnlyInClass(true, this)">🟢 Só em Aula neste Tempo</button>
+      <div class="control-strip">
+        <span class="strip-label">Tempo</span>
+        <button class="pill time-btn" id="time-T1" onclick="setTime('T1')">T1</button>
+        <button class="pill time-btn" id="time-T2" onclick="setTime('T2')">T2</button>
+        <button class="pill time-btn" id="time-T3" onclick="setTime('T3')">T3</button>
+        <button class="pill time-btn" id="time-T4" onclick="setTime('T4')">T4</button>
+        <button class="pill time-btn" id="time-T5" onclick="setTime('T5')">T5</button>
+        <button class="pill time-btn" id="time-T6" onclick="setTime('T6')">T6</button>
+        <button class="pill time-btn" id="time-T7" onclick="setTime('T7')">T7</button>
       </div>
     </section>
 
+    <!-- CONTADOR / DICA -->
+    <div class="results-meta">
+      <span id="resultsCount">0 resultados</span>
+      <span>Toque no card para ver a semana ↗</span>
+    </div>
+
     <!-- LISTA DE CARDS -->
-    <main class="prof-list" id="profListContainer"></main>
+    <main class="cards-list" id="cardsContainer"></main>
 
   </div>
 
-  <!-- DRAWER COM GRADE SEMANAL COMPLETA DO PROFESSOR -->
+  <!-- DRAWER DETALHES DA SEMANA -->
   <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer(event)">
     <div class="drawer" onclick="event.stopPropagation()">
       <div class="drawer-header">
         <div>
-          <h3 id="dwProfName" style="font-size:1.05rem; font-weight:700;">Professor</h3>
-          <p id="dwProfSubjects" style="font-size:0.75rem; color:var(--text-muted);">Matérias</p>
+          <h3 id="dwTitle" style="font-size:1.05rem; font-weight:800;">Detalhes</h3>
+          <p id="dwSubtitle" style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">---</p>
         </div>
         <button class="close-btn" onclick="toggleDrawer(false)">&times;</button>
       </div>
-      <div id="dwWeekContent"></div>
+      <div id="dwBody"></div>
     </div>
   </div>
 
@@ -496,8 +580,8 @@
       <span>Início</span>
     </a>
     <a href="professores.html" class="nav-item active">
-      <span class="nav-icon">👩‍🏫</span>
-      <span>Professores</span>
+      <span class="nav-icon">🧭</span>
+      <span>Grade</span>
     </a>
     <a href="monitor.html" class="nav-item">
       <span class="nav-icon">📊</span>
@@ -670,9 +754,10 @@
       }
     ];
 
+    let currentMode = "PROF"; // "PROF" ou "TURMA"
     let currentDay = "SEG";
     let currentTime = "T1";
-    let onlyInClass = false;
+    let onlyLive = false;
     let PROFESSORES_INDEX = [];
 
     function buildProfessoresIndex() {
@@ -711,7 +796,7 @@
         .map(p => ({
           ...p,
           materias: Array.from(p.materias),
-          turmas: Array.from(p.turmas)
+          turmas: Array.from(p.turmas).sort()
         }))
         .sort((a, b) => a.nome.localeCompare(b.nome));
     }
@@ -730,136 +815,261 @@
       else if (totalMinutes < 1025) currentTime = "T6";
       else currentTime = "T7";
 
-      updateFilterUI();
+      updateControlsUI();
     }
 
-    function updateFilterUI() {
+    function updateControlsUI() {
+      document.getElementById("mode-PROF").classList.toggle("active", currentMode === "PROF");
+      document.getElementById("mode-TURMA").classList.toggle("active", currentMode === "TURMA");
+
       document.querySelectorAll(".day-btn").forEach(b => b.classList.remove("active"));
       document.getElementById(`day-${currentDay}`)?.classList.add("active");
 
       document.querySelectorAll(".time-btn").forEach(b => b.classList.remove("active"));
       document.getElementById(`time-${currentTime}`)?.classList.add("active");
 
+      document.getElementById("btnOnlyLive").classList.toggle("active", onlyLive);
       document.getElementById("headerSubtitle").innerText = `${DIAS_LABEL[currentDay]} • Tempo ${currentTime}`;
+    }
+
+    function setMode(m) {
+      currentMode = m;
+      updateControlsUI();
+      render();
     }
 
     function setDay(d) {
       currentDay = d;
-      updateFilterUI();
-      renderizarProfessores();
+      updateControlsUI();
+      render();
     }
 
     function setTime(t) {
       currentTime = t;
-      updateFilterUI();
-      renderizarProfessores();
+      updateControlsUI();
+      render();
     }
 
-    function setOnlyInClass(val) {
-      onlyInClass = val;
-      document.getElementById("filter-ALL").classList.toggle("active-soft", !val);
-      document.getElementById("filter-INCLASS").classList.toggle("active-soft", val);
-      renderizarProfessores();
+    function toggleOnlyLive() {
+      onlyLive = !onlyLive;
+      updateControlsUI();
+      render();
     }
 
     function normalize(str) {
       return (str || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
     }
 
-    function renderizarProfessores() {
+    function render() {
+      if (currentMode === "PROF") {
+        renderProfessores();
+      } else {
+        renderTurmas();
+      }
+    }
+
+    /* RENDERIZAÇÃO: MODO POR PROFESSOR */
+    function renderProfessores() {
       const termo = normalize(document.getElementById("searchInput").value);
-      const container = document.getElementById("profListContainer");
+      const container = document.getElementById("cardsContainer");
       container.innerHTML = "";
 
       const filtrados = PROFESSORES_INDEX.filter(prof => {
         const aulaAgora = prof.horarios[currentDay][currentTime];
-        if (onlyInClass && !aulaAgora) return false;
-
+        if (onlyLive && !aulaAgora) return false;
         if (!termo) return true;
 
-        const salasDoProf = Object.values(prof.horarios)
+        const salasStr = Object.values(prof.horarios)
           .flatMap(d => Object.values(d))
           .map(a => `${a.sala} ${a.turma} ${a.sigla}`)
           .join(" ");
 
-        const textoGeral = normalize(`${prof.nome} ${prof.materias.join(" ")} ${prof.turmas.join(" ")} ${salasDoProf}`);
-        return textoGeral.includes(termo);
+        return normalize(`${prof.nome} ${prof.materias.join(" ")} ${prof.turmas.join(" ")} ${salasStr}`).includes(termo);
       });
 
       filtrados.sort((a, b) => {
-        const aAtivo = a.horarios[currentDay][currentTime] ? 0 : 1;
-        const bAtivo = b.horarios[currentDay][currentTime] ? 0 : 1;
-        return aAtivo - bAtivo || a.nome.localeCompare(b.nome);
+        const aLive = a.horarios[currentDay][currentTime] ? 0 : 1;
+        const bLive = b.horarios[currentDay][currentTime] ? 0 : 1;
+        return aLive - bLive || a.nome.localeCompare(b.nome);
       });
 
+      document.getElementById("resultsCount").innerText = `${filtrados.length} professor(es)`;
+
       if (filtrados.length === 0) {
-        container.innerHTML = `<div class="empty-msg">Nenhum professor encontrado para os filtros selecionados.</div>`;
+        container.innerHTML = `<div class="empty-msg">Nenhum professor encontrado para este filtro.</div>`;
         return;
       }
 
       filtrados.forEach(prof => {
         const aulaAtual = prof.horarios[currentDay][currentTime];
         const card = document.createElement("div");
-        card.className = `prof-card ${aulaAtual ? "in-class" : ""}`;
-        card.onclick = () => openDrawer(prof);
+        card.className = `item-card ${aulaAtual ? "is-live" : ""}`;
+        card.onclick = () => openProfDrawer(prof);
 
-        const locationHtml = aulaAtual
-          ? `<div class="location-pill active-room">📍 ${aulaAtual.sala} • ${aulaAtual.turma}</div>`
-          : `<div class="location-pill free-room">☕ Sem aula no ${currentTime}</div>`;
+        const statusHtml = aulaAtual
+          ? `<div class="status-pill live">📍 ${aulaAtual.sala}<br><span style="font-size:0.65rem;">Turma ${aulaAtual.turma} • ${aulaAtual.sigla}</span></div>`
+          : `<div class="status-pill idle">☕ Janela<br><span style="font-size:0.65rem;">Sem aula no ${currentTime}</span></div>`;
 
-        const materiasBadges = prof.materias
-          .map(m => `<span class="subject-badge">📚 ${m}</span>`)
-          .join("");
+        const tagsHtml = prof.materias.map(m => `<span class="tag-chip blue">📚 ${m}</span>`).join("") +
+                         `<span class="tag-chip">Turmas: ${prof.turmas.join(", ")}</span>`;
 
         const slotsHtml = SLOTS.map(slot => {
           const aula = prof.horarios[currentDay][slot];
-          const isSelected = slot === currentTime ? "selected-time" : "";
-          const hasClass = aula ? "has-class" : "";
+          const cls = slot === currentTime ? "now" : (aula ? "busy" : "");
           return `
-            <div class="mini-slot ${hasClass} ${isSelected}">
-              <div class="mini-slot-time">${slot}</div>
-              <div class="mini-slot-turma">${aula ? aula.turma : "—"}</div>
+            <div class="slot-box ${cls}">
+              <span class="slot-t">${slot}</span>
+              <span class="slot-v">${aula ? aula.turma : "—"}</span>
             </div>
           `;
         }).join("");
 
         card.innerHTML = `
-          <div class="prof-header">
+          <div class="card-top">
             <div>
-              <div class="prof-name">${prof.nome}</div>
-              <div class="prof-subjects">${materiasBadges}</div>
+              <div class="card-title">${prof.nome}</div>
+              <div class="card-subtitle">${tagsHtml}</div>
             </div>
-            ${locationHtml}
+            ${statusHtml}
           </div>
-          <div class="day-slots-bar">${slotsHtml}</div>
+          <div class="slots-grid">${slotsHtml}</div>
         `;
-
         container.appendChild(card);
       });
     }
 
-    function openDrawer(prof) {
-      document.getElementById("dwProfName").innerText = prof.nome;
-      document.getElementById("dwProfSubjects").innerText = `Matérias: ${prof.materias.join(", ")} • Turmas: ${prof.turmas.join(", ")}`;
+    /* RENDERIZAÇÃO: MODO POR TURMA */
+    function renderTurmas() {
+      const termo = normalize(document.getElementById("searchInput").value);
+      const container = document.getElementById("cardsContainer");
+      container.innerHTML = "";
 
-      const content = document.getElementById("dwWeekContent");
-      content.innerHTML = "";
+      const filtradas = TURMAS_PROFESSORES.filter(t => {
+        const siglaAgora = (t.grade[currentDay] || {})[currentTime] || "";
+        const temAula = siglaAgora && siglaAgora !== "LIVRE";
+        if (onlyLive && !temAula) return false;
+        if (!termo) return true;
+
+        const profsStr = Object.values(t.professores).map(p => `${p.nome} ${p.materia}`).join(" ");
+        const gradeStr = Object.values(t.grade[currentDay] || {}).join(" ");
+        return normalize(`turma ${t.turma} ${t.sala} ${profsStr} ${gradeStr}`).includes(termo);
+      });
+
+      document.getElementById("resultsCount").innerText = `${filtradas.length} turma(s)`;
+
+      if (filtradas.length === 0) {
+        container.innerHTML = `<div class="empty-msg">Nenhuma turma encontrada para este filtro.</div>`;
+        return;
+      }
+
+      filtradas.forEach(t => {
+        const siglaAtual = (t.grade[currentDay] || {})[currentTime] || "LIVRE";
+        const profAtual = t.professores[siglaAtual];
+        const emAula = siglaAtual && siglaAtual !== "LIVRE";
+
+        const card = document.createElement("div");
+        card.className = `item-card ${emAula ? "is-live" : ""}`;
+        card.onclick = () => openTurmaDrawer(t);
+
+        let statusHtml = "";
+        if (!emAula) {
+          statusHtml = `<div class="status-pill idle">🟢 Horário Livre<br><span style="font-size:0.65rem;">Sem aula no ${currentTime}</span></div>`;
+        } else if (profAtual) {
+          statusHtml = `<div class="status-pill live">👩‍🏫 ${profAtual.nome}<br><span style="font-size:0.65rem;">${profAtual.materia} (${siglaAtual})</span></div>`;
+        } else {
+          statusHtml = `<div class="status-pill live">📘 ${siglaAtual}<br><span style="font-size:0.65rem;">Prof. não cadastrado</span></div>`;
+        }
+
+        const slotsHtml = SLOTS.map(slot => {
+          const sig = (t.grade[currentDay] || {})[slot] || "—";
+          const isLivre = sig === "LIVRE" || sig === "—";
+          const cls = slot === currentTime ? "now" : (!isLivre ? "busy" : "");
+          return `
+            <div class="slot-box ${cls}">
+              <span class="slot-t">${slot}</span>
+              <span class="slot-v">${sig === "LIVRE" ? "—" : sig}</span>
+            </div>
+          `;
+        }).join("");
+
+        card.innerHTML = `
+          <div class="card-top">
+            <div>
+              <div class="card-title">Turma ${t.turma}</div>
+              <div class="card-subtitle">
+                <span class="tag-chip blue">📍 ${t.sala}</span>
+              </div>
+            </div>
+            ${statusHtml}
+          </div>
+          <div class="slots-grid">${slotsHtml}</div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    /* DRAWER: DETALHES DO PROFESSOR */
+    function openProfDrawer(prof) {
+      document.getElementById("dwTitle").innerText = prof.nome;
+      document.getElementById("dwSubtitle").innerText = `${prof.materias.join(", ")} • Turmas: ${prof.turmas.join(", ")}`;
+
+      const body = document.getElementById("dwBody");
+      body.innerHTML = `<div class="drawer-section-title">Grade Semanal do Professor</div>`;
 
       Object.keys(DIAS_LABEL).forEach(dia => {
         const aulasDia = SLOTS
           .filter(slot => prof.horarios[dia][slot])
           .map(slot => {
             const a = prof.horarios[dia][slot];
-            return `<b>${slot}:</b> Turma ${a.turma} (${a.sala} — ${a.materia})`;
+            return `<b>${slot}:</b> Turma ${a.turma} • ${a.sala} (${a.materia})`;
           });
 
         const block = document.createElement("div");
         block.className = "week-day-block";
         block.innerHTML = `
           <div class="week-day-title">${DIAS_LABEL[dia]}</div>
-          <div class="week-day-items">${aulasDia.length ? aulasDia.join("<br>") : "Sem aulas mapeadas neste dia."}</div>
+          <div class="week-day-items">${aulasDia.length ? aulasDia.join("<br>") : "Sem aulas mapeadas."}</div>
         `;
-        content.appendChild(block);
+        body.appendChild(block);
+      });
+
+      toggleDrawer(true);
+    }
+
+    /* DRAWER: DETALHES DA TURMA (ELENCO DE PROFESSORES + SEMANA) */
+    function openTurmaDrawer(t) {
+      document.getElementById("dwTitle").innerText = `Turma ${t.turma}`;
+      document.getElementById("dwSubtitle").innerText = `${t.sala} • Corpo Docente e Horários`;
+
+      const body = document.getElementById("dwBody");
+      
+      // Lista de professores da turma
+      const rosterItems = Object.entries(t.professores)
+        .map(([sigla, info]) => `<div class="roster-item"><strong>${info.materia} (${sigla})</strong>${info.nome}</div>`)
+        .join("");
+
+      body.innerHTML = `
+        <div class="drawer-section-title">Professores da Turma ${t.turma}</div>
+        <div class="prof-roster-grid">${rosterItems}</div>
+        <div class="drawer-section-title">Horário Semanal</div>
+      `;
+
+      Object.keys(DIAS_LABEL).forEach(dia => {
+        const aulasDia = SLOTS
+          .filter(slot => t.grade[dia] && t.grade[dia][slot] && t.grade[dia][slot] !== "LIVRE")
+          .map(slot => {
+            const sig = t.grade[dia][slot];
+            const prof = t.professores[sig];
+            return `<b>${slot}:</b> ${sig}${prof ? ` — ${prof.nome}` : ""}`;
+          });
+
+        const block = document.createElement("div");
+        block.className = "week-day-block";
+        block.innerHTML = `
+          <div class="week-day-title">${DIAS_LABEL[dia]}</div>
+          <div class="week-day-items">${aulasDia.length ? aulasDia.join("<br>") : "Sem aulas mapeadas."}</div>
+        `;
+        body.appendChild(block);
       });
 
       toggleDrawer(true);
@@ -876,7 +1086,7 @@
     window.onload = () => {
       buildProfessoresIndex();
       autoDetectTime();
-      renderizarProfessores();
+      render();
     };
   </script>
 </body>
