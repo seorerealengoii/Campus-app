@@ -948,8 +948,69 @@
       document.getElementById(`day-${currentDay}`)?.classList.add("active");
 
       document.querySelectorAll(".time-btn").forEach(b => b.classList.remove("active"));
-      document.getElementById(`time-${currentTime}`)?.classList.add("active");  document.getElementById("btnOnlyLive").classList.toggle("active-green", quickFilter === "LIVE"); document.getElementById("btnOnlyFaltas").classList.toggle("active-red", quickFilter === "FALTAS"); document.getElementById("headerSubtitle").innerText = `${DIAS_LABEL[currentDay]} • Tempo ${currentTime}`; }  function setMode(m) { currentMode = m; updateControlsUI(); render(); } function setDay(d) { currentDay = d; updateControlsUI(); render(); } function setTime(t) { currentTime = t; updateControlsUI(); render(); } function toggleQuickFilter(type) { quickFilter = quickFilter === type ? "NONE" : type; updateControlsUI(); render(); }  function normalize(str) { return (str \vert{}\vert{} "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim(); }  function atualizarContadorFaltas() { const totalFaltas = Object.values(OCORRENCIAS_HOJE).filter(o => o.status === "FALTOU" \vert{}\vert{} o.status === "ATRASO").length; document.getElementById("faltasBadgeCount").innerText = totalFaltas; }  function render() { atualizarContadorFaltas(); if (currentMode === "PROF") renderProfessores(); else renderTurmas(); }  /* RENDERIZAÇÃO: MODO POR PROFESSOR */ function renderProfessores() { const termo = normalize(document.getElementById("searchInput").value); const container = document.getElementById("cardsContainer"); container.innerHTML = "";  const filtrados = PROFESSORES_INDEX.filter(prof => { const aulaAgora = prof.horarios[currentDay][currentTime]; const occ = OCORRENCIAS_HOJE[prof.nome]; const temOcorrencia = occ && (occ.status === "FALTOU" \vert{}\vert{} occ.status === "ATRASO");  if (quickFilter === "LIVE" && !aulaAgora) return false; if (quickFilter === "FALTAS" && !temOcorrencia) return false; if (!termo) return true;  const salasStr = Object.values(prof.horarios).flatMap(d => Object.values(d)).map(a => `${a.sala} ${a.turma}${a.sigla}`).join(" ");
-        return normalize(`${prof.nome}${prof.materias.join(" ")} ${prof.turmas.join(" ")} ${salasStr} ${occ?.comentario \vert{}\vert{} ""}`).includes(termo); });  filtrados.sort((a, b) => { const occA = OCORRENCIAS_HOJE[a.nome]; const occB = OCORRENCIAS_HOJE[b.nome]; const pesoOccA = occA?.status === "FALTOU" ? 0 : occA?.status === "ATRASO" ? 1 : 2; const pesoOccB = occB?.status === "FALTOU" ? 0 : occB?.status === "ATRASO" ? 1 : 2; if (pesoOccA !== pesoOccB) return pesoOccA - pesoOccB;  const aLive = a.horarios[currentDay][currentTime] ? 0 : 1; const bLive = b.horarios[currentDay][currentTime] ? 0 : 1; return aLive - bLive \vert{}\vert{} a.nome.localeCompare(b.nome); });  document.getElementById("resultsCount").innerText = `${filtrados.length} professor(es)`;
+      document.getElementById(`time-${currentTime}`)?.classList.add("active");
+
+      document.getElementById("btnOnlyLive").classList.toggle("active-green", quickFilter === "LIVE");
+      document.getElementById("btnOnlyFaltas").classList.toggle("active-red", quickFilter === "FALTAS");
+      document.getElementById("headerSubtitle").innerText = `${DIAS_LABEL[currentDay]} • Tempo ${currentTime}`;
+    }
+
+    function setMode(m) { currentMode = m; updateControlsUI(); render(); }
+    function setDay(d) { currentDay = d; updateControlsUI(); render(); }
+    function setTime(t) { currentTime = t; updateControlsUI(); render(); }
+    function toggleQuickFilter(type) {
+      quickFilter = quickFilter === type ? "NONE" : type;
+      updateControlsUI();
+      render();
+    }
+
+    function normalize(str) {
+      return (str || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+    }
+
+    function atualizarContadorFaltas() {
+      const totalFaltas = Object.values(OCORRENCIAS_HOJE).filter(o => o.status === "FALTOU" || o.status === "ATRASO").length;
+      document.getElementById("faltasBadgeCount").innerText = totalFaltas;
+    }
+
+    function render() {
+      atualizarContadorFaltas();
+      if (currentMode === "PROF") renderProfessores();
+      else renderTurmas();
+    }
+
+    /* RENDERIZAÇÃO: MODO POR PROFESSOR */
+    function renderProfessores() {
+      const termo = normalize(document.getElementById("searchInput").value);
+      const container = document.getElementById("cardsContainer");
+      container.innerHTML = "";
+
+      const filtrados = PROFESSORES_INDEX.filter(prof => {
+        const aulaAgora = prof.horarios[currentDay][currentTime];
+        const occ = OCORRENCIAS_HOJE[prof.nome];
+        const temOcorrencia = occ && (occ.status === "FALTOU" || occ.status === "ATRASO");
+
+        if (quickFilter === "LIVE" && !aulaAgora) return false;
+        if (quickFilter === "FALTAS" && !temOcorrencia) return false;
+        if (!termo) return true;
+
+        const salasStr = Object.values(prof.horarios).flatMap(d => Object.values(d)).map(a => `${a.sala} ${a.turma} ${a.sigla}`).join(" ");
+        return normalize(`${prof.nome} ${prof.materias.join(" ")} ${prof.turmas.join(" ")} ${salasStr} ${occ?.comentario || ""}`).includes(termo);
+      });
+
+      filtrados.sort((a, b) => {
+        const occA = OCORRENCIAS_HOJE[a.nome];
+        const occB = OCORRENCIAS_HOJE[b.nome];
+        const pesoOccA = occA?.status === "FALTOU" ? 0 : occA?.status === "ATRASO" ? 1 : 2;
+        const pesoOccB = occB?.status === "FALTOU" ? 0 : occB?.status === "ATRASO" ? 1 : 2;
+        if (pesoOccA !== pesoOccB) return pesoOccA - pesoOccB;
+
+        const aLive = a.horarios[currentDay][currentTime] ? 0 : 1;
+        const bLive = b.horarios[currentDay][currentTime] ? 0 : 1;
+        return aLive - bLive || a.nome.localeCompare(b.nome);
+      });
+
+      document.getElementById("resultsCount").innerText = `${filtrados.length} professor(es)`;
 
       if (filtrados.length === 0) {
         container.innerHTML = `<div class="empty-msg">Nenhum professor encontrado para este filtro.</div>`;
@@ -970,7 +1031,7 @@
         else if (occ?.status === "ATRASO") occBadgeHtml = `<span class="occ-badge occ-ATRASO">⏳ Atraso/Permuta</span>`;
 
         const statusHtml = aulaAtual
-          ? `<div class="status-pill ${occ?.status === 'FALTOU' ? 'alert' : 'live'}">📍 ${aulaAtual.sala}<br><span style="font-size:0.65rem;">Turma ${aulaAtual.turma} •${aulaAtual.sigla}</span></div>`
+          ? `<div class="status-pill ${occ?.status === 'FALTOU' ? 'alert' : 'live'}">📍 ${aulaAtual.sala}<br><span style="font-size:0.65rem;">Turma ${aulaAtual.turma} • ${aulaAtual.sigla}</span></div>`
           : `<div class="status-pill idle">☕ Janela<br><span style="font-size:0.65rem;">Sem aula no ${currentTime}</span></div>`;
 
         const tagsHtml = prof.materias.map(m => `<span class="tag-chip blue">📚 ${m}</span>`).join("") +
@@ -979,7 +1040,7 @@
         const commentHtml = (occ && (occ.comentario || occ.status !== "PRESENTE"))
           ? `<div class="comment-banner">
                <span>💬 ${occ.comentario || (occ.status === "FALTOU" ? "Falta registrada" : "Atraso / Permuta")}</span>
-               <span class="comment-author">${occ.registradoPor} •${occ.hora}</span>
+               <span class="comment-author">${occ.registradoPor} • ${occ.hora}</span>
              </div>`
           : "";
 
@@ -998,7 +1059,8 @@
           <div class="card-top">
             <div>
               <div class="card-title-row">
-                <span class="card-title">${prof.nome}</span>${occBadgeHtml}
+                <span class="card-title">${prof.nome}</span>
+                ${occBadgeHtml}
               </div>
               <div class="card-subtitle">${tagsHtml}</div>
             </div>
@@ -1027,8 +1089,11 @@
         if (quickFilter === "FALTAS" && !(occ && (occ.status === "FALTOU" || occ.status === "ATRASO"))) return false;
         if (!termo) return true;
 
-        const profsStr = Object.values(t.professores).map(p => `${p.nome}${p.materia}`).join(" ");
-        return normalize(`turma ${t.turma}${t.sala} ${profsStr}`).includes(termo); });  document.getElementById("resultsCount").innerText = `${filtradas.length} turma(s)`;
+        const profsStr = Object.values(t.professores).map(p => `${p.nome} ${p.materia}`).join(" ");
+        return normalize(`turma ${t.turma} ${t.sala} ${profsStr}`).includes(termo);
+      });
+
+      document.getElementById("resultsCount").innerText = `${filtradas.length} turma(s)`;
 
       if (filtradas.length === 0) {
         container.innerHTML = `<div class="empty-msg">Nenhuma turma encontrada para este filtro.</div>`;
@@ -1060,7 +1125,7 @@
         const commentHtml = (occ && (occ.comentario || occ.status !== "PRESENTE"))
           ? `<div class="comment-banner">
                <span>💬 ${occ.comentario || "Professor ausente / atrasado"}</span>
-               <span class="comment-author">${occ.registradoPor} •${occ.hora}</span>
+               <span class="comment-author">${occ.registradoPor} • ${occ.hora}</span>
              </div>`
           : "";
 
@@ -1101,7 +1166,7 @@
 
     function adicionarTextoRapido(texto) {
       const input = document.getElementById("drawerCommentInput");
-      input.value = input.value ? `${input.value} •${texto}` : texto;
+      input.value = input.value ? `${input.value} • ${texto}` : texto;
     }
 
     /* DRAWER: DETALHES DO PROFESSOR + REGISTRO DE FALTA/COMENTÁRIO */
@@ -1117,4 +1182,101 @@
         <div class="drawer-section-title">Status Hoje (Visível para toda a equipe)</div>
         <div class="occ-panel">
           <div class="status-selector">
-            <button type="button" class="st-opt-btn
+            <button type="button" class="st-opt-btn ${occAtual.status === 'PRESENTE' ? 'selected-PRESENTE' : ''}" data-st="PRESENTE" onclick="selecionarStatusDrawer('PRESENTE')">✅ Presente</button>
+            <button type="button" class="st-opt-btn ${occAtual.status === 'ATRASO' ? 'selected-ATRASO' : ''}" data-st="ATRASO" onclick="selecionarStatusDrawer('ATRASO')">⏳ Atraso/Permuta</button>
+            <button type="button" class="st-opt-btn ${occAtual.status === 'FALTOU' ? 'selected-FALTOU' : ''}" data-st="FALTOU" onclick="selecionarStatusDrawer('FALTOU')">🚨 Faltou</button>
+          </div>
+
+          <div class="quick-chips">
+            <button type="button" class="q-chip" onclick="adicionarTextoRapido('Turma liberada')">+ Turma liberada</button>
+            <button type="button" class="q-chip" onclick="adicionarTextoRapido('Na quadra / pátio')">+ Na quadra / pátio</button>
+            <button type="button" class="q-chip" onclick="adicionarTextoRapido('Aula adiantada')">+ Aula adiantada</button>
+            <button type="button" class="q-chip" onclick="adicionarTextoRapido('Chega no próximo tempo')">+ Chega próx. tempo</button>
+          </div>
+
+          <input type="text" id="drawerCommentInput" class="comment-input" placeholder="Adicionar comentário (opcional)..." value="${occAtual.comentario || ""}" />
+          
+          <button type="button" class="btn-save-occ" onclick="salvarOcorrenciaProfessor('${prof.nome.replace(/'/g, "\\'")}')">💾 Salvar para Todos</button>
+        </div>
+
+        <div class="drawer-section-title">Grade Semanal do Professor</div>
+      `;
+
+      Object.keys(DIAS_LABEL).forEach(dia => {
+        const aulasDia = SLOTS
+          .filter(slot => prof.horarios[dia][slot])
+          .map(slot => {
+            const a = prof.horarios[dia][slot];
+            return `<b>${slot}:</b> Turma ${a.turma} • ${a.sala} (${a.materia})`;
+          });
+
+        const block = document.createElement("div");
+        block.className = "week-day-block";
+        block.innerHTML = `
+          <div class="week-day-title">${DIAS_LABEL[dia]}</div>
+          <div class="week-day-items">${aulasDia.length ? aulasDia.join("<br>") : "Sem aulas mapeadas."}</div>
+        `;
+        body.appendChild(block);
+      });
+
+      toggleDrawer(true);
+    }
+
+    /* DRAWER: DETALHES DA TURMA */
+    function openTurmaDrawer(t) {
+      document.getElementById("dwTitle").innerText = `Turma ${t.turma}`;
+      document.getElementById("dwSubtitle").innerText = `${t.sala} • Toque em um professor para marcar falta/aviso`;
+
+      const body = document.getElementById("dwBody");
+      const rosterItems = Object.entries(t.professores)
+        .map(([sigla, info]) => {
+          const occ = OCORRENCIAS_HOJE[info.nome];
+          const badge = occ?.status === "FALTOU" ? " 🚨" : occ?.status === "ATRASO" ? " ⏳" : "";
+          return `<div class="roster-item" style="cursor:pointer;" onclick="abrirProfPorNome('${info.nome.replace(/'/g, "\\'")}')"><strong>${info.materia} (${sigla})</strong>${info.nome}${badge}</div>`;
+        })
+        .join("");
+
+      body.innerHTML = `
+        <div class="drawer-section-title">Professores da Turma ${t.turma}</div>
+        <div class="prof-roster-grid">${rosterItems}</div>
+        <div class="drawer-section-title">Horário Semanal</div>
+      `;
+
+      Object.keys(DIAS_LABEL).forEach(dia => {
+        const aulasDia = SLOTS
+          .filter(slot => t.grade[dia] && t.grade[dia][slot] && t.grade[dia][slot] !== "LIVRE")
+          .map(slot => {
+            const sig = t.grade[dia][slot];
+            const prof = t.professores[sig];
+            return `<b>${slot}:</b> ${sig}${prof ? ` — ${prof.nome}` : ""}`;
+          });
+
+        const block = document.createElement("div");
+        block.className = "week-day-block";
+        block.innerHTML = `
+          <div class="week-day-title">${DIAS_LABEL[dia]}</div>
+          <div class="week-day-items">${aulasDia.length ? aulasDia.join("<br>") : "Sem aulas mapeadas."}</div>
+        `;
+        body.appendChild(block);
+      });
+
+      toggleDrawer(true);
+    }
+
+    function abrirProfPorNome(nome) {
+      const profObj = PROFESSORES_INDEX.find(p => p.nome === nome);
+      if (profObj) openProfDrawer(profObj);
+    }
+
+    function toggleDrawer(open) { document.getElementById("drawerOverlay").classList.toggle("open", open); }
+    function closeDrawer(e) { if (e.target.id === "drawerOverlay") toggleDrawer(false); }
+
+    window.onload = () => {
+      buildProfessoresIndex();
+      autoDetectTime();
+      sincronizarPlanilha(false);
+      setInterval(() => sincronizarPlanilha(false), 30000);
+    };
+  </script>
+</body>
+</html>
