@@ -386,24 +386,9 @@
     }
 
     .prof-button {
-      background: #0f172a;
-      color: #ffffff;
-      border: none;
-      border-radius: 12px;
-      padding: 14px;
-      font-size: 0.95rem;
-      font-weight: 600;
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-
-    .event-button {
-      background: linear-gradient(135deg, #8b5cf6, #6d28d9);
-      color: #ffffff;
-      border: none;
+      background: var(--brand-blue-light);
+      color: var(--brand-blue);
+      border: 1.5px solid var(--brand-blue);
       border-radius: 12px;
       padding: 14px;
       font-size: 0.95rem;
@@ -413,7 +398,6 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
-      box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
     }
 
     /* GRADE DE ATALHOS RÁPIDOS */
@@ -557,15 +541,9 @@
       <a href="monitor.html" class="main-button">
         <span>🖥️ Monitor de Salas ao Vivo</span>
       </a>
-
-      <!-- BOTÃO: BUSCA DE PROFESSORES -->
-      <a href="professores.html" class="prof-button">
-        <span>👩‍🏫 Busca de Professores & Horários</span>
-      </a>
       
-      <!-- BOTÃO EM DESTAQUE: SEMANA CULTURAL -->
-      <a href="semana-cultural.html" class="event-button">
-        <span>🎨 Programação — Semana Cultural RE2</span>
+      <a href="professores.html" class="prof-button">
+        <span>🧭 Grade, Professores & Faltas</span>
       </a>
     </section>
 
@@ -942,4 +920,104 @@
           const posts = await res.json();
           if (posts && Array.isArray(posts) && posts.length > 0) {
             BLOG_NEWS = posts.map(post => {
-              const postDate = new Date(post.date).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year
+              const postDate = new Date(post.date).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+              const tempDiv = document.createElement("div");
+              tempDiv.innerHTML = post.title.rendered;
+              return { title: tempDiv.innerText || tempDiv.textContent, date: postDate, url: post.link };
+            });
+            renderBlogTile();
+          }
+        }
+      } catch (err) {
+        console.error("Erro ao buscar notícias do blog:", err);
+      }
+    }
+
+    function renderBlogTile() {
+      const news = BLOG_NEWS[currentNewsIndex];
+      const titleEl = document.getElementById("blog-title");
+      const dateEl = document.getElementById("blog-date");
+      const dotsEl = document.getElementById("blog-dots");
+
+      if (titleEl && dateEl) {
+        titleEl.style.opacity = 0;
+        setTimeout(() => {
+          titleEl.innerText = news.title;
+          dateEl.innerText = news.date;
+          titleEl.style.opacity = 1;
+        }, 150);
+      }
+
+      if (dotsEl) {
+        dotsEl.innerHTML = "";
+        BLOG_NEWS.forEach((_, idx) => {
+          const dot = document.createElement("div");
+          dot.className = `blog-dot ${idx === currentNewsIndex ? "active" : ""}`;
+          dotsEl.appendChild(dot);
+        });
+      }
+    }
+
+    function goToNews() {
+      const news = BLOG_NEWS[currentNewsIndex];
+      if (news && news.url) {
+        window.open(news.url, "_blank");
+      }
+    }
+
+    /* SISTEMA DE GESTOS (SWIPE) NO CARD DO BLOG */
+    function initBlogSwipe() {
+      const tile = document.getElementById("blog-tile");
+      let startX = 0, startY = 0, distX = 0, distY = 0;
+      let isSwiping = false;
+
+      tile.addEventListener("touchstart", (e) => {
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+        distX = 0;
+        distY = 0;
+        isSwiping = false;
+      }, { passive: true });
+
+      tile.addEventListener("touchmove", (e) => {
+        distX = e.touches[0].clientX - startX;
+        distY = e.touches[0].clientY - startY;
+        if (Math.abs(distX) > Math.abs(distY) && Math.abs(distX) > 10) {
+          isSwiping = true;
+        }
+      }, { passive: true });
+
+      tile.addEventListener("touchend", (e) => {
+        if (isSwiping && Math.abs(distX) > 40) {
+          if (distX < 0) {
+            currentNewsIndex = (currentNewsIndex + 1) % BLOG_NEWS.length;
+          } else {
+            currentNewsIndex = (currentNewsIndex - 1 + BLOG_NEWS.length) % BLOG_NEWS.length;
+          }
+          renderBlogTile();
+        } else if (!isSwiping && Math.abs(distX) < 10 && Math.abs(distY) < 10) {
+          goToNews();
+        }
+      });
+
+      tile.addEventListener("click", (e) => {
+        if (!('ontouchstart' in window)) {
+          goToNews();
+        }
+      });
+    }
+
+    function toggleMenuDrawer(open) { document.getElementById("menu-drawer-overlay").classList.toggle("open", open); }
+    function toggleHolidayDrawer(open) { document.getElementById("holiday-drawer-overlay").classList.toggle("open", open); }
+
+    window.onload = () => {
+      carregarBoasVindas();
+      initSlideToDismiss();
+      initBlogSwipe();
+      setupHolidays();
+      renderBlogTile();
+      fetchRealBlogPosts();
+    };
+  </script>
+</body>
+</html>
