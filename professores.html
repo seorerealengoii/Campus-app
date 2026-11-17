@@ -869,15 +869,20 @@
       const linkGrade = window.location.href.split("#")[0].split("?")[0];
       const obsLinha = comentario ? `*Obs:* ${comentario}\n` : "";
 
+      const profObj = PROFESSORES_INDEX.find(p => p.nome === professor);
+      const materiasStr = (profObj && profObj.materias && profObj.materias.length)
+        ? ` - ${profObj.materias.join(" / ")}`
+        : "";
+
       const msg =
         `🚨 *AVISO SEORE — Pátio Digital*\n\n` +
         `*Data:* ${dataAlvo} (${diaSemana})\n` +
-        `*Professor:* ${professor}\n` +
+        `*Professor:* ${professor}${materiasStr}\n` +
         `*Situação:* ${meta.label}\n` +
         `*Turmas:* ${turmasStr}\n` +
         obsLinha +
         `*Registrado por:* ${servidor}\n\n` +
-        `🔗 *Acessar grade ao vivo:*\n` +
+        `*Acessar grade ao vivo:*\n` +
         linkGrade;
 
       const url = `https://wa.me/?text=${encodeURIComponent(msg)}`;
