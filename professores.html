@@ -97,8 +97,78 @@
     .header-actions { display: flex; align-items: center; gap: 6px; }
     .sync-btn, .back-btn {
       background: var(--bg-surface); border: 1px solid var(--border-color);
-      border-radius: 10px; padding: 7px 11px; font-size: 0.78rem;
+      border-radius: 10px; padding: 7px 10px; font-size: 0.78rem;
       font-weight: 700; color: var(--text-main); text-decoration: none; cursor: pointer;
+    }
+
+    /* SINO DE NOTIFICAÇÃO NO TOPO */
+    .notif-bell-btn {
+      position: relative;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      width: 35px;
+      height: 35px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.98rem;
+      cursor: pointer;
+    }
+    .notif-bell-btn.has-alerts { background: #fef2f2; border-color: #fca5a5; }
+    .notif-badge {
+      position: absolute; top: -5px; right: -5px;
+      background: #ef4444; color: #fff; font-size: 0.62rem; font-weight: 800;
+      min-width: 17px; height: 17px; padding: 0 4px; border-radius: 999px;
+      display: none; align-items: center; justify-content: center; border: 2px solid #fff;
+    }
+
+    /* POPUP MODAL DE FALTAS DO DIA */
+    .popup-overlay {
+      position: fixed; inset: 0;
+      background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(4px);
+      display: flex; align-items: center; justify-content: center;
+      padding: 16px; opacity: 0; pointer-events: none; transition: opacity 0.2s ease; z-index: 1500;
+    }
+    .popup-overlay.open { opacity: 1; pointer-events: auto; }
+    .popup-card {
+      background: var(--card-bg); border: 1px solid var(--border-color);
+      border-radius: 20px; width: 100%; max-width: 430px; max-height: 82vh;
+      display: flex; flex-direction: column; overflow: hidden;
+      box-shadow: 0 16px 36px rgba(15, 23, 42, 0.22);
+      transform: scale(0.95); transition: transform 0.2s ease;
+    }
+    .popup-overlay.open .popup-card { transform: scale(1); }
+    .popup-header {
+      padding: 14px 16px; border-bottom: 1px solid var(--border-color);
+      display: flex; justify-content: space-between; align-items: center; background: #fef2f2;
+    }
+    .popup-header.clean { background: var(--bg-surface); }
+    .popup-title { font-size: 0.92rem; font-weight: 800; color: #991b1b; }
+    .popup-header.clean .popup-title { color: var(--text-main); }
+    .popup-sub { font-size: 0.7rem; color: var(--text-muted); margin-top: 2px; }
+    .popup-body { padding: 14px 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
+    .absent-row {
+      background: var(--bg-surface); border: 1px solid var(--border-color);
+      border-left: 4px solid #ef4444; border-radius: 12px;
+      padding: 10px 12px; display: flex; flex-direction: column; gap: 4px;
+    }
+    .absent-row.st-ATRASO { border-left-color: #f59e0b; }
+    .absent-row.st-FOLGA_TRE { border-left-color: #6366f1; }
+    .absent-row-top { display: flex; justify-content: space-between; align-items: center; gap: 6px; }
+    .absent-name { font-size: 0.86rem; font-weight: 800; color: var(--text-main); }
+    .absent-pill {
+      font-size: 0.64rem; font-weight: 800; padding: 2px 7px; border-radius: 6px;
+      color: #fff; background: #ef4444; white-space: nowrap;
+    }
+    .absent-pill.st-ATRASO { background: #f59e0b; }
+    .absent-pill.st-FOLGA_TRE { background: #6366f1; }
+    .absent-classes { font-size: 0.74rem; font-weight: 700; color: var(--brand-blue); }
+    .absent-note { font-size: 0.72rem; color: var(--text-muted); }
+    .popup-footer { padding: 12px 16px; border-top: 1px solid var(--border-color); }
+    .popup-btn-full {
+      width: 100%; background: var(--brand-blue); border: none; color: #fff;
+      padding: 11px; border-radius: 11px; font-size: 0.82rem; font-weight: 700; cursor: pointer;
     }
 
     /* SELETOR DE MODO (TURMA PRIMEIRO) */
@@ -225,7 +295,7 @@
     .slot-t { font-size: 0.58rem; font-weight: 700; opacity: 0.8; }
     .slot-v { font-size: 0.66rem; font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-    /* ÁREA FINAL: LANÇADOR DE FALTA POR TURMA */
+    /* ÁREA FINAL: LANÇAMENTO RÁPIDO POR TURMA */
     .quick-launch-card {
       background: var(--card-bg);
       border: 1.5px solid var(--brand-blue);
@@ -252,9 +322,7 @@
     }
     .clean-select:focus, .clean-input:focus { border-color: var(--brand-blue); background: #ffffff; }
 
-    .turma-profs-list {
-      display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px;
-    }
+    .turma-profs-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
     .prof-pick-btn {
       background: var(--bg-surface); border: 1.5px solid var(--border-color);
       border-radius: 10px; padding: 9px 10px; text-align: left;
@@ -262,14 +330,10 @@
     }
     .prof-pick-btn strong { display: block; font-size: 0.8rem; color: var(--text-main); }
     .prof-pick-btn span { font-size: 0.68rem; color: var(--text-muted); font-weight: 600; }
-    .prof-pick-btn.selected {
-      background: var(--brand-blue-light); border-color: var(--brand-blue);
-    }
+    .prof-pick-btn.selected { background: var(--brand-blue-light); border-color: var(--brand-blue); }
     .prof-pick-btn.selected strong { color: var(--brand-blue); }
 
-    .status-grid-4 {
-      display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px;
-    }
+    .status-grid-4 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
     .st-opt-btn {
       padding: 9px 8px; border-radius: 10px;
       border: 1.5px solid var(--border-color); background: #ffffff;
@@ -390,6 +454,10 @@
         </div>
       </div>
       <div class="header-actions">
+        <button class="notif-bell-btn" id="notifBellBtn" onclick="toggleFaltasPopup(true)" title="Resumo de ausências hoje">
+          <span>🔔</span>
+          <span class="notif-badge" id="notifBadge">0</span>
+        </button>
         <button class="sync-btn" onclick="sincronizarPlanilha(true)" title="Sincronizar agora">🔄</button>
         <a href="inicio.html" class="back-btn">← Início</a>
       </div>
@@ -498,6 +566,23 @@
       <div id="futurosContainer" class="future-box" style="display:none;"></div>
     </section>
 
+  </div>
+
+  <!-- POPUP SUSPENSO DE AUSÊNCIAS DO DIA -->
+  <div class="popup-overlay" id="faltasPopupOverlay" onclick="toggleFaltasPopup(false)">
+    <div class="popup-card" onclick="event.stopPropagation()">
+      <div class="popup-header" id="popupHeaderBox">
+        <div>
+          <div class="popup-title" id="popupTitle">🚨 Ausências & Avisos Hoje</div>
+          <div class="popup-sub" id="popupSub">Resumo atualizado até agora</div>
+        </div>
+        <button class="close-btn" onclick="toggleFaltasPopup(false)">&times;</button>
+      </div>
+      <div class="popup-body" id="popupBody"></div>
+      <div class="popup-footer">
+        <button type="button" class="popup-btn-full" onclick="toggleFaltasPopup(false)">Fechar Resumo</button>
+      </div>
+    </div>
   </div>
 
   <!-- DRAWER DETALHES -->
@@ -709,6 +794,7 @@
     let OCORRENCIAS_HOJE = {};
     let OCORRENCIAS_FUTURAS = [];
     let statusSelecionadoDrawer = "PRESENTE";
+    let popupAutoOpened = false;
 
     let qlProfSelecionado = "";
     let qlStatusSelecionado = "FALTOU";
@@ -723,6 +809,87 @@
 
     function isOcorrenciaAtiva(occ) {
       return occ && (occ.status === "FALTOU" || occ.status === "ATRASO" || occ.status === "FOLGA_TRE");
+    }
+
+    function getDiaHojeKey() {
+      const dayMap = ["SEG", "SEG", "TER", "QUA", "QUI", "SEX", "SEG"];
+      return dayMap[new Date().getDay()];
+    }
+
+    function getAulasHojeProfessor(nomeProf) {
+      const diaKey = getDiaHojeKey();
+      const profObj = PROFESSORES_INDEX.find(p => p.nome === nomeProf);
+      if (!profObj) return "Sem horários mapeados hoje";
+
+      const porTurma = {};
+      SLOTS.forEach(slot => {
+        const aula = profObj.horarios[diaKey][slot];
+        if (aula) {
+          if (!porTurma[aula.turma]) porTurma[aula.turma] = [];
+          porTurma[aula.turma].push(slot);
+        }
+      });
+
+      const partes = Object.entries(porTurma).map(([turma, slots]) => `Turma ${turma} (${slots.join(", ")})`);
+      return partes.length ? partes.join(" • ") : "Sem aulas mapeadas hoje";
+    }
+
+    function renderFaltasPopup() {
+      const entries = Object.entries(OCORRENCIAS_HOJE).filter(([_, info]) => isOcorrenciaAtiva(info));
+
+      const bellBtn = document.getElementById("notifBellBtn");
+      const badge = document.getElementById("notifBadge");
+      const headerBox = document.getElementById("popupHeaderBox");
+      const titleEl = document.getElementById("popupTitle");
+      const bodyEl = document.getElementById("popupBody");
+
+      if (entries.length > 0) {
+        bellBtn.classList.add("has-alerts");
+        badge.style.display = "flex";
+        badge.innerText = entries.length;
+        headerBox.classList.remove("clean");
+        titleEl.innerText = `🚨 ${entries.length} Ocorrência(s) Hoje`;
+      } else {
+        bellBtn.classList.remove("has-alerts");
+        badge.style.display = "none";
+        headerBox.classList.add("clean");
+        titleEl.innerText = "✅ Equipe Completa Hoje";
+      }
+
+      if (entries.length === 0) {
+        bodyEl.innerHTML = `<div style="text-align:center; padding:18px 8px; font-size:0.82rem; color:var(--text-muted);">Nenhuma falta, atraso ou Folga/TRE registrada até o momento.</div>`;
+        return;
+      }
+
+      const labelMap = {
+        FALTOU: "🚨 Faltou",
+        ATRASO: "⏳ Atraso / Permuta",
+        FOLGA_TRE: "🏖️ Folga / TRE"
+      };
+
+      bodyEl.innerHTML = entries.map(([prof, info]) => {
+        const aulasStr = getAulasHojeProfessor(prof);
+        const obsStr = info.comentario ? `💬 ${info.comentario} • ` : "";
+        return `
+          <div class="absent-row st-${info.status}">
+            <div class="absent-row-top">
+              <span class="absent-name">${prof}</span>
+              <span class="absent-pill st-${info.status}">${labelMap[info.status] || info.status}</span>
+            </div>
+            <div class="absent-classes">📚 ${aulasStr}</div>
+            <div class="absent-note">${obsStr}Por ${info.registradoPor || "SEORE"} às ${info.hora || "--:--"}</div>
+          </div>
+        `;
+      }).join("");
+
+      if (!popupAutoOpened) {
+        popupAutoOpened = true;
+        setTimeout(() => toggleFaltasPopup(true), 2000);
+      }
+    }
+
+    function toggleFaltasPopup(open) {
+      document.getElementById("faltasPopupOverlay").classList.toggle("open", open);
     }
 
     function buildProfessoresIndex() {
@@ -791,12 +958,14 @@
           localStorage.setItem("seore_prof_ocorrencias", JSON.stringify(OCORRENCIAS_HOJE));
           render();
           renderFuturos();
+          renderFaltasPopup();
           if (manual) showToast("✅ Sincronizado com a equipe!");
         }
       } catch (err) {
         const cache = localStorage.getItem("seore_prof_ocorrencias");
         if (cache) OCORRENCIAS_HOJE = JSON.parse(cache);
         render();
+        renderFaltasPopup();
         if (manual) showToast("⚠️ Falha na conexão");
       }
     }
@@ -826,6 +995,7 @@
 
       render();
       renderFuturos();
+      renderFaltasPopup();
       showToast("💾 Salvando para toda a equipe...");
 
       try {
@@ -982,8 +1152,7 @@
 
     function autoDetectTime() {
       const now = new Date();
-      const dayMap = ["SEG", "SEG", "TER", "QUA", "QUI", "SEX", "SEG"];
-      currentDay = dayMap[now.getDay()];
+      currentDay = getDiaHojeKey();
 
       const totalMinutes = now.getHours() * 60 + now.getMinutes();
       if (totalMinutes < 790) currentTime = "T1";
