@@ -173,6 +173,62 @@
       padding: 11px; border-radius: 11px; font-size: 0.82rem; font-weight: 700; cursor: pointer;
     }
 
+    /* MODAL DE SEGURANÇA (DIGITAL + PIN) */
+    .auth-overlay {
+      position: fixed; inset: 0;
+      background: rgba(15, 23, 42, 0.62); backdrop-filter: blur(5px);
+      display: flex; align-items: center; justify-content: center;
+      padding: 16px; opacity: 0; pointer-events: none; transition: opacity 0.2s ease; z-index: 1800;
+    }
+    .auth-overlay.open { opacity: 1; pointer-events: auto; }
+    .auth-card {
+      background: var(--card-bg); border: 1px solid var(--border-color);
+      border-radius: 22px; width: 100%; max-width: 380px;
+      padding: 20px; display: flex; flex-direction: column; gap: 14px;
+      box-shadow: 0 20px 44px rgba(15, 23, 42, 0.28);
+      transform: scale(0.95); transition: transform 0.2s ease;
+    }
+    .auth-overlay.open .auth-card { transform: scale(1); }
+    .auth-top { display: flex; align-items: center; gap: 10px; }
+    .auth-shield {
+      width: 42px; height: 42px; border-radius: 12px;
+      background: var(--brand-blue-light); color: var(--brand-blue);
+      display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0;
+    }
+    .auth-title { font-size: 0.96rem; font-weight: 800; color: var(--text-main); }
+    .auth-desc { font-size: 0.74rem; color: var(--text-muted); margin-top: 2px; line-height: 1.35; }
+    .auth-summary {
+      background: var(--bg-surface); border: 1px solid var(--border-color);
+      border-radius: 11px; padding: 9px 12px; font-size: 0.76rem; font-weight: 700; color: var(--text-main);
+    }
+    .btn-bio-primary {
+      width: 100%; background: var(--brand-blue); color: #fff; border: none;
+      border-radius: 12px; padding: 13px; font-size: 0.88rem; font-weight: 800;
+      cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
+    }
+    .btn-bio-primary:active { transform: scale(0.99); }
+    .auth-divider {
+      display: flex; align-items: center; gap: 8px; font-size: 0.68rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;
+    }
+    .auth-divider::before, .auth-divider::after { content: ""; flex: 1; height: 1px; background: var(--border-color); }
+    .pin-row { display: flex; gap: 8px; }
+    .pin-input {
+      flex: 1; padding: 10px 12px; border-radius: 11px; border: 1.5px solid var(--border-color);
+      background: var(--bg-surface); font-size: 1rem; font-weight: 800; letter-spacing: 4px;
+      text-align: center; color: var(--text-main); outline: none; user-select: text;
+    }
+    .pin-input:focus { border-color: var(--brand-blue); background: #fff; }
+    .btn-pin-confirm {
+      background: #0f172a; color: #fff; border: none; border-radius: 11px;
+      padding: 0 16px; font-size: 0.8rem; font-weight: 700; cursor: pointer;
+    }
+    .auth-error { font-size: 0.72rem; font-weight: 700; color: var(--red-text); text-align: center; display: none; }
+    .btn-auth-cancel {
+      background: transparent; border: 1px solid var(--border-color); color: var(--text-muted);
+      border-radius: 10px; padding: 9px; font-size: 0.78rem; font-weight: 700; cursor: pointer; width: 100%;
+    }
+
     /* SELETOR DE MODO (TURMA PRIMEIRO) */
     .mode-switcher {
       display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
@@ -582,6 +638,37 @@
 
   </div>
 
+  <!-- MODAL DE CONFIRMAÇÃO POR DIGITAL OU PIN -->
+  <div class="auth-overlay" id="securityAuthOverlay" onclick="resolverSeguranca(false)">
+    <div class="auth-card" onclick="event.stopPropagation()">
+      <div class="auth-top">
+        <div class="auth-shield">🔐</div>
+        <div>
+          <div class="auth-title">Confirmar Alteração</div>
+          <div class="auth-desc">Use a digital do aparelho ou o PIN da equipe para gravar esta alteração.</div>
+        </div>
+      </div>
+
+      <div class="auth-summary" id="authActionSummary">---</div>
+
+      <button type="button" class="btn-bio-primary" id="btnTriggerBiometric" onclick="executarBiometria()">
+        <span>👆</span>
+        <span id="btnBioLabel">Confirmar com Digital</span>
+      </button>
+
+      <div class="auth-divider">ou digite o PIN</div>
+
+      <div class="pin-row">
+        <input type="password" inputmode="numeric" maxlength="6" id="authPinInput" class="pin-input" placeholder="••••" onkeydown="if(event.key==='Enter') validarPinSeguranca()" />
+        <button type="button" class="btn-pin-confirm" onclick="validarPinSeguranca()">Confirmar</button>
+      </div>
+
+      <div class="auth-error" id="authErrorMsg">PIN incorreto ou digital não reconhecida.</div>
+
+      <button type="button" class="btn-auth-cancel" onclick="resolverSeguranca(false)">Cancelar</button>
+    </div>
+  </div>
+
   <!-- POPUP SUSPENSO DE AUSÊNCIAS DO DIA -->
   <div class="popup-overlay" id="faltasPopupOverlay" onclick="toggleFaltasPopup(false)">
     <div class="popup-card" onclick="event.stopPropagation()">
@@ -630,6 +717,7 @@
 
   <script>
     const API_PROF_URL = "https://script.google.com/macros/s/AKfycbyhfouoR-5LNTG64ZHoOqmipZipAablUIvGcUjm_GBBiXKrZjqX-Z3UMPcUYeNl2rA/exec";
+    const EQUIPE_PIN = "2027";
 
     const SLOTS = ["T1", "T2", "T3", "T4", "T5", "T6", "T7"];
     const DIAS_LABEL = { SEG: "Segunda-feira", TER: "Terça-feira", QUA: "Quarta-feira", QUI: "Quinta-feira", SEX: "Sexta-feira" };
@@ -814,12 +902,161 @@
     let qlStatusSelecionado = "FALTOU";
     let qlDateMode = "HOJE";
 
+    let authResolveCallback = null;
+
     function showToast(msg) {
       const t = document.getElementById("toastMsg");
       t.innerText = msg;
       t.classList.add("show");
       setTimeout(() => t.classList.remove("show"), 2400);
     }
+
+    /* ==========================================================
+       SISTEMA DE CONFIRMAÇÃO POR DIGITAL (WEBAUTHN) + PIN FALLBACK
+       ========================================================== */
+    function bufToBase64(buffer) {
+      return btoa(String.fromCharCode(...new Uint8Array(buffer)));
+    }
+
+    function base64ToBuf(base64) {
+      const bin = atob(base64);
+      const bytes = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+      return bytes.buffer;
+    }
+
+    async function suportaBiometriaNativa() {
+      try {
+        if (!window.PublicKeyCredential) return false;
+        return await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+      } catch (e) {
+        return false;
+      }
+    }
+
+    async function confirmarIdentidadeSeguranca(resumoAcao) {
+      const overlay = document.getElementById("securityAuthOverlay");
+      const summaryEl = document.getElementById("authActionSummary");
+      const pinInput = document.getElementById("authPinInput");
+      const errEl = document.getElementById("authErrorMsg");
+      const bioBtn = document.getElementById("btnTriggerBiometric");
+      const bioLabel = document.getElementById("btnBioLabel");
+
+      summaryEl.innerText = resumoAcao;
+      pinInput.value = "";
+      errEl.style.display = "none";
+
+      const temBio = await suportaBiometriaNativa();
+      const credSalva = localStorage.getItem("seore_bio_cred_id");
+
+      if (temBio) {
+        bioBtn.style.display = "flex";
+        bioLabel.innerText = credSalva ? "Confirmar com Digital" : "Cadastrar e Confirmar Digital";
+      } else {
+        bioBtn.style.display = "none";
+      }
+
+      overlay.classList.add("open");
+
+      if (!temBio) {
+        setTimeout(() => pinInput.focus(), 120);
+      }
+
+      return new Promise(resolve => {
+        authResolveCallback = resolve;
+      });
+    }
+
+    function resolverSeguranca(autorizado) {
+      const overlay = document.getElementById("securityAuthOverlay");
+      overlay.classList.remove("open");
+      if (authResolveCallback) {
+        const cb = authResolveCallback;
+        authResolveCallback = null;
+        cb(autorizado);
+      }
+    }
+
+    function validarPinSeguranca() {
+      const val = document.getElementById("authPinInput").value.trim();
+      const errEl = document.getElementById("authErrorMsg");
+      if (val === EQUIPE_PIN) {
+        errEl.style.display = "none";
+        resolverSeguranca(true);
+      } else {
+        errEl.innerText = "PIN incorreto. Tente novamente.";
+        errEl.style.display = "block";
+        document.getElementById("authPinInput").value = "";
+        document.getElementById("authPinInput").focus();
+      }
+    }
+
+    async function executarBiometria() {
+      const errEl = document.getElementById("authErrorMsg");
+      errEl.style.display = "none";
+
+      try {
+        const challenge = new Uint8Array(32);
+        crypto.getRandomValues(challenge);
+        const savedCredId = localStorage.getItem("seore_bio_cred_id");
+
+        if (!savedCredId) {
+          const servidorNome = localStorage.getItem("nomeServidor") || "Inspetor SEORE";
+          const userId = new Uint8Array(16);
+          crypto.getRandomValues(userId);
+
+          const credential = await navigator.credentials.create({
+            publicKey: {
+              challenge: challenge,
+              rp: { name: "SEORE Pátio Digital" },
+              user: {
+                id: userId,
+                name: servidorNome,
+                displayName: servidorNome
+              },
+              pubKeyCredParams: [
+                { type: "public-key", alg: -7 },
+                { type: "public-key", alg: -257 }
+              ],
+              authenticatorSelection: {
+                authenticatorAttachment: "platform",
+                userVerification: "required"
+              },
+              timeout: 60000
+            }
+          });
+
+          if (credential && credential.rawId) {
+            localStorage.setItem("seore_bio_cred_id", bufToBase64(credential.rawId));
+            resolverSeguranca(true);
+          }
+        } else {
+          const assertion = await navigator.credentials.get({
+            publicKey: {
+              challenge: challenge,
+              allowCredentials: [{
+                type: "public-key",
+                id: base64ToBuf(savedCredId)
+              }],
+              userVerification: "required",
+              timeout: 60000
+            }
+          });
+
+          if (assertion) {
+            resolverSeguranca(true);
+          }
+        }
+      } catch (err) {
+        if (err && err.name === "InvalidStateError") {
+          localStorage.removeItem("seore_bio_cred_id");
+        }
+        errEl.innerText = "Digital cancelada ou indisponível. Use a digital novamente ou digite o PIN.";
+        errEl.style.display = "block";
+      }
+    }
+
+    /* ========================================================== */
 
     function isOcorrenciaAtiva(occ) {
       return occ && (occ.status === "FALTOU" || occ.status === "ATRASO" || occ.status === "FOLGA_TRE");
@@ -1078,6 +1315,10 @@
 
     async function salvarOcorrenciaProfessor(nomeProf, enviarWpp = false) {
       const comentario = document.getElementById("drawerCommentInput").value.trim();
+      const stLabel = (STATUS_META[statusSelecionadoDrawer] || { label: statusSelecionadoDrawer }).label;
+      const autorizado = await confirmarIdentidadeSeguranca(`Prof. ${nomeProf} • ${stLabel}`);
+      if (!autorizado) return;
+
       toggleDrawer(false);
       await enviarParaPlanilha({
         dataAlvo: getHojeBR(),
@@ -1178,6 +1419,10 @@
       const dataAlvo = qlDateMode === "FUTURO" ? formatISOToBR(isoDate) : getHojeBR();
       const diaSemana = qlDateMode === "FUTURO" ? getDiaSemanaFromISO(isoDate) : DIAS_LABEL[currentDay];
       const comentario = document.getElementById("qlCommentInput").value.trim();
+      const stLabel = (STATUS_META[qlStatusSelecionado] || { label: qlStatusSelecionado }).label;
+
+      const autorizado = await confirmarIdentidadeSeguranca(`Prof. ${qlProfSelecionado} • ${stLabel} (${dataAlvo})`);
+      if (!autorizado) return;
 
       await enviarParaPlanilha({
         dataAlvo,
