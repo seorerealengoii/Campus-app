@@ -34,6 +34,8 @@
       --green-text: #166534;
       --green-dot: #16a34a;
 
+      --whatsapp-green: #16a34a;
+
       --amber-bg: #fef3c7;
       --amber-border: #f59e0b;
       --amber-text: #92400e;
@@ -360,10 +362,19 @@
       font-weight: 600; color: var(--text-main); white-space: nowrap; cursor: pointer;
     }
 
+    .save-actions-col { display: flex; flex-direction: column; gap: 8px; }
+
     .btn-save-occ {
       background: var(--brand-blue); color: #ffffff; border: none;
       border-radius: 11px; padding: 12px; font-size: 0.86rem;
       font-weight: 700; cursor: pointer; width: 100%;
+    }
+
+    .btn-save-wpp {
+      background: var(--whatsapp-green); color: #ffffff; border: none;
+      border-radius: 11px; padding: 12px; font-size: 0.86rem;
+      font-weight: 700; cursor: pointer; width: 100%;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
     }
 
     .future-box {
@@ -559,7 +570,10 @@
             <input type="text" id="qlCommentInput" class="clean-input" placeholder="Ex: Turma liberada após o T4..." />
           </div>
 
-          <button type="button" class="btn-save-occ" onclick="salvarLancamentoRapido()">💾 Salvar para Toda a Equipe</button>
+          <div class="save-actions-col">
+            <button type="button" class="btn-save-occ" onclick="salvarLancamentoRapido(false)">💾 Salvar para Toda a Equipe</button>
+            <button type="button" class="btn-save-wpp" onclick="salvarLancamentoRapido(true)">📲 Salvar e Enviar no WhatsApp</button>
+          </div>
         </div>
       </div>
 
@@ -816,10 +830,20 @@
       return dayMap[new Date().getDay()];
     }
 
-    function getAulasHojeProfessor(nomeProf) {
-      const diaKey = getDiaHojeKey();
+    function diaSemanaToKey(diaSemana) {
+      const map = {
+        "Segunda-feira": "SEG",
+        "Terça-feira": "TER",
+        "Quarta-feira": "QUA",
+        "Quinta-feira": "QUI",
+        "Sexta-feira": "SEX"
+      };
+      return map[diaSemana] || getDiaHojeKey();
+    }
+
+    function getAulasDiaProfessor(nomeProf, diaKey) {
       const profObj = PROFESSORES_INDEX.find(p => p.nome === nomeProf);
-      if (!profObj) return "Sem horários mapeados hoje";
+      if (!profObj || !profObj.horarios[diaKey]) return "Sem horários mapeados neste dia";
 
       const porTurma = {};
       SLOTS.forEach(slot => {
@@ -830,8 +854,34 @@
         }
       });
 
-      const partes = Object.entries(porTurma).map(([turma, slots]) => `Turma ${turma} (${slots.join(", ")})`);
-      return partes.length ? partes.join(" • ") : "Sem aulas mapeadas hoje";
+      const partes = Object.entries(porTurma).map(([turma, slots]) => `${turma} (${slots.join(", ")})`);
+      return partes.length ? partes.join(" • ") : "Sem aulas mapeadas neste dia";
+    }
+
+    function getAulasHojeProfessor(nomeProf) {
+      return getAulasDiaProfessor(nomeProf, getDiaHojeKey());
+    }
+
+    function abrirWhatsAppAviso({ dataAlvo, diaSemana, professor, status, comentario, servidor }) {
+      const meta = STATUS_META[status] || { label: status };
+      const diaKey = diaSemanaToKey(diaSemana);
+      const turmasStr = getAulasDiaProfessor(professor, diaKey);
+      const linkGrade = window.location.href.split("#")[0].split("?")[0];
+      const obsLinha = comentario ? `*Obs:* ${comentario}\n` : "";
+
+      const msg =
+        `🚨 *AVISO SEORE — Pátio Digital*\n\n` +
+        `*Data:* ${dataAlvo} (${diaSemana})\n` +
+        `👨‍🏫 *Professor:* ${professor}\n` +
+        `📌 *Situação:* ${meta.label}\n` +
+        `🏫 *Turmas:* ${turmasStr}\n` +
+        obsLinha +
+        `*Registrado por:* ${servidor}\n\n` +
+        `🔗 *Acessar grade ao vivo:*\n` +
+        linkGrade;
+
+      const url = `https://wa.me/?text=${encodeURIComponent(msg)}`;
+      window.open(url, "_blank");
     }
 
     function renderFaltasPopup() {
@@ -970,7 +1020,7 @@
       }
     }
 
-    async function enviarParaPlanilha({ dataAlvo, diaSemana, professor, status, comentario }) {
+    async function enviarParaPlanilha({ dataAlvo, diaSemana, professor, status, comentario, enviarWpp = false }) {
       const servidor = (localStorage.getItem("nomeServidor") || "SEORE").split(" ")[0];
       const horaAtual = new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
       const hojeBR = getHojeBR();
@@ -998,6 +1048,10 @@
       renderFaltasPopup();
       showToast("💾 Salvando para toda a equipe...");
 
+      if (enviarWpp) {
+        abrirWhatsAppAviso({ dataAlvo, diaSemana, professor, status, comentario, servidor });
+      }
+
       try {
         await fetch(API_PROF_URL, {
           method: "POST",
@@ -1017,7 +1071,7 @@
       }
     }
 
-    async function salvarOcorrenciaProfessor(nomeProf) {
+    async function salvarOcorrenciaProfessor(nomeProf, enviarWpp = false) {
       const comentario = document.getElementById("drawerCommentInput").value.trim();
       toggleDrawer(false);
       await enviarParaPlanilha({
@@ -1025,7 +1079,8 @@
         diaSemana: DIAS_LABEL[currentDay],
         professor: nomeProf,
         status: statusSelecionadoDrawer,
-        comentario: comentario
+        comentario: comentario,
+        enviarWpp: enviarWpp
       });
     }
 
@@ -1102,7 +1157,7 @@
       inp.value = inp.value ? `${inp.value} • ${txt}` : txt;
     }
 
-    async function salvarLancamentoRapido() {
+    async function salvarLancamentoRapido(enviarWpp = false) {
       const turmaVal = document.getElementById("qlTurmaSelect").value;
       if (!turmaVal || !qlProfSelecionado) {
         showToast("⚠️ Selecione a turma e o professor.");
@@ -1124,7 +1179,8 @@
         diaSemana,
         professor: qlProfSelecionado,
         status: qlStatusSelecionado,
-        comentario
+        comentario,
+        enviarWpp
       });
 
       document.getElementById("qlCommentInput").value = "";
@@ -1407,6 +1463,8 @@
       document.getElementById("dwSubtitle").innerText = `${prof.materias.join(", ")} • Turmas: ${prof.turmas.join(", ")}`;
 
       const body = document.getElementById("dwBody");
+      const escapedNome = prof.nome.replace(/'/g, "\\'");
+
       body.innerHTML = `
         <div class="drawer-section-title">Status Hoje (Visível para toda a equipe)</div>
         <div class="occ-panel">
@@ -1426,7 +1484,10 @@
           </div>
 
           <input type="text" id="drawerCommentInput" class="clean-input" placeholder="Adicionar comentário (opcional)..." value="${occAtual.comentario || ""}" />
-          <button type="button" class="btn-save-occ" onclick="salvarOcorrenciaProfessor('${prof.nome.replace(/'/g, "\\'")}')">💾 Salvar para Todos</button>
+          <div class="save-actions-col">
+            <button type="button" class="btn-save-occ" onclick="salvarOcorrenciaProfessor('${escapedNome}', false)">💾 Salvar para Todos</button>
+            <button type="button" class="btn-save-wpp" onclick="salvarOcorrenciaProfessor('${escapedNome}', true)">📲 Salvar e Enviar no WhatsApp</button>
+          </div>
         </div>
 
         <div class="drawer-section-title">Grade Semanal do Professor</div>
