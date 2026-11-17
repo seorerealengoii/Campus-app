@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SEORE Pátio Digital — Professores & Turmas</title>
 
-  <!-- Configurações PWA (SEORE Pátio Digital) -->
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#f1f5f9">
   <meta name="mobile-web-app-capable" content="yes">
@@ -13,7 +12,6 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="SEORE Pátio">
 
-  <!-- Trava de Segurança: Exige Login -->
   <script>
     if (localStorage.getItem("userAuthenticated") !== "true") {
       window.location.href = "index.html";
@@ -27,7 +25,7 @@
       --border-color: #e2e8f0;
       --text-main: #0f172a;
       --text-muted: #64748b;
-      
+
       --brand-blue: #0284c7;
       --brand-blue-light: #e0f2fe;
 
@@ -39,6 +37,10 @@
       --amber-bg: #fef3c7;
       --amber-border: #f59e0b;
       --amber-text: #92400e;
+
+      --indigo-bg: #eef2ff;
+      --indigo-border: #6366f1;
+      --indigo-text: #3730a3;
 
       --red-bg: #fee2e2;
       --red-border: #ef4444;
@@ -68,7 +70,7 @@
       display: flex;
       flex-direction: column;
       gap: 12px;
-      padding-bottom: 85px;
+      padding-bottom: 90px;
     }
 
     /* HEADER */
@@ -80,469 +82,294 @@
       padding: 12px 16px;
       border-radius: 16px;
       border: 1px solid var(--border-color);
-      box-shadow: 0 1px 2px rgba(0,0,0,0.03);
     }
 
     .brand { display: flex; align-items: center; gap: 10px; }
-
     .brand-icon {
-      width: 36px;
-      height: 36px;
-      background: var(--brand-blue-light);
-      color: var(--brand-blue);
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      width: 36px; height: 36px;
+      background: var(--brand-blue-light); color: var(--brand-blue);
+      border-radius: 10px; display: flex; align-items: center; justify-content: center;
       font-size: 1.15rem;
     }
-
     .brand-text h1 { font-size: 0.95rem; font-weight: 800; color: var(--text-main); }
     .brand-text p { font-size: 0.72rem; font-weight: 600; color: var(--brand-blue); margin-top: 1px; }
 
     .header-actions { display: flex; align-items: center; gap: 6px; }
-
-    .sync-btn {
-      background: var(--bg-surface);
-      border: 1px solid var(--border-color);
-      border-radius: 10px;
-      padding: 7px 10px;
-      font-size: 0.85rem;
-      cursor: pointer;
+    .sync-btn, .back-btn {
+      background: var(--bg-surface); border: 1px solid var(--border-color);
+      border-radius: 10px; padding: 7px 11px; font-size: 0.78rem;
+      font-weight: 700; color: var(--text-main); text-decoration: none; cursor: pointer;
     }
 
-    .back-btn {
-      background: var(--bg-surface);
-      border: 1px solid var(--border-color);
-      color: var(--text-main);
-      padding: 7px 12px;
-      border-radius: 10px;
-      font-size: 0.78rem;
-      text-decoration: none;
-      font-weight: 700;
-    }
-
-    /* SELETOR DE MODO (PROFESSOR VS TURMA) */
+    /* SELETOR DE MODO (TURMA PRIMEIRO) */
     .mode-switcher {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 6px;
-      background: var(--card-bg);
-      padding: 5px;
-      border-radius: 14px;
-      border: 1px solid var(--border-color);
+      display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
+      background: var(--card-bg); padding: 5px;
+      border-radius: 14px; border: 1px solid var(--border-color);
     }
-
     .mode-btn {
-      background: transparent;
-      border: none;
-      padding: 10px;
-      border-radius: 10px;
-      font-size: 0.82rem;
-      font-weight: 700;
-      color: var(--text-muted);
-      cursor: pointer;
-      transition: all 0.18s ease;
+      background: transparent; border: none; padding: 10px;
+      border-radius: 10px; font-size: 0.82rem; font-weight: 700;
+      color: var(--text-muted); cursor: pointer; transition: all 0.15s ease;
     }
-
     .mode-btn.active {
-      background: var(--brand-blue);
-      color: #ffffff;
-      box-shadow: 0 2px 6px rgba(2, 132, 199, 0.25);
+      background: var(--brand-blue); color: #ffffff;
+      box-shadow: 0 2px 6px rgba(2, 132, 199, 0.22);
     }
 
-    /* BUSCA + FILTROS RÁPIDOS */
+    /* BUSCA + FILTROS */
     .search-row { display: flex; gap: 6px; align-items: center; }
     .search-box { position: relative; flex: 1; }
-
     .search-input {
-      width: 100%;
-      padding: 11px 12px 11px 34px;
-      border-radius: 12px;
-      border: 1px solid var(--border-color);
-      background: var(--card-bg);
-      font-size: 0.84rem;
-      color: var(--text-main);
-      outline: none;
-      user-select: text;
+      width: 100%; padding: 10px 12px 10px 34px;
+      border-radius: 12px; border: 1px solid var(--border-color);
+      background: var(--card-bg); font-size: 0.83rem; color: var(--text-main);
+      outline: none; user-select: text;
     }
-
     .search-input:focus { border-color: var(--brand-blue); }
-
     .search-icon {
-      position: absolute;
-      left: 11px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 0.88rem;
-      color: var(--text-muted);
+      position: absolute; left: 11px; top: 50%; transform: translateY(-50%);
+      font-size: 0.85rem; color: var(--text-muted);
     }
 
     .quick-filter-btn {
-      background: var(--card-bg);
-      border: 1px solid var(--border-color);
-      color: var(--text-muted);
-      padding: 11px 10px;
-      border-radius: 12px;
-      font-size: 0.72rem;
-      font-weight: 700;
-      cursor: pointer;
-      white-space: nowrap;
+      background: var(--card-bg); border: 1px solid var(--border-color);
+      color: var(--text-muted); padding: 10px 9px; border-radius: 12px;
+      font-size: 0.72rem; font-weight: 700; cursor: pointer; white-space: nowrap;
     }
+    .quick-filter-btn.active-green { background: var(--green-bg); border-color: var(--green-border); color: var(--green-text); }
+    .quick-filter-btn.active-red { background: var(--red-bg); border-color: var(--red-border); color: var(--red-text); }
 
-    .quick-filter-btn.active-green {
-      background: var(--green-bg);
-      border-color: var(--green-border);
-      color: var(--green-text);
-    }
-
-    .quick-filter-btn.active-red {
-      background: var(--red-bg);
-      border-color: var(--red-border);
-      color: var(--red-text);
-    }
-
-    /* BARRA COMPACTA DE DIA E TEMPO */
+    /* BARRA DE DIA E TEMPO */
     .time-controls {
-      background: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 14px;
-      padding: 10px 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
+      background: var(--card-bg); border: 1px solid var(--border-color);
+      border-radius: 14px; padding: 10px 12px;
+      display: flex; flex-direction: column; gap: 8px;
     }
-
-    .control-strip {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      overflow-x: auto;
-      scrollbar-width: none;
-    }
+    .control-strip { display: flex; align-items: center; gap: 5px; overflow-x: auto; scrollbar-width: none; }
     .control-strip::-webkit-scrollbar { display: none; }
-
-    .strip-label {
-      font-size: 0.65rem;
-      font-weight: 800;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      min-width: 42px;
-    }
-
+    .strip-label { font-size: 0.65rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; min-width: 42px; }
     .pill {
-      flex: 1;
-      text-align: center;
-      background: var(--bg-surface);
-      border: 1px solid transparent;
-      color: var(--text-muted);
-      padding: 6px 8px;
-      font-size: 0.75rem;
-      font-weight: 700;
-      border-radius: 8px;
-      cursor: pointer;
-      white-space: nowrap;
+      flex: 1; text-align: center; background: var(--bg-surface);
+      border: 1px solid transparent; color: var(--text-muted);
+      padding: 6px 8px; font-size: 0.75rem; font-weight: 700;
+      border-radius: 8px; cursor: pointer; white-space: nowrap;
     }
-
-    .pill.active {
-      background: var(--brand-blue-light);
-      border-color: var(--brand-blue);
-      color: var(--brand-blue);
-    }
+    .pill.active { background: var(--brand-blue-light); border-color: var(--brand-blue); color: var(--brand-blue); }
 
     .results-meta {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0 4px;
-      font-size: 0.72rem;
-      font-weight: 600;
-      color: var(--text-muted);
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 0 4px; font-size: 0.72rem; font-weight: 600; color: var(--text-muted);
     }
 
-    /* CARDS */
-    .cards-list { display: flex; flex-direction: column; gap: 10px; }
+    /* CARDS LIMPOS */
+    .cards-list { display: flex; flex-direction: column; gap: 9px; }
 
     .item-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 16px;
-      padding: 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      cursor: pointer;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
-      transition: transform 0.1s ease;
+      background: var(--card-bg); border: 1px solid var(--border-color);
+      border-radius: 15px; padding: 13px 14px;
+      display: flex; flex-direction: column; gap: 9px;
+      cursor: pointer; transition: transform 0.1s ease;
     }
-
-    .item-card:active { transform: scale(0.985); }
-
+    .item-card:active { transform: scale(0.99); }
     .item-card.is-live { border-left: 4px solid var(--green-dot); }
     .item-card.is-FALTOU { background: #fef2f2; border: 1.5px solid var(--red-border); border-left: 5px solid var(--red-border); }
     .item-card.is-ATRASO { background: #fffbeb; border: 1.5px solid var(--amber-border); border-left: 5px solid var(--amber-border); }
+    .item-card.is-FOLGA_TRE { background: var(--indigo-bg); border: 1.5px solid var(--indigo-border); border-left: 5px solid var(--indigo-border); }
 
-    .card-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 10px;
-    }
-
+    .card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
     .card-title-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-    .card-title { font-size: 0.98rem; font-weight: 800; color: var(--text-main); line-height: 1.2; }
+    .card-title { font-size: 0.96rem; font-weight: 800; color: var(--text-main); }
 
     .occ-badge {
-      font-size: 0.65rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      padding: 2px 7px;
-      border-radius: 6px;
+      font-size: 0.64rem; font-weight: 800; text-transform: uppercase;
+      padding: 2px 7px; border-radius: 6px; color: #ffffff;
     }
-    .occ-FALTOU { background: var(--red-border); color: #ffffff; }
-    .occ-ATRASO { background: var(--amber-border); color: #ffffff; }
+    .occ-FALTOU { background: var(--red-border); }
+    .occ-ATRASO { background: var(--amber-border); }
+    .occ-FOLGA_TRE { background: var(--indigo-border); }
 
-    .card-subtitle { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 5px; }
-
+    .card-subtitle { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 4px; }
     .tag-chip {
-      font-size: 0.68rem;
-      font-weight: 700;
-      padding: 2px 8px;
-      border-radius: 6px;
-      background: var(--bg-surface);
-      color: var(--text-muted);
-      border: 1px solid var(--border-color);
+      font-size: 0.68rem; font-weight: 700; padding: 2px 8px;
+      border-radius: 6px; background: var(--bg-surface);
+      color: var(--text-muted); border: 1px solid var(--border-color);
     }
-
-    .tag-chip.blue {
-      background: var(--brand-blue-light);
-      color: var(--brand-blue);
-      border-color: transparent;
-    }
+    .tag-chip.blue { background: var(--brand-blue-light); color: var(--brand-blue); border-color: transparent; }
 
     .status-pill {
-      font-size: 0.72rem;
-      font-weight: 800;
-      padding: 5px 10px;
-      border-radius: 10px;
-      white-space: nowrap;
-      text-align: right;
+      font-size: 0.72rem; font-weight: 800; padding: 5px 10px;
+      border-radius: 10px; white-space: nowrap; text-align: right;
     }
-
     .status-pill.live { background: var(--green-bg); color: var(--green-text); border: 1px solid var(--green-border); }
     .status-pill.alert { background: var(--red-bg); color: var(--red-text); border: 1px solid var(--red-border); }
+    .status-pill.warn { background: var(--amber-bg); color: var(--amber-text); border: 1px solid var(--amber-border); }
+    .status-pill.indigo { background: var(--indigo-bg); color: var(--indigo-text); border: 1px solid var(--indigo-border); }
     .status-pill.idle { background: var(--gray-bg); color: var(--gray-text); border: 1px solid var(--border-color); }
 
-    /* CAIXA DE COMENTÁRIO VISÍVEL NO CARD */
     .comment-banner {
-      background: rgba(255, 255, 255, 0.8);
-      border: 1px solid rgba(0, 0, 0, 0.08);
-      border-radius: 10px;
-      padding: 7px 10px;
-      font-size: 0.75rem;
-      color: var(--text-main);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
+      background: rgba(255, 255, 255, 0.85); border: 1px solid rgba(0, 0, 0, 0.07);
+      border-radius: 9px; padding: 6px 10px; font-size: 0.74rem;
+      color: var(--text-main); display: flex; justify-content: space-between; align-items: center; gap: 8px;
     }
-    .comment-author { font-size: 0.65rem; color: var(--text-muted); white-space: nowrap; }
+    .comment-author { font-size: 0.64rem; color: var(--text-muted); white-space: nowrap; }
 
-    /* LINHA DO TEMPO T1 - T7 */
     .slots-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
-
     .slot-box {
-      background: var(--bg-surface);
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      padding: 5px 2px;
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      gap: 1px;
+      background: var(--bg-surface); border: 1px solid var(--border-color);
+      border-radius: 8px; padding: 4px 2px; text-align: center;
+      display: flex; flex-direction: column; gap: 1px;
     }
-
     .slot-box.busy { background: #f0fdf4; border-color: #bbf7d0; color: #166534; }
     .slot-box.now { background: var(--brand-blue); border-color: var(--brand-blue); color: #ffffff; }
-    .slot-t { font-size: 0.6rem; font-weight: 700; opacity: 0.8; }
-    .slot-v { font-size: 0.67rem; font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .slot-t { font-size: 0.58rem; font-weight: 700; opacity: 0.8; }
+    .slot-v { font-size: 0.66rem; font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-    .empty-msg {
-      text-align: center;
-      padding: 32px 16px;
+    /* ÁREA FINAL: LANÇADOR DE FALTA POR TURMA */
+    .quick-launch-card {
       background: var(--card-bg);
-      border: 1px dashed var(--border-color);
+      border: 1.5px solid var(--brand-blue);
       border-radius: 16px;
-      color: var(--text-muted);
-      font-size: 0.84rem;
-    }
-
-    /* DRAWER DE STATUS, COMENTÁRIOS E GRADE */
-    .drawer-overlay {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(15, 23, 42, 0.45);
-      backdrop-filter: blur(4px);
-      display: flex;
-      justify-content: center;
-      align-items: flex-end;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.2s;
-      z-index: 1000;
-    }
-
-    .drawer-overlay.open { opacity: 1; pointer-events: auto; }
-
-    .drawer {
-      background: var(--card-bg);
-      border-radius: 22px 22px 0 0;
-      width: 100%;
-      max-width: 540px;
-      max-height: 88vh;
-      overflow-y: auto;
-      padding: 20px;
-      transform: translateY(100%);
-      transition: transform 0.25s cubic-bezier(0.1, 0.9, 0.2, 1);
-      box-shadow: 0 -4px 24px rgba(0,0,0,0.12);
-    }
-
-    .drawer-overlay.open .drawer { transform: translateY(0); }
-
-    .drawer-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 12px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid var(--border-color);
-    }
-
-    .close-btn { background: transparent; border: none; font-size: 1.5rem; color: var(--text-muted); cursor: pointer; line-height: 1; }
-
-    .drawer-section-title {
-      font-size: 0.7rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      margin: 12px 0 6px;
-    }
-
-    /* PAINEL DE REGISTRO DE OCORRÊNCIA NO DRAWER */
-    .occ-panel {
-      background: var(--bg-surface);
-      border: 1px solid var(--border-color);
-      border-radius: 14px;
-      padding: 12px;
+      padding: 16px;
+      margin-top: 6px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
+      box-shadow: 0 2px 10px rgba(2, 132, 199, 0.07);
     }
 
-    .status-selector {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 6px;
-    }
+    .ql-header { display: flex; justify-content: space-between; align-items: center; }
+    .ql-header h2 { font-size: 0.92rem; font-weight: 800; color: var(--brand-blue); }
+    .ql-header span { font-size: 0.68rem; font-weight: 700; color: var(--text-muted); background: var(--bg-surface); padding: 3px 8px; border-radius: 6px; }
 
+    .form-label { font-size: 0.72rem; font-weight: 700; color: var(--text-muted); margin-bottom: 4px; display: block; text-transform: uppercase; }
+
+    .clean-select, .clean-input {
+      width: 100%; padding: 11px 12px; border-radius: 10px;
+      border: 1px solid var(--border-color); background: var(--bg-surface);
+      font-size: 0.84rem; font-weight: 600; color: var(--text-main);
+      font-family: inherit; outline: none; user-select: text;
+    }
+    .clean-select:focus, .clean-input:focus { border-color: var(--brand-blue); background: #ffffff; }
+
+    .turma-profs-list {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px;
+    }
+    .prof-pick-btn {
+      background: var(--bg-surface); border: 1.5px solid var(--border-color);
+      border-radius: 10px; padding: 9px 10px; text-align: left;
+      cursor: pointer; transition: all 0.12s;
+    }
+    .prof-pick-btn strong { display: block; font-size: 0.8rem; color: var(--text-main); }
+    .prof-pick-btn span { font-size: 0.68rem; color: var(--text-muted); font-weight: 600; }
+    .prof-pick-btn.selected {
+      background: var(--brand-blue-light); border-color: var(--brand-blue);
+    }
+    .prof-pick-btn.selected strong { color: var(--brand-blue); }
+
+    .status-grid-4 {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px;
+    }
     .st-opt-btn {
-      padding: 9px 6px;
-      border-radius: 10px;
-      border: 1.5px solid var(--border-color);
-      background: #ffffff;
-      font-size: 0.74rem;
-      font-weight: 700;
-      color: var(--text-muted);
-      cursor: pointer;
+      padding: 9px 8px; border-radius: 10px;
+      border: 1.5px solid var(--border-color); background: #ffffff;
+      font-size: 0.75rem; font-weight: 700; color: var(--text-muted); cursor: pointer;
     }
-
     .st-opt-btn.selected-PRESENTE { background: var(--green-dot); border-color: var(--green-dot); color: #fff; }
     .st-opt-btn.selected-ATRASO { background: var(--amber-border); border-color: var(--amber-border); color: #fff; }
+    .st-opt-btn.selected-FOLGA_TRE { background: var(--indigo-border); border-color: var(--indigo-border); color: #fff; }
     .st-opt-btn.selected-FALTOU { background: var(--red-border); border-color: var(--red-border); color: #fff; }
+
+    .date-row { display: flex; gap: 8px; align-items: center; }
+    .date-mode-btn {
+      padding: 10px 12px; border-radius: 10px; border: 1.5px solid var(--border-color);
+      background: var(--bg-surface); font-size: 0.76rem; font-weight: 700;
+      color: var(--text-muted); cursor: pointer; white-space: nowrap;
+    }
+    .date-mode-btn.active { background: var(--brand-blue-light); border-color: var(--brand-blue); color: var(--brand-blue); }
 
     .quick-chips { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
     .quick-chips::-webkit-scrollbar { display: none; }
-
     .q-chip {
-      background: #ffffff;
-      border: 1px solid var(--border-color);
-      border-radius: 14px;
-      padding: 5px 10px;
-      font-size: 0.7rem;
-      font-weight: 600;
-      color: var(--text-main);
-      white-space: nowrap;
-      cursor: pointer;
-    }
-
-    .comment-input {
-      width: 100%;
-      padding: 10px 12px;
-      border-radius: 10px;
-      border: 1px solid var(--border-color);
-      font-size: 0.82rem;
-      font-family: inherit;
-      outline: none;
-      user-select: text;
+      background: var(--bg-surface); border: 1px solid var(--border-color);
+      border-radius: 14px; padding: 5px 10px; font-size: 0.7rem;
+      font-weight: 600; color: var(--text-main); white-space: nowrap; cursor: pointer;
     }
 
     .btn-save-occ {
-      background: var(--brand-blue);
-      color: #ffffff;
-      border: none;
-      border-radius: 10px;
-      padding: 11px;
-      font-size: 0.85rem;
-      font-weight: 700;
-      cursor: pointer;
+      background: var(--brand-blue); color: #ffffff; border: none;
+      border-radius: 11px; padding: 12px; font-size: 0.86rem;
+      font-weight: 700; cursor: pointer; width: 100%;
     }
 
+    .future-box {
+      background: var(--bg-surface); border: 1px dashed var(--border-color);
+      border-radius: 12px; padding: 10px 12px; font-size: 0.75rem;
+    }
+    .future-item {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 6px 0; border-bottom: 1px solid var(--border-color);
+    }
+    .future-item:last-child { border-bottom: none; }
+
+    .empty-msg {
+      text-align: center; padding: 28px 16px; background: var(--card-bg);
+      border: 1px dashed var(--border-color); border-radius: 16px;
+      color: var(--text-muted); font-size: 0.84rem;
+    }
+
+    /* DRAWER */
+    .drawer-overlay {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15, 23, 42, 0.45); backdrop-filter: blur(4px);
+      display: flex; justify-content: center; align-items: flex-end;
+      opacity: 0; pointer-events: none; transition: opacity 0.2s; z-index: 1000;
+    }
+    .drawer-overlay.open { opacity: 1; pointer-events: auto; }
+    .drawer {
+      background: var(--card-bg); border-radius: 22px 22px 0 0;
+      width: 100%; max-width: 540px; max-height: 88vh;
+      overflow-y: auto; padding: 20px; transform: translateY(100%);
+      transition: transform 0.25s cubic-bezier(0.1, 0.9, 0.2, 1);
+    }
+    .drawer-overlay.open .drawer { transform: translateY(0); }
+    .drawer-header {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--border-color);
+    }
+    .close-btn { background: transparent; border: none; font-size: 1.5rem; color: var(--text-muted); cursor: pointer; line-height: 1; }
+    .drawer-section-title {
+      font-size: 0.7rem; font-weight: 800; text-transform: uppercase;
+      color: var(--text-muted); margin: 12px 0 6px;
+    }
+    .occ-panel {
+      background: var(--bg-surface); border: 1px solid var(--border-color);
+      border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 10px;
+    }
     .prof-roster-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; margin-bottom: 10px; }
     .roster-item { background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 8px; padding: 7px 10px; font-size: 0.74rem; }
     .roster-item strong { color: var(--brand-blue); display: block; font-size: 0.68rem; text-transform: uppercase; }
-
     .week-day-block { margin-bottom: 8px; background: var(--bg-surface); padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border-color); }
     .week-day-title { font-size: 0.72rem; font-weight: 800; color: var(--brand-blue); text-transform: uppercase; margin-bottom: 4px; }
     .week-day-items { font-size: 0.78rem; color: var(--text-main); line-height: 1.45; }
 
     .toast {
-      position: fixed;
-      top: 16px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #0f172a;
-      color: #ffffff;
-      padding: 10px 18px;
-      border-radius: 12px;
-      font-size: 0.78rem;
-      font-weight: 600;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.25s;
-      z-index: 2000;
+      position: fixed; top: 16px; left: 50%; transform: translateX(-50%);
+      background: #0f172a; color: #ffffff; padding: 10px 18px;
+      border-radius: 12px; font-size: 0.78rem; font-weight: 600;
+      opacity: 0; pointer-events: none; transition: opacity 0.25s; z-index: 2000;
     }
     .toast.show { opacity: 1; }
 
     /* BOTTOM NAV */
     .bottom-nav {
-      position: fixed;
-      bottom: 12px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: calc(100% - 32px);
-      max-width: 480px;
-      background: rgba(255, 255, 255, 0.94);
-      backdrop-filter: blur(8px);
-      border: 1px solid var(--border-color);
-      border-radius: 20px;
-      padding: 8px 16px;
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
-      z-index: 900;
+      position: fixed; bottom: 12px; left: 50%; transform: translateX(-50%);
+      width: calc(100% - 32px); max-width: 480px;
+      background: rgba(255, 255, 255, 0.94); backdrop-filter: blur(8px);
+      border: 1px solid var(--border-color); border-radius: 20px;
+      padding: 8px 16px; display: flex; justify-content: space-around; align-items: center;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06); z-index: 900;
     }
-
     .nav-item { display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 0.7rem; font-weight: 600; color: var(--text-muted); text-decoration: none; }
     .nav-item.active { color: var(--brand-blue); }
     .nav-icon { font-size: 1.1rem; }
@@ -553,8 +380,7 @@
   <div class="toast" id="toastMsg">Atualizado!</div>
 
   <div class="app-container">
-    
-    <!-- HEADER -->
+
     <header>
       <div class="brand">
         <div class="brand-icon">🧭</div>
@@ -569,23 +395,21 @@
       </div>
     </header>
 
-    <!-- ABAS: POR PROFESSOR OU POR TURMA -->
+    <!-- TELA INICIAL: POR TURMA PRIMEIRO -->
     <div class="mode-switcher">
-      <button class="mode-btn active" id="mode-PROF" onclick="setMode('PROF')">👩‍🏫 Por Professor</button>
-      <button class="mode-btn" id="mode-TURMA" onclick="setMode('TURMA')">🏫 Por Turma</button>
+      <button class="mode-btn active" id="mode-TURMA" onclick="setMode('TURMA')">🏫 Por Turma</button>
+      <button class="mode-btn" id="mode-PROF" onclick="setMode('PROF')">👩‍🏫 Por Professor</button>
     </div>
 
-    <!-- BUSCA + FILTROS RÁPIDOS -->
     <div class="search-row">
       <div class="search-box">
         <span class="search-icon">🔍</span>
-        <input type="text" id="searchInput" class="search-input" placeholder="Professor, matéria, turma..." oninput="render()" />
+        <input type="text" id="searchInput" class="search-input" placeholder="Turma, professor ou matéria..." oninput="render()" />
       </div>
       <button class="quick-filter-btn" id="btnOnlyLive" onclick="toggleQuickFilter('LIVE')">🟢 Em aula</button>
-      <button class="quick-filter-btn" id="btnOnlyFaltas" onclick="toggleQuickFilter('FALTAS')">🚨 Faltas (<span id="faltasBadgeCount">0</span>)</button>
+      <button class="quick-filter-btn" id="btnOnlyFaltas" onclick="toggleQuickFilter('FALTAS')">🚨 Avisos (<span id="faltasBadgeCount">0</span>)</button>
     </div>
 
-    <!-- SELETOR DE DIA E TEMPO -->
     <section class="time-controls">
       <div class="control-strip">
         <span class="strip-label">Dia</span>
@@ -608,18 +432,75 @@
       </div>
     </section>
 
-    <!-- CONTADOR / DICA -->
     <div class="results-meta">
       <span id="resultsCount">0 resultados</span>
-      <span>Toque no card para falta/comentário ✏️</span>
+      <a href="#areaLancarFalta" style="color:var(--brand-blue); text-decoration:none; font-weight:700;">↓ Lançar falta por turma</a>
     </div>
 
-    <!-- LISTA DE CARDS -->
     <main class="cards-list" id="cardsContainer"></main>
+
+    <!-- ÁREA FINAL: LANÇAMENTO RÁPIDO POR TURMA (HOJE OU DIA FUTURO) -->
+    <section class="quick-launch-card" id="areaLancarFalta">
+      <div class="ql-header">
+        <h2>📝 Lançar Falta / Aviso</h2>
+        <span>Por Turma</span>
+      </div>
+
+      <div>
+        <label class="form-label" for="qlTurmaSelect">1. Selecione a turma</label>
+        <select id="qlTurmaSelect" class="clean-select" onchange="onSelectTurmaForm()">
+          <option value="">-- Selecione a turma --</option>
+        </select>
+      </div>
+
+      <div id="qlStepProf" style="display:none; flex-direction:column; gap:12px;">
+        <div>
+          <label class="form-label">2. Selecione o professor da turma</label>
+          <div class="turma-profs-list" id="qlProfsContainer"></div>
+        </div>
+
+        <div id="qlStepDetails" style="display:none; flex-direction:column; gap:11px; border-top:1px solid var(--border-color); padding-top:11px;">
+          <div>
+            <label class="form-label">3. Data da ocorrência</label>
+            <div class="date-row">
+              <button type="button" class="date-mode-btn active" id="qlBtnHoje" onclick="setQlDateMode('HOJE')">📅 Hoje</button>
+              <button type="button" class="date-mode-btn" id="qlBtnFuturo" onclick="setQlDateMode('FUTURO')">🗓️ Dia futuro</button>
+              <input type="date" id="qlDateInput" class="clean-input" style="display:none; padding:8px 10px;" />
+            </div>
+          </div>
+
+          <div>
+            <label class="form-label">4. Situação / Motivo</label>
+            <div class="status-grid-4" id="qlStatusGrid">
+              <button type="button" class="st-opt-btn selected-FALTOU" data-st="FALTOU" onclick="setQlStatus('FALTOU')">🚨 Faltou</button>
+              <button type="button" class="st-opt-btn" data-st="ATRASO" onclick="setQlStatus('ATRASO')">⏳ Atraso / Permuta</button>
+              <button type="button" class="st-opt-btn" data-st="FOLGA_TRE" onclick="setQlStatus('FOLGA_TRE')">🏖️ Folga / TRE</button>
+              <button type="button" class="st-opt-btn" data-st="PRESENTE" onclick="setQlStatus('PRESENTE')">✅ Presente</button>
+            </div>
+          </div>
+
+          <div>
+            <label class="form-label">5. Observação (opcional)</label>
+            <div class="quick-chips" style="margin-bottom:6px;">
+              <button type="button" class="q-chip" onclick="addQlChip('Turma liberada')">+ Turma liberada</button>
+              <button type="button" class="q-chip" onclick="addQlChip('Folga TRE')">+ Folga TRE</button>
+              <button type="button" class="q-chip" onclick="addQlChip('Na quadra / pátio')">+ Na quadra / pátio</button>
+              <button type="button" class="q-chip" onclick="addQlChip('Aula adiantada')">+ Aula adiantada</button>
+              <button type="button" class="q-chip" onclick="addQlChip('Chega no próximo tempo')">+ Chega próx. tempo</button>
+            </div>
+            <input type="text" id="qlCommentInput" class="clean-input" placeholder="Ex: Turma liberada após o T4..." />
+          </div>
+
+          <button type="button" class="btn-save-occ" onclick="salvarLancamentoRapido()">💾 Salvar para Toda a Equipe</button>
+        </div>
+      </div>
+
+      <div id="futurosContainer" class="future-box" style="display:none;"></div>
+    </section>
 
   </div>
 
-  <!-- DRAWER DETALHES E REGISTRO -->
+  <!-- DRAWER DETALHES -->
   <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer(event)">
     <div class="drawer" onclick="event.stopPropagation()">
       <div class="drawer-header">
@@ -633,7 +514,6 @@
     </div>
   </div>
 
-  <!-- BOTTOM NAV -->
   <nav class="bottom-nav">
     <a href="inicio.html" class="nav-item">
       <span class="nav-icon">🏠</span>
@@ -654,6 +534,12 @@
 
     const SLOTS = ["T1", "T2", "T3", "T4", "T5", "T6", "T7"];
     const DIAS_LABEL = { SEG: "Segunda-feira", TER: "Terça-feira", QUA: "Quarta-feira", QUI: "Quinta-feira", SEX: "Sexta-feira" };
+    const STATUS_META = {
+      PRESENTE: { label: "Presente", badge: "", pillClass: "live" },
+      ATRASO: { label: "Atraso / Permuta", badge: "⏳ Atraso/Permuta", pillClass: "warn" },
+      FOLGA_TRE: { label: "Folga / TRE", badge: "🏖️ Folga / TRE", pillClass: "indigo" },
+      FALTOU: { label: "Faltou", badge: "🚨 Faltou", pillClass: "alert" }
+    };
 
     const TURMAS_PROFESSORES = [
       {
@@ -815,13 +701,18 @@
       }
     ];
 
-    let currentMode = "PROF";
+    let currentMode = "TURMA";
     let currentDay = "SEG";
     let currentTime = "T1";
     let quickFilter = "NONE";
     let PROFESSORES_INDEX = [];
     let OCORRENCIAS_HOJE = {};
+    let OCORRENCIAS_FUTURAS = [];
     let statusSelecionadoDrawer = "PRESENTE";
+
+    let qlProfSelecionado = "";
+    let qlStatusSelecionado = "FALTOU";
+    let qlDateMode = "HOJE";
 
     function showToast(msg) {
       const t = document.getElementById("toastMsg");
@@ -830,9 +721,20 @@
       setTimeout(() => t.classList.remove("show"), 2400);
     }
 
+    function isOcorrenciaAtiva(occ) {
+      return occ && (occ.status === "FALTOU" || occ.status === "ATRASO" || occ.status === "FOLGA_TRE");
+    }
+
     function buildProfessoresIndex() {
       const mapa = {};
+      const selectTurma = document.getElementById("qlTurmaSelect");
+
       TURMAS_PROFESSORES.forEach(t => {
+        const opt = document.createElement("option");
+        opt.value = t.turma;
+        opt.textContent = `Turma ${t.turma} — ${t.sala}`;
+        selectTurma.appendChild(opt);
+
         Object.keys(t.grade).forEach(dia => {
           SLOTS.forEach(slot => {
             const sigla = t.grade[dia][slot];
@@ -860,67 +762,222 @@
         .sort((a, b) => a.nome.localeCompare(b.nome));
     }
 
-    async function sincronizarPlanilha(manual = false) {
-      if (!API_PROF_URL) {
-        const cache = localStorage.getItem("seore_prof_ocorrencias");
-        if (cache) OCORRENCIAS_HOJE = JSON.parse(cache);
-        render();
-        return;
-      }
+    function getHojeBR() {
+      return new Date().toLocaleDateString("pt-BR", { timeZone: "America/Sao_Paulo" });
+    }
 
+    function formatISOToBR(isoStr) {
+      if (!isoStr || !isoStr.includes("-")) return getHojeBR();
+      const [y, m, d] = isoStr.split("-");
+      return `${d}/${m}/${y}`;
+    }
+
+    function getDiaSemanaFromISO(isoStr) {
+      if (!isoStr || !isoStr.includes("-")) return DIAS_LABEL[currentDay];
+      const [y, m, d] = isoStr.split("-").map(Number);
+      const dt = new Date(y, m - 1, d);
+      const nomes = ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"];
+      return nomes[dt.getDay()];
+    }
+
+    async function sincronizarPlanilha(manual = false) {
+      if (!API_PROF_URL) return;
       try {
-        const res = await fetch(API_PROF_URL);
+        const res = await fetch(`${API_PROF_URL}?t=${Date.now()}`);
         if (res.ok) {
           const data = await res.json();
           OCORRENCIAS_HOJE = data.statusHoje || {};
+          OCORRENCIAS_FUTURAS = data.futuros || [];
           localStorage.setItem("seore_prof_ocorrencias", JSON.stringify(OCORRENCIAS_HOJE));
           render();
+          renderFuturos();
           if (manual) showToast("✅ Sincronizado com a equipe!");
         }
       } catch (err) {
+        const cache = localStorage.getItem("seore_prof_ocorrencias");
+        if (cache) OCORRENCIAS_HOJE = JSON.parse(cache);
+        render();
         if (manual) showToast("⚠️ Falha na conexão");
+      }
+    }
+
+    async function enviarParaPlanilha({ dataAlvo, diaSemana, professor, status, comentario }) {
+      const servidor = (localStorage.getItem("nomeServidor") || "SEORE").split(" ")[0];
+      const horaAtual = new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+      const hojeBR = getHojeBR();
+      const ehHoje = dataAlvo === hojeBR;
+
+      if (ehHoje) {
+        if (status === "PRESENTE" && !comentario) {
+          delete OCORRENCIAS_HOJE[professor];
+        } else {
+          OCORRENCIAS_HOJE[professor] = {
+            status: status,
+            comentario: comentario,
+            registradoPor: servidor,
+            hora: horaAtual
+          };
+        }
+        localStorage.setItem("seore_prof_ocorrencias", JSON.stringify(OCORRENCIAS_HOJE));
+      } else if (status !== "PRESENTE") {
+        OCORRENCIAS_FUTURAS = OCORRENCIAS_FUTURAS.filter(f => !(f.data === dataAlvo && f.professor === professor));
+        OCORRENCIAS_FUTURAS.push({ data: dataAlvo, diaSemana, professor, status, comentario, registradoPor: servidor });
+      }
+
+      render();
+      renderFuturos();
+      showToast("💾 Salvando para toda a equipe...");
+
+      try {
+        await fetch(API_PROF_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({
+            dataAlvo: dataAlvo,
+            diaSemana: diaSemana,
+            professor: professor,
+            status: status,
+            comentario: comentario,
+            registradoPor: servidor
+          })
+        });
+        showToast(ehHoje ? "✅ Atualizado na planilha!" : `🗓️ Agendado para ${dataAlvo}!`);
+      } catch (err) {
+        showToast("⚠️ Salvo localmente (erro de rede)");
       }
     }
 
     async function salvarOcorrenciaProfessor(nomeProf) {
       const comentario = document.getElementById("drawerCommentInput").value.trim();
-      const servidor = localStorage.getItem("nomeServidor") || "SEORE";
-      const horaAtual = new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
-
-      if (statusSelecionadoDrawer === "PRESENTE" && !comentario) {
-        delete OCORRENCIAS_HOJE[nomeProf];
-      } else {
-        OCORRENCIAS_HOJE[nomeProf] = {
-          status: statusSelecionadoDrawer,
-          comentario: comentario,
-          registradoPor: servidor.split(" ")[0],
-          hora: horaAtual
-        };
-      }
-
-      localStorage.setItem("seore_prof_ocorrencias", JSON.stringify(OCORRENCIAS_HOJE));
       toggleDrawer(false);
-      render();
-      showToast("💾 Salvando para toda a equipe...");
+      await enviarParaPlanilha({
+        dataAlvo: getHojeBR(),
+        diaSemana: DIAS_LABEL[currentDay],
+        professor: nomeProf,
+        status: statusSelecionadoDrawer,
+        comentario: comentario
+      });
+    }
 
-      if (API_PROF_URL) {
-        try {
-          await fetch(API_PROF_URL, {
-            method: "POST",
-            headers: { "Content-Type": "text/plain;charset=utf-8" },
-            body: JSON.stringify({
-              diaSemana: DIAS_LABEL[currentDay],
-              professor: nomeProf,
-              status: statusSelecionadoDrawer,
-              comentario: comentario,
-              registradoPor: servidor.split(" ")[0]
-            })
-          });
-          showToast("✅ Atualizado na planilha!");
-        } catch (err) {
-          showToast("⚠️ Salvo localmente (erro de rede)");
-        }
+    /* FUNÇÕES DA ÁREA FINAL: LANÇAMENTO POR TURMA */
+    function onSelectTurmaForm() {
+      const turmaVal = document.getElementById("qlTurmaSelect").value;
+      const stepProf = document.getElementById("qlStepProf");
+      const stepDetails = document.getElementById("qlStepDetails");
+      const profsContainer = document.getElementById("qlProfsContainer");
+
+      qlProfSelecionado = "";
+      stepDetails.style.display = "none";
+      profsContainer.innerHTML = "";
+
+      if (!turmaVal) {
+        stepProf.style.display = "none";
+        return;
       }
+
+      const turmaObj = TURMAS_PROFESSORES.find(t => t.turma === turmaVal);
+      if (!turmaObj) return;
+
+      const vistos = new Map();
+      Object.entries(turmaObj.professores).forEach(([sigla, info]) => {
+        if (!vistos.has(info.nome)) {
+          vistos.set(info.nome, { nome: info.nome, materias: [info.materia] });
+        } else if (!vistos.get(info.nome).materias.includes(info.materia)) {
+          vistos.get(info.nome).materias.push(info.materia);
+        }
+      });
+
+      Array.from(vistos.values())
+        .sort((a, b) => a.nome.localeCompare(b.nome))
+        .forEach(p => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "prof-pick-btn";
+          btn.innerHTML = `<strong>${p.nome}</strong><span>${p.materias.join(" / ")}</span>`;
+          btn.onclick = () => {
+            document.querySelectorAll(".prof-pick-btn").forEach(b => b.classList.remove("selected"));
+            btn.classList.add("selected");
+            qlProfSelecionado = p.nome;
+            stepDetails.style.display = "flex";
+          };
+          profsContainer.appendChild(btn);
+        });
+
+      stepProf.style.display = "flex";
+    }
+
+    function setQlDateMode(mode) {
+      qlDateMode = mode;
+      document.getElementById("qlBtnHoje").classList.toggle("active", mode === "HOJE");
+      document.getElementById("qlBtnFuturo").classList.toggle("active", mode === "FUTURO");
+      const dateInput = document.getElementById("qlDateInput");
+      dateInput.style.display = mode === "FUTURO" ? "block" : "none";
+      if (mode === "FUTURO" && !dateInput.value) {
+        const amanha = new Date();
+        amanha.setDate(amanha.getDate() + 1);
+        dateInput.value = amanha.toISOString().split("T")[0];
+      }
+    }
+
+    function setQlStatus(st) {
+      qlStatusSelecionado = st;
+      document.querySelectorAll("#qlStatusGrid .st-opt-btn").forEach(btn => {
+        btn.className = "st-opt-btn";
+        if (btn.dataset.st === st) btn.classList.add(`selected-${st}`);
+      });
+    }
+
+    function addQlChip(txt) {
+      const inp = document.getElementById("qlCommentInput");
+      inp.value = inp.value ? `${inp.value} • ${txt}` : txt;
+    }
+
+    async function salvarLancamentoRapido() {
+      const turmaVal = document.getElementById("qlTurmaSelect").value;
+      if (!turmaVal || !qlProfSelecionado) {
+        showToast("⚠️ Selecione a turma e o professor.");
+        return;
+      }
+
+      const isoDate = document.getElementById("qlDateInput").value;
+      if (qlDateMode === "FUTURO" && !isoDate) {
+        showToast("⚠️ Escolha a data futura.");
+        return;
+      }
+
+      const dataAlvo = qlDateMode === "FUTURO" ? formatISOToBR(isoDate) : getHojeBR();
+      const diaSemana = qlDateMode === "FUTURO" ? getDiaSemanaFromISO(isoDate) : DIAS_LABEL[currentDay];
+      const comentario = document.getElementById("qlCommentInput").value.trim();
+
+      await enviarParaPlanilha({
+        dataAlvo,
+        diaSemana,
+        professor: qlProfSelecionado,
+        status: qlStatusSelecionado,
+        comentario
+      });
+
+      document.getElementById("qlCommentInput").value = "";
+      document.getElementById("qlTurmaSelect").value = "";
+      onSelectTurmaForm();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function renderFuturos() {
+      const box = document.getElementById("futurosContainer");
+      if (!OCORRENCIAS_FUTURAS || OCORRENCIAS_FUTURAS.length === 0) {
+        box.style.display = "none";
+        return;
+      }
+      box.style.display = "block";
+      box.innerHTML = `<div style="font-weight:800; color:var(--text-main); margin-bottom:6px;">🗓️ Agendamentos Futuros</div>` +
+        OCORRENCIAS_FUTURAS.map(f => {
+          const meta = STATUS_META[f.status] || { badge: f.status };
+          return `<div class="future-item">
+            <span><b>${f.data}</b> (${f.diaSemana.split("-")[0]}) • ${f.professor}</span>
+            <span style="font-weight:700; color:var(--brand-blue);">${meta.badge || f.status}</span>
+          </div>`;
+        }).join("");
     }
 
     function autoDetectTime() {
@@ -941,8 +998,8 @@
     }
 
     function updateControlsUI() {
-      document.getElementById("mode-PROF").classList.toggle("active", currentMode === "PROF");
       document.getElementById("mode-TURMA").classList.toggle("active", currentMode === "TURMA");
+      document.getElementById("mode-PROF").classList.toggle("active", currentMode === "PROF");
 
       document.querySelectorAll(".day-btn").forEach(b => b.classList.remove("active"));
       document.getElementById(`day-${currentDay}`)?.classList.add("active");
@@ -969,17 +1026,105 @@
     }
 
     function atualizarContadorFaltas() {
-      const totalFaltas = Object.values(OCORRENCIAS_HOJE).filter(o => o.status === "FALTOU" || o.status === "ATRASO").length;
+      const totalFaltas = Object.values(OCORRENCIAS_HOJE).filter(o => isOcorrenciaAtiva(o)).length;
       document.getElementById("faltasBadgeCount").innerText = totalFaltas;
     }
 
     function render() {
       atualizarContadorFaltas();
-      if (currentMode === "PROF") renderProfessores();
-      else renderTurmas();
+      if (currentMode === "TURMA") renderTurmas();
+      else renderProfessores();
     }
 
-    /* RENDERIZAÇÃO: MODO POR PROFESSOR */
+    /* RENDERIZAÇÃO: POR TURMA */
+    function renderTurmas() {
+      const termo = normalize(document.getElementById("searchInput").value);
+      const container = document.getElementById("cardsContainer");
+      container.innerHTML = "";
+
+      const filtradas = TURMAS_PROFESSORES.filter(t => {
+        const siglaAgora = (t.grade[currentDay] || {})[currentTime] || "";
+        const profAgora = t.professores[siglaAgora];
+        const occ = profAgora ? OCORRENCIAS_HOJE[profAgora.nome] : null;
+        const temAula = siglaAgora && siglaAgora !== "LIVRE";
+
+        if (quickFilter === "LIVE" && !temAula) return false;
+        if (quickFilter === "FALTAS" && !isOcorrenciaAtiva(occ)) return false;
+        if (!termo) return true;
+
+        const profsStr = Object.values(t.professores).map(p => `${p.nome} ${p.materia}`).join(" ");
+        return normalize(`turma ${t.turma} ${t.sala} ${profsStr}`).includes(termo);
+      });
+
+      document.getElementById("resultsCount").innerText = `${filtradas.length} turma(s)`;
+
+      if (filtradas.length === 0) {
+        container.innerHTML = `<div class="empty-msg">Nenhuma turma encontrada para este filtro.</div>`;
+        return;
+      }
+
+      filtradas.forEach(t => {
+        const siglaAtual = (t.grade[currentDay] || {})[currentTime] || "LIVRE";
+        const profAtual = t.professores[siglaAtual];
+        const occ = profAtual ? OCORRENCIAS_HOJE[profAtual.nome] : null;
+        const emAula = siglaAtual && siglaAtual !== "LIVRE";
+        const meta = occ ? STATUS_META[occ.status] : null;
+
+        const stClass = isOcorrenciaAtiva(occ) ? `is-${occ.status}` : (emAula ? "is-live" : "");
+
+        const card = document.createElement("div");
+        card.className = `item-card ${stClass}`;
+        card.onclick = () => openTurmaDrawer(t);
+
+        let statusHtml = "";
+        if (!emAula) {
+          statusHtml = `<div class="status-pill idle">🟢 Horário Livre<br><span style="font-size:0.65rem;">Sem aula no ${currentTime}</span></div>`;
+        } else if (profAtual) {
+          const prefix = occ?.status === "FALTOU" ? "🚨 FALTOU: "
+                       : occ?.status === "ATRASO" ? "⏳ ATRASO: "
+                       : occ?.status === "FOLGA_TRE" ? "🏖️ FOLGA/TRE: "
+                       : "👩‍🏫 ";
+          const pillCls = isOcorrenciaAtiva(occ) ? meta.pillClass : "live";
+          statusHtml = `<div class="status-pill ${pillCls}">${prefix}${profAtual.nome}<br><span style="font-size:0.65rem;">${profAtual.materia} (${siglaAtual})</span></div>`;
+        } else {
+          statusHtml = `<div class="status-pill live">📘 ${siglaAtual}<br><span style="font-size:0.65rem;">Sem docente fixo</span></div>`;
+        }
+
+        const commentHtml = (occ && (occ.comentario || isOcorrenciaAtiva(occ)))
+          ? `<div class="comment-banner">
+               <span>💬 ${occ.comentario || meta?.label || "Aviso registrado"}</span>
+               <span class="comment-author">${occ.registradoPor} • ${occ.hora}</span>
+             </div>`
+          : "";
+
+        const slotsHtml = SLOTS.map(slot => {
+          const sig = (t.grade[currentDay] || {})[slot] || "—";
+          const isLivre = sig === "LIVRE" || sig === "—";
+          const cls = slot === currentTime ? "now" : (!isLivre ? "busy" : "");
+          return `
+            <div class="slot-box ${cls}">
+              <span class="slot-t">${slot}</span>
+              <span class="slot-v">${sig === "LIVRE" ? "—" : sig}</span>
+            </div>
+          `;
+        }).join("");
+
+        card.innerHTML = `
+          <div class="card-top">
+            <div>
+              <div class="card-title">Turma ${t.turma}</div>
+              <div class="card-subtitle"><span class="tag-chip blue">📍 ${t.sala}</span></div>
+            </div>
+            ${statusHtml}
+          </div>
+          ${commentHtml}
+          <div class="slots-grid">${slotsHtml}</div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    /* RENDERIZAÇÃO: POR PROFESSOR */
     function renderProfessores() {
       const termo = normalize(document.getElementById("searchInput").value);
       const container = document.getElementById("cardsContainer");
@@ -988,10 +1133,9 @@
       const filtrados = PROFESSORES_INDEX.filter(prof => {
         const aulaAgora = prof.horarios[currentDay][currentTime];
         const occ = OCORRENCIAS_HOJE[prof.nome];
-        const temOcorrencia = occ && (occ.status === "FALTOU" || occ.status === "ATRASO");
 
         if (quickFilter === "LIVE" && !aulaAgora) return false;
-        if (quickFilter === "FALTAS" && !temOcorrencia) return false;
+        if (quickFilter === "FALTAS" && !isOcorrenciaAtiva(occ)) return false;
         if (!termo) return true;
 
         const salasStr = Object.values(prof.horarios).flatMap(d => Object.values(d)).map(a => `${a.sala} ${a.turma} ${a.sigla}`).join(" ");
@@ -999,11 +1143,10 @@
       });
 
       filtrados.sort((a, b) => {
-        const occA = OCORRENCIAS_HOJE[a.nome];
-        const occB = OCORRENCIAS_HOJE[b.nome];
-        const pesoOccA = occA?.status === "FALTOU" ? 0 : occA?.status === "ATRASO" ? 1 : 2;
-        const pesoOccB = occB?.status === "FALTOU" ? 0 : occB?.status === "ATRASO" ? 1 : 2;
-        if (pesoOccA !== pesoOccB) return pesoOccA - pesoOccB;
+        const peso = st => st === "FALTOU" ? 0 : st === "ATRASO" ? 1 : st === "FOLGA_TRE" ? 2 : 3;
+        const pA = peso(OCORRENCIAS_HOJE[a.nome]?.status);
+        const pB = peso(OCORRENCIAS_HOJE[b.nome]?.status);
+        if (pA !== pB) return pA - pB;
 
         const aLive = a.horarios[currentDay][currentTime] ? 0 : 1;
         const bLive = b.horarios[currentDay][currentTime] ? 0 : 1;
@@ -1020,26 +1163,27 @@
       filtrados.forEach(prof => {
         const aulaAtual = prof.horarios[currentDay][currentTime];
         const occ = OCORRENCIAS_HOJE[prof.nome];
-        const stClass = occ?.status === "FALTOU" ? "is-FALTOU" : occ?.status === "ATRASO" ? "is-ATRASO" : (aulaAtual ? "is-live" : "");
+        const meta = occ ? STATUS_META[occ.status] : null;
+        const stClass = isOcorrenciaAtiva(occ) ? `is-${occ.status}` : (aulaAtual ? "is-live" : "");
 
         const card = document.createElement("div");
         card.className = `item-card ${stClass}`;
         card.onclick = () => openProfDrawer(prof);
 
-        let occBadgeHtml = "";
-        if (occ?.status === "FALTOU") occBadgeHtml = `<span class="occ-badge occ-FALTOU">🚨 Faltou</span>`;
-        else if (occ?.status === "ATRASO") occBadgeHtml = `<span class="occ-badge occ-ATRASO">⏳ Atraso/Permuta</span>`;
+        const occBadgeHtml = isOcorrenciaAtiva(occ)
+          ? `<span class="occ-badge occ-${occ.status}">${meta.badge}</span>`
+          : "";
 
         const statusHtml = aulaAtual
-          ? `<div class="status-pill ${occ?.status === 'FALTOU' ? 'alert' : 'live'}">📍 ${aulaAtual.sala}<br><span style="font-size:0.65rem;">Turma ${aulaAtual.turma} • ${aulaAtual.sigla}</span></div>`
+          ? `<div class="status-pill ${isOcorrenciaAtiva(occ) ? meta.pillClass : 'live'}">📍 ${aulaAtual.sala}<br><span style="font-size:0.65rem;">Turma ${aulaAtual.turma} • ${aulaAtual.sigla}</span></div>`
           : `<div class="status-pill idle">☕ Janela<br><span style="font-size:0.65rem;">Sem aula no ${currentTime}</span></div>`;
 
         const tagsHtml = prof.materias.map(m => `<span class="tag-chip blue">📚 ${m}</span>`).join("") +
                          `<span class="tag-chip">Turmas: ${prof.turmas.join(", ")}</span>`;
 
-        const commentHtml = (occ && (occ.comentario || occ.status !== "PRESENTE"))
+        const commentHtml = (occ && (occ.comentario || isOcorrenciaAtiva(occ)))
           ? `<div class="comment-banner">
-               <span>💬 ${occ.comentario || (occ.status === "FALTOU" ? "Falta registrada" : "Atraso / Permuta")}</span>
+               <span>💬 ${occ.comentario || meta?.label || "Aviso registrado"}</span>
                <span class="comment-author">${occ.registradoPor} • ${occ.hora}</span>
              </div>`
           : "";
@@ -1073,92 +1217,9 @@
       });
     }
 
-    /* RENDERIZAÇÃO: MODO POR TURMA */
-    function renderTurmas() {
-      const termo = normalize(document.getElementById("searchInput").value);
-      const container = document.getElementById("cardsContainer");
-      container.innerHTML = "";
-
-      const filtradas = TURMAS_PROFESSORES.filter(t => {
-        const siglaAgora = (t.grade[currentDay] || {})[currentTime] || "";
-        const profAgora = t.professores[siglaAgora];
-        const occ = profAgora ? OCORRENCIAS_HOJE[profAgora.nome] : null;
-        const temAula = siglaAgora && siglaAgora !== "LIVRE";
-
-        if (quickFilter === "LIVE" && !temAula) return false;
-        if (quickFilter === "FALTAS" && !(occ && (occ.status === "FALTOU" || occ.status === "ATRASO"))) return false;
-        if (!termo) return true;
-
-        const profsStr = Object.values(t.professores).map(p => `${p.nome} ${p.materia}`).join(" ");
-        return normalize(`turma ${t.turma} ${t.sala} ${profsStr}`).includes(termo);
-      });
-
-      document.getElementById("resultsCount").innerText = `${filtradas.length} turma(s)`;
-
-      if (filtradas.length === 0) {
-        container.innerHTML = `<div class="empty-msg">Nenhuma turma encontrada para este filtro.</div>`;
-        return;
-      }
-
-      filtradas.forEach(t => {
-        const siglaAtual = (t.grade[currentDay] || {})[currentTime] || "LIVRE";
-        const profAtual = t.professores[siglaAtual];
-        const occ = profAtual ? OCORRENCIAS_HOJE[profAtual.nome] : null;
-        const emAula = siglaAtual && siglaAtual !== "LIVRE";
-
-        const stClass = occ?.status === "FALTOU" ? "is-FALTOU" : occ?.status === "ATRASO" ? "is-ATRASO" : (emAula ? "is-live" : "");
-
-        const card = document.createElement("div");
-        card.className = `item-card ${stClass}`;
-        card.onclick = () => openTurmaDrawer(t);
-
-        let statusHtml = "";
-        if (!emAula) {
-          statusHtml = `<div class="status-pill idle">🟢 Horário Livre<br><span style="font-size:0.65rem;">Sem aula no ${currentTime}</span></div>`;
-        } else if (profAtual) {
-          const alertTag = occ?.status === "FALTOU" ? "🚨 FALTOU: " : occ?.status === "ATRASO" ? "⏳ ATRASO: " : "👩‍🏫 ";
-          statusHtml = `<div class="status-pill ${occ?.status === 'FALTOU' ? 'alert' : 'live'}">${alertTag}${profAtual.nome}<br><span style="font-size:0.65rem;">${profAtual.materia} (${siglaAtual})</span></div>`;
-        } else {
-          statusHtml = `<div class="status-pill live">📘 ${siglaAtual}<br><span style="font-size:0.65rem;">Prof. não cadastrado</span></div>`;
-        }
-
-        const commentHtml = (occ && (occ.comentario || occ.status !== "PRESENTE"))
-          ? `<div class="comment-banner">
-               <span>💬 ${occ.comentario || "Professor ausente / atrasado"}</span>
-               <span class="comment-author">${occ.registradoPor} • ${occ.hora}</span>
-             </div>`
-          : "";
-
-        const slotsHtml = SLOTS.map(slot => {
-          const sig = (t.grade[currentDay] || {})[slot] || "—";
-          const isLivre = sig === "LIVRE" || sig === "—";
-          const cls = slot === currentTime ? "now" : (!isLivre ? "busy" : "");
-          return `
-            <div class="slot-box ${cls}">
-              <span class="slot-t">${slot}</span>
-              <span class="slot-v">${sig === "LIVRE" ? "—" : sig}</span>
-            </div>
-          `;
-        }).join("");
-
-        card.innerHTML = `
-          <div class="card-top">
-            <div>
-              <div class="card-title">Turma ${t.turma}</div>
-              <div class="card-subtitle"><span class="tag-chip blue">📍 ${t.sala}</span></div>
-            </div>
-            ${statusHtml}
-          </div>
-          ${commentHtml}
-          <div class="slots-grid">${slotsHtml}</div>
-        `;
-        container.appendChild(card);
-      });
-    }
-
     function selecionarStatusDrawer(st) {
       statusSelecionadoDrawer = st;
-      document.querySelectorAll(".st-opt-btn").forEach(btn => {
+      document.querySelectorAll("#drawerStatusGrid .st-opt-btn").forEach(btn => {
         btn.className = "st-opt-btn";
         if (btn.dataset.st === st) btn.classList.add(`selected-${st}`);
       });
@@ -1169,7 +1230,6 @@
       input.value = input.value ? `${input.value} • ${texto}` : texto;
     }
 
-    /* DRAWER: DETALHES DO PROFESSOR + REGISTRO DE FALTA/COMENTÁRIO */
     function openProfDrawer(prof) {
       const occAtual = OCORRENCIAS_HOJE[prof.nome] || { status: "PRESENTE", comentario: "" };
       statusSelecionadoDrawer = occAtual.status;
@@ -1181,21 +1241,22 @@
       body.innerHTML = `
         <div class="drawer-section-title">Status Hoje (Visível para toda a equipe)</div>
         <div class="occ-panel">
-          <div class="status-selector">
+          <div class="status-grid-4" id="drawerStatusGrid">
             <button type="button" class="st-opt-btn ${occAtual.status === 'PRESENTE' ? 'selected-PRESENTE' : ''}" data-st="PRESENTE" onclick="selecionarStatusDrawer('PRESENTE')">✅ Presente</button>
-            <button type="button" class="st-opt-btn ${occAtual.status === 'ATRASO' ? 'selected-ATRASO' : ''}" data-st="ATRASO" onclick="selecionarStatusDrawer('ATRASO')">⏳ Atraso/Permuta</button>
+            <button type="button" class="st-opt-btn ${occAtual.status === 'ATRASO' ? 'selected-ATRASO' : ''}" data-st="ATRASO" onclick="selecionarStatusDrawer('ATRASO')">⏳ Atraso / Permuta</button>
+            <button type="button" class="st-opt-btn ${occAtual.status === 'FOLGA_TRE' ? 'selected-FOLGA_TRE' : ''}" data-st="FOLGA_TRE" onclick="selecionarStatusDrawer('FOLGA_TRE')">🏖️ Folga / TRE</button>
             <button type="button" class="st-opt-btn ${occAtual.status === 'FALTOU' ? 'selected-FALTOU' : ''}" data-st="FALTOU" onclick="selecionarStatusDrawer('FALTOU')">🚨 Faltou</button>
           </div>
 
           <div class="quick-chips">
             <button type="button" class="q-chip" onclick="adicionarTextoRapido('Turma liberada')">+ Turma liberada</button>
+            <button type="button" class="q-chip" onclick="adicionarTextoRapido('Folga TRE')">+ Folga TRE</button>
             <button type="button" class="q-chip" onclick="adicionarTextoRapido('Na quadra / pátio')">+ Na quadra / pátio</button>
             <button type="button" class="q-chip" onclick="adicionarTextoRapido('Aula adiantada')">+ Aula adiantada</button>
             <button type="button" class="q-chip" onclick="adicionarTextoRapido('Chega no próximo tempo')">+ Chega próx. tempo</button>
           </div>
 
-          <input type="text" id="drawerCommentInput" class="comment-input" placeholder="Adicionar comentário (opcional)..." value="${occAtual.comentario || ""}" />
-          
+          <input type="text" id="drawerCommentInput" class="clean-input" placeholder="Adicionar comentário (opcional)..." value="${occAtual.comentario || ""}" />
           <button type="button" class="btn-save-occ" onclick="salvarOcorrenciaProfessor('${prof.nome.replace(/'/g, "\\'")}')">💾 Salvar para Todos</button>
         </div>
 
@@ -1222,16 +1283,15 @@
       toggleDrawer(true);
     }
 
-    /* DRAWER: DETALHES DA TURMA */
     function openTurmaDrawer(t) {
       document.getElementById("dwTitle").innerText = `Turma ${t.turma}`;
-      document.getElementById("dwSubtitle").innerText = `${t.sala} • Toque em um professor para marcar falta/aviso`;
+      document.getElementById("dwSubtitle").innerText = `${t.sala} • Toque em um professor para registrar aviso`;
 
       const body = document.getElementById("dwBody");
       const rosterItems = Object.entries(t.professores)
         .map(([sigla, info]) => {
           const occ = OCORRENCIAS_HOJE[info.nome];
-          const badge = occ?.status === "FALTOU" ? " 🚨" : occ?.status === "ATRASO" ? " ⏳" : "";
+          const badge = occ?.status === "FALTOU" ? " 🚨" : occ?.status === "ATRASO" ? " ⏳" : occ?.status === "FOLGA_TRE" ? " 🏖️" : "";
           return `<div class="roster-item" style="cursor:pointer;" onclick="abrirProfPorNome('${info.nome.replace(/'/g, "\\'")}')"><strong>${info.materia} (${sigla})</strong>${info.nome}${badge}</div>`;
         })
         .join("");
