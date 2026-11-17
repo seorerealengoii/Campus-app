@@ -37,7 +37,12 @@
       --green-dot: #16a34a;
 
       --amber-bg: #fef3c7;
+      --amber-border: #f59e0b;
       --amber-text: #92400e;
+
+      --red-bg: #fee2e2;
+      --red-border: #ef4444;
+      --red-text: #991b1b;
 
       --gray-bg: #f8fafc;
       --gray-text: #64748b;
@@ -95,6 +100,17 @@
     .brand-text h1 { font-size: 0.95rem; font-weight: 800; color: var(--text-main); }
     .brand-text p { font-size: 0.72rem; font-weight: 600; color: var(--brand-blue); margin-top: 1px; }
 
+    .header-actions { display: flex; align-items: center; gap: 6px; }
+
+    .sync-btn {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 7px 10px;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+
     .back-btn {
       background: var(--bg-surface);
       border: 1px solid var(--border-color);
@@ -135,54 +151,55 @@
       box-shadow: 0 2px 6px rgba(2, 132, 199, 0.25);
     }
 
-    /* BUSCA + CHIP DE FILTRO RÁPIDO */
-    .search-row {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
-
+    /* BUSCA + FILTROS RÁPIDOS */
+    .search-row { display: flex; gap: 6px; align-items: center; }
     .search-box { position: relative; flex: 1; }
 
     .search-input {
       width: 100%;
-      padding: 11px 14px 11px 36px;
+      padding: 11px 12px 11px 34px;
       border-radius: 12px;
       border: 1px solid var(--border-color);
       background: var(--card-bg);
-      font-size: 0.85rem;
+      font-size: 0.84rem;
       color: var(--text-main);
       outline: none;
+      user-select: text;
     }
 
     .search-input:focus { border-color: var(--brand-blue); }
 
     .search-icon {
       position: absolute;
-      left: 12px;
+      left: 11px;
       top: 50%;
       transform: translateY(-50%);
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       color: var(--text-muted);
     }
 
-    .toggle-active-btn {
+    .quick-filter-btn {
       background: var(--card-bg);
       border: 1px solid var(--border-color);
       color: var(--text-muted);
-      padding: 11px 12px;
+      padding: 11px 10px;
       border-radius: 12px;
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       font-weight: 700;
       cursor: pointer;
       white-space: nowrap;
-      transition: all 0.15s;
     }
 
-    .toggle-active-btn.active {
+    .quick-filter-btn.active-green {
       background: var(--green-bg);
       border-color: var(--green-border);
       color: var(--green-text);
+    }
+
+    .quick-filter-btn.active-red {
+      background: var(--red-bg);
+      border-color: var(--red-border);
+      color: var(--red-text);
     }
 
     /* BARRA COMPACTA DE DIA E TEMPO */
@@ -225,7 +242,6 @@
       border-radius: 8px;
       cursor: pointer;
       white-space: nowrap;
-      transition: all 0.15s;
     }
 
     .pill.active {
@@ -234,7 +250,6 @@
       color: var(--brand-blue);
     }
 
-    /* CONTADOR DE RESULTADOS */
     .results-meta {
       display: flex;
       justify-content: space-between;
@@ -245,12 +260,8 @@
       color: var(--text-muted);
     }
 
-    /* CARDS LIMPOS (PROFESSOR E TURMA) */
-    .cards-list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
+    /* CARDS */
+    .cards-list { display: flex; flex-direction: column; gap: 10px; }
 
     .item-card {
       background: var(--card-bg);
@@ -262,14 +273,14 @@
       gap: 10px;
       cursor: pointer;
       box-shadow: 0 1px 3px rgba(0,0,0,0.02);
-      transition: transform 0.1s ease, border-color 0.15s;
+      transition: transform 0.1s ease;
     }
 
     .item-card:active { transform: scale(0.985); }
 
-    .item-card.is-live {
-      border-left: 4px solid var(--green-dot);
-    }
+    .item-card.is-live { border-left: 4px solid var(--green-dot); }
+    .item-card.is-FALTOU { background: #fef2f2; border: 1.5px solid var(--red-border); border-left: 5px solid var(--red-border); }
+    .item-card.is-ATRASO { background: #fffbeb; border: 1.5px solid var(--amber-border); border-left: 5px solid var(--amber-border); }
 
     .card-top {
       display: flex;
@@ -278,19 +289,20 @@
       gap: 10px;
     }
 
-    .card-title {
-      font-size: 0.98rem;
-      font-weight: 800;
-      color: var(--text-main);
-      line-height: 1.2;
-    }
+    .card-title-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .card-title { font-size: 0.98rem; font-weight: 800; color: var(--text-main); line-height: 1.2; }
 
-    .card-subtitle {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 5px;
-      margin-top: 5px;
+    .occ-badge {
+      font-size: 0.65rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      padding: 2px 7px;
+      border-radius: 6px;
     }
+    .occ-FALTOU { background: var(--red-border); color: #ffffff; }
+    .occ-ATRASO { background: var(--amber-border); color: #ffffff; }
+
+    .card-subtitle { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 5px; }
 
     .tag-chip {
       font-size: 0.68rem;
@@ -317,24 +329,27 @@
       text-align: right;
     }
 
-    .status-pill.live {
-      background: var(--green-bg);
-      color: var(--green-text);
-      border: 1px solid var(--green-border);
-    }
+    .status-pill.live { background: var(--green-bg); color: var(--green-text); border: 1px solid var(--green-border); }
+    .status-pill.alert { background: var(--red-bg); color: var(--red-text); border: 1px solid var(--red-border); }
+    .status-pill.idle { background: var(--gray-bg); color: var(--gray-text); border: 1px solid var(--border-color); }
 
-    .status-pill.idle {
-      background: var(--gray-bg);
-      color: var(--gray-text);
-      border: 1px solid var(--border-color);
+    /* CAIXA DE COMENTÁRIO VISÍVEL NO CARD */
+    .comment-banner {
+      background: rgba(255, 255, 255, 0.8);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      border-radius: 10px;
+      padding: 7px 10px;
+      font-size: 0.75rem;
+      color: var(--text-main);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
     }
+    .comment-author { font-size: 0.65rem; color: var(--text-muted); white-space: nowrap; }
 
     /* LINHA DO TEMPO T1 - T7 */
-    .slots-grid {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 4px;
-    }
+    .slots-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
 
     .slot-box {
       background: var(--bg-surface);
@@ -347,19 +362,8 @@
       gap: 1px;
     }
 
-    .slot-box.busy {
-      background: #f0fdf4;
-      border-color: #bbf7d0;
-      color: #166534;
-    }
-
-    .slot-box.now {
-      background: var(--brand-blue);
-      border-color: var(--brand-blue);
-      color: #ffffff;
-      box-shadow: 0 2px 6px rgba(2, 132, 199, 0.25);
-    }
-
+    .slot-box.busy { background: #f0fdf4; border-color: #bbf7d0; color: #166534; }
+    .slot-box.now { background: var(--brand-blue); border-color: var(--brand-blue); color: #ffffff; }
     .slot-t { font-size: 0.6rem; font-weight: 700; opacity: 0.8; }
     .slot-v { font-size: 0.67rem; font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
@@ -373,7 +377,7 @@
       font-size: 0.84rem;
     }
 
-    /* DRAWER DETALHES */
+    /* DRAWER DE STATUS, COMENTÁRIOS E GRADE */
     .drawer-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -395,7 +399,7 @@
       border-radius: 22px 22px 0 0;
       width: 100%;
       max-width: 540px;
-      max-height: 84vh;
+      max-height: 88vh;
       overflow-y: auto;
       padding: 20px;
       transform: translateY(100%);
@@ -409,7 +413,7 @@
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
       padding-bottom: 10px;
       border-bottom: 1px solid var(--border-color);
     }
@@ -424,40 +428,100 @@
       margin: 12px 0 6px;
     }
 
-    .prof-roster-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 6px;
-      margin-bottom: 10px;
-    }
-
-    .roster-item {
+    /* PAINEL DE REGISTRO DE OCORRÊNCIA NO DRAWER */
+    .occ-panel {
       background: var(--bg-surface);
       border: 1px solid var(--border-color);
-      border-radius: 8px;
-      padding: 7px 10px;
-      font-size: 0.74rem;
+      border-radius: 14px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
     }
 
-    .roster-item strong { color: var(--brand-blue); display: block; font-size: 0.68rem; text-transform: uppercase; }
+    .status-selector {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
 
-    .week-day-block {
-      margin-bottom: 8px;
-      background: var(--bg-surface);
+    .st-opt-btn {
+      padding: 9px 6px;
+      border-radius: 10px;
+      border: 1.5px solid var(--border-color);
+      background: #ffffff;
+      font-size: 0.74rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+
+    .st-opt-btn.selected-PRESENTE { background: var(--green-dot); border-color: var(--green-dot); color: #fff; }
+    .st-opt-btn.selected-ATRASO { background: var(--amber-border); border-color: var(--amber-border); color: #fff; }
+    .st-opt-btn.selected-FALTOU { background: var(--red-border); border-color: var(--red-border); color: #fff; }
+
+    .quick-chips { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
+    .quick-chips::-webkit-scrollbar { display: none; }
+
+    .q-chip {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 5px 10px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--text-main);
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    .comment-input {
+      width: 100%;
       padding: 10px 12px;
       border-radius: 10px;
       border: 1px solid var(--border-color);
+      font-size: 0.82rem;
+      font-family: inherit;
+      outline: none;
+      user-select: text;
     }
 
-    .week-day-title {
-      font-size: 0.72rem;
-      font-weight: 800;
-      color: var(--brand-blue);
-      text-transform: uppercase;
-      margin-bottom: 4px;
+    .btn-save-occ {
+      background: var(--brand-blue);
+      color: #ffffff;
+      border: none;
+      border-radius: 10px;
+      padding: 11px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
     }
 
+    .prof-roster-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; margin-bottom: 10px; }
+    .roster-item { background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 8px; padding: 7px 10px; font-size: 0.74rem; }
+    .roster-item strong { color: var(--brand-blue); display: block; font-size: 0.68rem; text-transform: uppercase; }
+
+    .week-day-block { margin-bottom: 8px; background: var(--bg-surface); padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border-color); }
+    .week-day-title { font-size: 0.72rem; font-weight: 800; color: var(--brand-blue); text-transform: uppercase; margin-bottom: 4px; }
     .week-day-items { font-size: 0.78rem; color: var(--text-main); line-height: 1.45; }
+
+    .toast {
+      position: fixed;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #0f172a;
+      color: #ffffff;
+      padding: 10px 18px;
+      border-radius: 12px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s;
+      z-index: 2000;
+    }
+    .toast.show { opacity: 1; }
 
     /* BOTTOM NAV */
     .bottom-nav {
@@ -479,22 +543,14 @@
       z-index: 900;
     }
 
-    .nav-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 2px;
-      font-size: 0.7rem;
-      font-weight: 600;
-      color: var(--text-muted);
-      text-decoration: none;
-    }
-
+    .nav-item { display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 0.7rem; font-weight: 600; color: var(--text-muted); text-decoration: none; }
     .nav-item.active { color: var(--brand-blue); }
     .nav-icon { font-size: 1.1rem; }
   </style>
 </head>
 <body>
+
+  <div class="toast" id="toastMsg">Atualizado!</div>
 
   <div class="app-container">
     
@@ -507,7 +563,10 @@
           <p id="headerSubtitle">Segunda-feira • Tempo T1</p>
         </div>
       </div>
-      <a href="inicio.html" class="back-btn">← Início</a>
+      <div class="header-actions">
+        <button class="sync-btn" onclick="sincronizarPlanilha(true)" title="Sincronizar agora">🔄</button>
+        <a href="inicio.html" class="back-btn">← Início</a>
+      </div>
     </header>
 
     <!-- ABAS: POR PROFESSOR OU POR TURMA -->
@@ -516,13 +575,14 @@
       <button class="mode-btn" id="mode-TURMA" onclick="setMode('TURMA')">🏫 Por Turma</button>
     </div>
 
-    <!-- BUSCA + FILTRO RÁPIDO -->
+    <!-- BUSCA + FILTROS RÁPIDOS -->
     <div class="search-row">
       <div class="search-box">
         <span class="search-icon">🔍</span>
-        <input type="text" id="searchInput" class="search-input" placeholder="Professor, matéria, turma ou sala..." oninput="render()" />
+        <input type="text" id="searchInput" class="search-input" placeholder="Professor, matéria, turma..." oninput="render()" />
       </div>
-      <button class="toggle-active-btn" id="btnOnlyLive" onclick="toggleOnlyLive()">🟢 Em aula</button>
+      <button class="quick-filter-btn" id="btnOnlyLive" onclick="toggleQuickFilter('LIVE')">🟢 Em aula</button>
+      <button class="quick-filter-btn" id="btnOnlyFaltas" onclick="toggleQuickFilter('FALTAS')">🚨 Faltas (<span id="faltasBadgeCount">0</span>)</button>
     </div>
 
     <!-- SELETOR DE DIA E TEMPO -->
@@ -551,7 +611,7 @@
     <!-- CONTADOR / DICA -->
     <div class="results-meta">
       <span id="resultsCount">0 resultados</span>
-      <span>Toque no card para ver a semana ↗</span>
+      <span>Toque no card para falta/comentário ✏️</span>
     </div>
 
     <!-- LISTA DE CARDS -->
@@ -559,7 +619,7 @@
 
   </div>
 
-  <!-- DRAWER DETALHES DA SEMANA -->
+  <!-- DRAWER DETALHES E REGISTRO -->
   <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer(event)">
     <div class="drawer" onclick="event.stopPropagation()">
       <div class="drawer-header">
@@ -590,10 +650,11 @@
   </nav>
 
   <script>
+    const API_PROF_URL = "https://script.google.com/macros/s/AKfycbyhfouoR-5LNTG64ZHoOqmipZipAablUIvGcUjm_GBBiXKrZjqX-Z3UMPcUYeNl2rA/exec";
+
     const SLOTS = ["T1", "T2", "T3", "T4", "T5", "T6", "T7"];
     const DIAS_LABEL = { SEG: "Segunda-feira", TER: "Terça-feira", QUA: "Quarta-feira", QUI: "Quinta-feira", SEX: "Sexta-feira" };
 
-    // MAPA DAS TURMAS COM SALAS E PROFESSORES POR SIGLA DE MATÉRIA
     const TURMAS_PROFESSORES = [
       {
         turma: "602",
@@ -754,15 +815,23 @@
       }
     ];
 
-    let currentMode = "PROF"; // "PROF" ou "TURMA"
+    let currentMode = "PROF";
     let currentDay = "SEG";
     let currentTime = "T1";
-    let onlyLive = false;
+    let quickFilter = "NONE";
     let PROFESSORES_INDEX = [];
+    let OCORRENCIAS_HOJE = {};
+    let statusSelecionadoDrawer = "PRESENTE";
+
+    function showToast(msg) {
+      const t = document.getElementById("toastMsg");
+      t.innerText = msg;
+      t.classList.add("show");
+      setTimeout(() => t.classList.remove("show"), 2400);
+    }
 
     function buildProfessoresIndex() {
       const mapa = {};
-
       TURMAS_PROFESSORES.forEach(t => {
         Object.keys(t.grade).forEach(dia => {
           SLOTS.forEach(slot => {
@@ -779,26 +848,79 @@
                 horarios: { SEG: {}, TER: {}, QUA: {}, QUI: {}, SEX: {} }
               };
             }
-
             mapa[nome].materias.add(infoProf.materia);
             mapa[nome].turmas.add(t.turma);
-            mapa[nome].horarios[dia][slot] = {
-              turma: t.turma,
-              sala: t.sala,
-              sigla: sigla,
-              materia: infoProf.materia
-            };
+            mapa[nome].horarios[dia][slot] = { turma: t.turma, sala: t.sala, sigla: sigla, materia: infoProf.materia };
           });
         });
       });
 
       PROFESSORES_INDEX = Object.values(mapa)
-        .map(p => ({
-          ...p,
-          materias: Array.from(p.materias),
-          turmas: Array.from(p.turmas).sort()
-        }))
+        .map(p => ({ ...p, materias: Array.from(p.materias), turmas: Array.from(p.turmas).sort() }))
         .sort((a, b) => a.nome.localeCompare(b.nome));
+    }
+
+    async function sincronizarPlanilha(manual = false) {
+      if (!API_PROF_URL) {
+        const cache = localStorage.getItem("seore_prof_ocorrencias");
+        if (cache) OCORRENCIAS_HOJE = JSON.parse(cache);
+        render();
+        return;
+      }
+
+      try {
+        const res = await fetch(API_PROF_URL);
+        if (res.ok) {
+          const data = await res.json();
+          OCORRENCIAS_HOJE = data.statusHoje || {};
+          localStorage.setItem("seore_prof_ocorrencias", JSON.stringify(OCORRENCIAS_HOJE));
+          render();
+          if (manual) showToast("✅ Sincronizado com a equipe!");
+        }
+      } catch (err) {
+        if (manual) showToast("⚠️ Falha na conexão");
+      }
+    }
+
+    async function salvarOcorrenciaProfessor(nomeProf) {
+      const comentario = document.getElementById("drawerCommentInput").value.trim();
+      const servidor = localStorage.getItem("nomeServidor") || "SEORE";
+      const horaAtual = new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+
+      if (statusSelecionadoDrawer === "PRESENTE" && !comentario) {
+        delete OCORRENCIAS_HOJE[nomeProf];
+      } else {
+        OCORRENCIAS_HOJE[nomeProf] = {
+          status: statusSelecionadoDrawer,
+          comentario: comentario,
+          registradoPor: servidor.split(" ")[0],
+          hora: horaAtual
+        };
+      }
+
+      localStorage.setItem("seore_prof_ocorrencias", JSON.stringify(OCORRENCIAS_HOJE));
+      toggleDrawer(false);
+      render();
+      showToast("💾 Salvando para toda a equipe...");
+
+      if (API_PROF_URL) {
+        try {
+          await fetch(API_PROF_URL, {
+            method: "POST",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify({
+              diaSemana: DIAS_LABEL[currentDay],
+              professor: nomeProf,
+              status: statusSelecionadoDrawer,
+              comentario: comentario,
+              registradoPor: servidor.split(" ")[0]
+            })
+          });
+          showToast("✅ Atualizado na planilha!");
+        } catch (err) {
+          showToast("⚠️ Salvo localmente (erro de rede)");
+        }
+      }
     }
 
     function autoDetectTime() {
@@ -826,74 +948,8 @@
       document.getElementById(`day-${currentDay}`)?.classList.add("active");
 
       document.querySelectorAll(".time-btn").forEach(b => b.classList.remove("active"));
-      document.getElementById(`time-${currentTime}`)?.classList.add("active");
-
-      document.getElementById("btnOnlyLive").classList.toggle("active", onlyLive);
-      document.getElementById("headerSubtitle").innerText = `${DIAS_LABEL[currentDay]} • Tempo ${currentTime}`;
-    }
-
-    function setMode(m) {
-      currentMode = m;
-      updateControlsUI();
-      render();
-    }
-
-    function setDay(d) {
-      currentDay = d;
-      updateControlsUI();
-      render();
-    }
-
-    function setTime(t) {
-      currentTime = t;
-      updateControlsUI();
-      render();
-    }
-
-    function toggleOnlyLive() {
-      onlyLive = !onlyLive;
-      updateControlsUI();
-      render();
-    }
-
-    function normalize(str) {
-      return (str || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
-    }
-
-    function render() {
-      if (currentMode === "PROF") {
-        renderProfessores();
-      } else {
-        renderTurmas();
-      }
-    }
-
-    /* RENDERIZAÇÃO: MODO POR PROFESSOR */
-    function renderProfessores() {
-      const termo = normalize(document.getElementById("searchInput").value);
-      const container = document.getElementById("cardsContainer");
-      container.innerHTML = "";
-
-      const filtrados = PROFESSORES_INDEX.filter(prof => {
-        const aulaAgora = prof.horarios[currentDay][currentTime];
-        if (onlyLive && !aulaAgora) return false;
-        if (!termo) return true;
-
-        const salasStr = Object.values(prof.horarios)
-          .flatMap(d => Object.values(d))
-          .map(a => `${a.sala} ${a.turma} ${a.sigla}`)
-          .join(" ");
-
-        return normalize(`${prof.nome} ${prof.materias.join(" ")} ${prof.turmas.join(" ")} ${salasStr}`).includes(termo);
-      });
-
-      filtrados.sort((a, b) => {
-        const aLive = a.horarios[currentDay][currentTime] ? 0 : 1;
-        const bLive = b.horarios[currentDay][currentTime] ? 0 : 1;
-        return aLive - bLive || a.nome.localeCompare(b.nome);
-      });
-
-      document.getElementById("resultsCount").innerText = `${filtrados.length} professor(es)`;
+      document.getElementById(`time-${currentTime}`)?.classList.add("active");  document.getElementById("btnOnlyLive").classList.toggle("active-green", quickFilter === "LIVE"); document.getElementById("btnOnlyFaltas").classList.toggle("active-red", quickFilter === "FALTAS"); document.getElementById("headerSubtitle").innerText = `${DIAS_LABEL[currentDay]} • Tempo ${currentTime}`; }  function setMode(m) { currentMode = m; updateControlsUI(); render(); } function setDay(d) { currentDay = d; updateControlsUI(); render(); } function setTime(t) { currentTime = t; updateControlsUI(); render(); } function toggleQuickFilter(type) { quickFilter = quickFilter === type ? "NONE" : type; updateControlsUI(); render(); }  function normalize(str) { return (str \vert{}\vert{} "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim(); }  function atualizarContadorFaltas() { const totalFaltas = Object.values(OCORRENCIAS_HOJE).filter(o => o.status === "FALTOU" \vert{}\vert{} o.status === "ATRASO").length; document.getElementById("faltasBadgeCount").innerText = totalFaltas; }  function render() { atualizarContadorFaltas(); if (currentMode === "PROF") renderProfessores(); else renderTurmas(); }  /* RENDERIZAÇÃO: MODO POR PROFESSOR */ function renderProfessores() { const termo = normalize(document.getElementById("searchInput").value); const container = document.getElementById("cardsContainer"); container.innerHTML = "";  const filtrados = PROFESSORES_INDEX.filter(prof => { const aulaAgora = prof.horarios[currentDay][currentTime]; const occ = OCORRENCIAS_HOJE[prof.nome]; const temOcorrencia = occ && (occ.status === "FALTOU" \vert{}\vert{} occ.status === "ATRASO");  if (quickFilter === "LIVE" && !aulaAgora) return false; if (quickFilter === "FALTAS" && !temOcorrencia) return false; if (!termo) return true;  const salasStr = Object.values(prof.horarios).flatMap(d => Object.values(d)).map(a => `${a.sala} ${a.turma}${a.sigla}`).join(" ");
+        return normalize(`${prof.nome}${prof.materias.join(" ")} ${prof.turmas.join(" ")} ${salasStr} ${occ?.comentario \vert{}\vert{} ""}`).includes(termo); });  filtrados.sort((a, b) => { const occA = OCORRENCIAS_HOJE[a.nome]; const occB = OCORRENCIAS_HOJE[b.nome]; const pesoOccA = occA?.status === "FALTOU" ? 0 : occA?.status === "ATRASO" ? 1 : 2; const pesoOccB = occB?.status === "FALTOU" ? 0 : occB?.status === "ATRASO" ? 1 : 2; if (pesoOccA !== pesoOccB) return pesoOccA - pesoOccB;  const aLive = a.horarios[currentDay][currentTime] ? 0 : 1; const bLive = b.horarios[currentDay][currentTime] ? 0 : 1; return aLive - bLive \vert{}\vert{} a.nome.localeCompare(b.nome); });  document.getElementById("resultsCount").innerText = `${filtrados.length} professor(es)`;
 
       if (filtrados.length === 0) {
         container.innerHTML = `<div class="empty-msg">Nenhum professor encontrado para este filtro.</div>`;
@@ -902,16 +958,30 @@
 
       filtrados.forEach(prof => {
         const aulaAtual = prof.horarios[currentDay][currentTime];
+        const occ = OCORRENCIAS_HOJE[prof.nome];
+        const stClass = occ?.status === "FALTOU" ? "is-FALTOU" : occ?.status === "ATRASO" ? "is-ATRASO" : (aulaAtual ? "is-live" : "");
+
         const card = document.createElement("div");
-        card.className = `item-card ${aulaAtual ? "is-live" : ""}`;
+        card.className = `item-card ${stClass}`;
         card.onclick = () => openProfDrawer(prof);
 
+        let occBadgeHtml = "";
+        if (occ?.status === "FALTOU") occBadgeHtml = `<span class="occ-badge occ-FALTOU">🚨 Faltou</span>`;
+        else if (occ?.status === "ATRASO") occBadgeHtml = `<span class="occ-badge occ-ATRASO">⏳ Atraso/Permuta</span>`;
+
         const statusHtml = aulaAtual
-          ? `<div class="status-pill live">📍 ${aulaAtual.sala}<br><span style="font-size:0.65rem;">Turma ${aulaAtual.turma} • ${aulaAtual.sigla}</span></div>`
+          ? `<div class="status-pill ${occ?.status === 'FALTOU' ? 'alert' : 'live'}">📍 ${aulaAtual.sala}<br><span style="font-size:0.65rem;">Turma ${aulaAtual.turma} •${aulaAtual.sigla}</span></div>`
           : `<div class="status-pill idle">☕ Janela<br><span style="font-size:0.65rem;">Sem aula no ${currentTime}</span></div>`;
 
         const tagsHtml = prof.materias.map(m => `<span class="tag-chip blue">📚 ${m}</span>`).join("") +
                          `<span class="tag-chip">Turmas: ${prof.turmas.join(", ")}</span>`;
+
+        const commentHtml = (occ && (occ.comentario || occ.status !== "PRESENTE"))
+          ? `<div class="comment-banner">
+               <span>💬 ${occ.comentario || (occ.status === "FALTOU" ? "Falta registrada" : "Atraso / Permuta")}</span>
+               <span class="comment-author">${occ.registradoPor} •${occ.hora}</span>
+             </div>`
+          : "";
 
         const slotsHtml = SLOTS.map(slot => {
           const aula = prof.horarios[currentDay][slot];
@@ -927,11 +997,14 @@
         card.innerHTML = `
           <div class="card-top">
             <div>
-              <div class="card-title">${prof.nome}</div>
+              <div class="card-title-row">
+                <span class="card-title">${prof.nome}</span>${occBadgeHtml}
+              </div>
               <div class="card-subtitle">${tagsHtml}</div>
             </div>
             ${statusHtml}
           </div>
+          ${commentHtml}
           <div class="slots-grid">${slotsHtml}</div>
         `;
         container.appendChild(card);
@@ -946,16 +1019,16 @@
 
       const filtradas = TURMAS_PROFESSORES.filter(t => {
         const siglaAgora = (t.grade[currentDay] || {})[currentTime] || "";
+        const profAgora = t.professores[siglaAgora];
+        const occ = profAgora ? OCORRENCIAS_HOJE[profAgora.nome] : null;
         const temAula = siglaAgora && siglaAgora !== "LIVRE";
-        if (onlyLive && !temAula) return false;
+
+        if (quickFilter === "LIVE" && !temAula) return false;
+        if (quickFilter === "FALTAS" && !(occ && (occ.status === "FALTOU" || occ.status === "ATRASO"))) return false;
         if (!termo) return true;
 
-        const profsStr = Object.values(t.professores).map(p => `${p.nome} ${p.materia}`).join(" ");
-        const gradeStr = Object.values(t.grade[currentDay] || {}).join(" ");
-        return normalize(`turma ${t.turma} ${t.sala} ${profsStr} ${gradeStr}`).includes(termo);
-      });
-
-      document.getElementById("resultsCount").innerText = `${filtradas.length} turma(s)`;
+        const profsStr = Object.values(t.professores).map(p => `${p.nome}${p.materia}`).join(" ");
+        return normalize(`turma ${t.turma}${t.sala} ${profsStr}`).includes(termo); });  document.getElementById("resultsCount").innerText = `${filtradas.length} turma(s)`;
 
       if (filtradas.length === 0) {
         container.innerHTML = `<div class="empty-msg">Nenhuma turma encontrada para este filtro.</div>`;
@@ -965,20 +1038,31 @@
       filtradas.forEach(t => {
         const siglaAtual = (t.grade[currentDay] || {})[currentTime] || "LIVRE";
         const profAtual = t.professores[siglaAtual];
+        const occ = profAtual ? OCORRENCIAS_HOJE[profAtual.nome] : null;
         const emAula = siglaAtual && siglaAtual !== "LIVRE";
 
+        const stClass = occ?.status === "FALTOU" ? "is-FALTOU" : occ?.status === "ATRASO" ? "is-ATRASO" : (emAula ? "is-live" : "");
+
         const card = document.createElement("div");
-        card.className = `item-card ${emAula ? "is-live" : ""}`;
+        card.className = `item-card ${stClass}`;
         card.onclick = () => openTurmaDrawer(t);
 
         let statusHtml = "";
         if (!emAula) {
           statusHtml = `<div class="status-pill idle">🟢 Horário Livre<br><span style="font-size:0.65rem;">Sem aula no ${currentTime}</span></div>`;
         } else if (profAtual) {
-          statusHtml = `<div class="status-pill live">👩‍🏫 ${profAtual.nome}<br><span style="font-size:0.65rem;">${profAtual.materia} (${siglaAtual})</span></div>`;
+          const alertTag = occ?.status === "FALTOU" ? "🚨 FALTOU: " : occ?.status === "ATRASO" ? "⏳ ATRASO: " : "👩‍🏫 ";
+          statusHtml = `<div class="status-pill ${occ?.status === 'FALTOU' ? 'alert' : 'live'}">${alertTag}${profAtual.nome}<br><span style="font-size:0.65rem;">${profAtual.materia} (${siglaAtual})</span></div>`;
         } else {
           statusHtml = `<div class="status-pill live">📘 ${siglaAtual}<br><span style="font-size:0.65rem;">Prof. não cadastrado</span></div>`;
         }
+
+        const commentHtml = (occ && (occ.comentario || occ.status !== "PRESENTE"))
+          ? `<div class="comment-banner">
+               <span>💬 ${occ.comentario || "Professor ausente / atrasado"}</span>
+               <span class="comment-author">${occ.registradoPor} •${occ.hora}</span>
+             </div>`
+          : "";
 
         const slotsHtml = SLOTS.map(slot => {
           const sig = (t.grade[currentDay] || {})[slot] || "—";
@@ -996,98 +1080,41 @@
           <div class="card-top">
             <div>
               <div class="card-title">Turma ${t.turma}</div>
-              <div class="card-subtitle">
-                <span class="tag-chip blue">📍 ${t.sala}</span>
-              </div>
+              <div class="card-subtitle"><span class="tag-chip blue">📍 ${t.sala}</span></div>
             </div>
             ${statusHtml}
           </div>
+          ${commentHtml}
           <div class="slots-grid">${slotsHtml}</div>
         `;
         container.appendChild(card);
       });
     }
 
-    /* DRAWER: DETALHES DO PROFESSOR */
+    function selecionarStatusDrawer(st) {
+      statusSelecionadoDrawer = st;
+      document.querySelectorAll(".st-opt-btn").forEach(btn => {
+        btn.className = "st-opt-btn";
+        if (btn.dataset.st === st) btn.classList.add(`selected-${st}`);
+      });
+    }
+
+    function adicionarTextoRapido(texto) {
+      const input = document.getElementById("drawerCommentInput");
+      input.value = input.value ? `${input.value} •${texto}` : texto;
+    }
+
+    /* DRAWER: DETALHES DO PROFESSOR + REGISTRO DE FALTA/COMENTÁRIO */
     function openProfDrawer(prof) {
+      const occAtual = OCORRENCIAS_HOJE[prof.nome] || { status: "PRESENTE", comentario: "" };
+      statusSelecionadoDrawer = occAtual.status;
+
       document.getElementById("dwTitle").innerText = prof.nome;
       document.getElementById("dwSubtitle").innerText = `${prof.materias.join(", ")} • Turmas: ${prof.turmas.join(", ")}`;
 
       const body = document.getElementById("dwBody");
-      body.innerHTML = `<div class="drawer-section-title">Grade Semanal do Professor</div>`;
-
-      Object.keys(DIAS_LABEL).forEach(dia => {
-        const aulasDia = SLOTS
-          .filter(slot => prof.horarios[dia][slot])
-          .map(slot => {
-            const a = prof.horarios[dia][slot];
-            return `<b>${slot}:</b> Turma ${a.turma} • ${a.sala} (${a.materia})`;
-          });
-
-        const block = document.createElement("div");
-        block.className = "week-day-block";
-        block.innerHTML = `
-          <div class="week-day-title">${DIAS_LABEL[dia]}</div>
-          <div class="week-day-items">${aulasDia.length ? aulasDia.join("<br>") : "Sem aulas mapeadas."}</div>
-        `;
-        body.appendChild(block);
-      });
-
-      toggleDrawer(true);
-    }
-
-    /* DRAWER: DETALHES DA TURMA (ELENCO DE PROFESSORES + SEMANA) */
-    function openTurmaDrawer(t) {
-      document.getElementById("dwTitle").innerText = `Turma ${t.turma}`;
-      document.getElementById("dwSubtitle").innerText = `${t.sala} • Corpo Docente e Horários`;
-
-      const body = document.getElementById("dwBody");
-      
-      // Lista de professores da turma
-      const rosterItems = Object.entries(t.professores)
-        .map(([sigla, info]) => `<div class="roster-item"><strong>${info.materia} (${sigla})</strong>${info.nome}</div>`)
-        .join("");
-
       body.innerHTML = `
-        <div class="drawer-section-title">Professores da Turma ${t.turma}</div>
-        <div class="prof-roster-grid">${rosterItems}</div>
-        <div class="drawer-section-title">Horário Semanal</div>
-      `;
-
-      Object.keys(DIAS_LABEL).forEach(dia => {
-        const aulasDia = SLOTS
-          .filter(slot => t.grade[dia] && t.grade[dia][slot] && t.grade[dia][slot] !== "LIVRE")
-          .map(slot => {
-            const sig = t.grade[dia][slot];
-            const prof = t.professores[sig];
-            return `<b>${slot}:</b> ${sig}${prof ? ` — ${prof.nome}` : ""}`;
-          });
-
-        const block = document.createElement("div");
-        block.className = "week-day-block";
-        block.innerHTML = `
-          <div class="week-day-title">${DIAS_LABEL[dia]}</div>
-          <div class="week-day-items">${aulasDia.length ? aulasDia.join("<br>") : "Sem aulas mapeadas."}</div>
-        `;
-        body.appendChild(block);
-      });
-
-      toggleDrawer(true);
-    }
-
-    function toggleDrawer(open) {
-      document.getElementById("drawerOverlay").classList.toggle("open", open);
-    }
-
-    function closeDrawer(e) {
-      if (e.target.id === "drawerOverlay") toggleDrawer(false);
-    }
-
-    window.onload = () => {
-      buildProfessoresIndex();
-      autoDetectTime();
-      render();
-    };
-  </script>
-</body>
-</html>
+        <div class="drawer-section-title">Status Hoje (Visível para toda a equipe)</div>
+        <div class="occ-panel">
+          <div class="status-selector">
+            <button type="button" class="st-opt-btn
