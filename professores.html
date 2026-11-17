@@ -268,7 +268,7 @@
     .quick-filter-btn.active-green { background: var(--green-bg); border-color: var(--green-border); color: var(--green-text); }
     .quick-filter-btn.active-red { background: var(--red-bg); border-color: var(--red-border); color: var(--red-text); }
 
-    /* BARRA DE DIA E TEMPO */
+    /* BARRA DE TURNO, DIA E TEMPO */
     .time-controls {
       background: var(--card-bg); border: 1px solid var(--border-color);
       border-radius: 14px; padding: 10px 12px;
@@ -280,7 +280,7 @@
     .pill {
       flex: 1; text-align: center; background: var(--bg-surface);
       border: 1px solid transparent; color: var(--text-muted);
-      padding: 6px 8px; font-size: 0.75rem; font-weight: 700;
+      padding: 6px 7px; font-size: 0.74rem; font-weight: 700;
       border-radius: 8px; cursor: pointer; white-space: nowrap;
     }
     .pill.active { background: var(--brand-blue-light); border-color: var(--brand-blue); color: var(--brand-blue); }
@@ -351,7 +351,7 @@
     .slot-box.busy { background: #f0fdf4; border-color: #bbf7d0; color: #166534; }
     .slot-box.now { background: var(--brand-blue); border-color: var(--brand-blue); color: #ffffff; }
     .slot-t { font-size: 0.58rem; font-weight: 700; opacity: 0.8; }
-    .slot-v { font-size: 0.66rem; font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .slot-v { font-size: 0.64rem; font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
     /* ÁREA FINAL: LANÇAMENTO RÁPIDO POR TURMA */
     .quick-launch-card {
@@ -547,24 +547,22 @@
 
     <section class="time-controls">
       <div class="control-strip">
+        <span class="strip-label">Turno</span>
+        <button class="pill shift-btn" id="shift-M" onclick="setShift('M')">🌅 Manhã (M)</button>
+        <button class="pill shift-btn" id="shift-T" onclick="setShift('T')">🌇 Tarde (T)</button>
+      </div>
+
+      <div class="control-strip">
         <span class="strip-label">Dia</span>
         <button class="pill day-btn" id="day-SEG" onclick="setDay('SEG')">Seg</button>
         <button class="pill day-btn" id="day-TER" onclick="setDay('TER')">Ter</button>
         <button class="pill day-btn" id="day-QUA" onclick="setDay('QUA')">Qua</button>
         <button class="pill day-btn" id="day-QUI" onclick="setDay('QUI')">Qui</button>
         <button class="pill day-btn" id="day-SEX" onclick="setDay('SEX')">Sex</button>
+        <button class="pill day-btn" id="day-SAB" onclick="setDay('SAB')">Sáb</button>
       </div>
 
-      <div class="control-strip">
-        <span class="strip-label">Tempo</span>
-        <button class="pill time-btn" id="time-T1" onclick="setTime('T1')">T1</button>
-        <button class="pill time-btn" id="time-T2" onclick="setTime('T2')">T2</button>
-        <button class="pill time-btn" id="time-T3" onclick="setTime('T3')">T3</button>
-        <button class="pill time-btn" id="time-T4" onclick="setTime('T4')">T4</button>
-        <button class="pill time-btn" id="time-T5" onclick="setTime('T5')">T5</button>
-        <button class="pill time-btn" id="time-T6" onclick="setTime('T6')">T6</button>
-        <button class="pill time-btn" id="time-T7" onclick="setTime('T7')">T7</button>
-      </div>
+      <div class="control-strip" id="timeStripContainer"></div>
     </section>
 
     <div class="results-meta">
@@ -719,8 +717,19 @@
     const API_PROF_URL = "https://script.google.com/macros/s/AKfycbyhfouoR-5LNTG64ZHoOqmipZipAablUIvGcUjm_GBBiXKrZjqX-Z3UMPcUYeNl2rA/exec";
     const EQUIPE_PIN = "2027";
 
-    const SLOTS = ["T1", "T2", "T3", "T4", "T5", "T6", "T7"];
-    const DIAS_LABEL = { SEG: "Segunda-feira", TER: "Terça-feira", QUA: "Quarta-feira", QUI: "Quinta-feira", SEX: "Sexta-feira" };
+    const SLOTS_M = ["M1", "M2", "M3", "M4", "M5", "M6", "M7"];
+    const SLOTS_T = ["T1", "T2", "T3", "T4", "T5", "T6", "T7"];
+    const ALL_SLOTS = [...SLOTS_M, ...SLOTS_T];
+    const DIAS_LIST = ["SEG", "TER", "QUA", "QUI", "SEX", "SAB"];
+    const DIAS_LABEL = {
+      SEG: "Segunda-feira",
+      TER: "Terça-feira",
+      QUA: "Quarta-feira",
+      QUI: "Quinta-feira",
+      SEX: "Sexta-feira",
+      SAB: "Sábado"
+    };
+
     const STATUS_META = {
       PRESENTE: { label: "Presente", badge: "", pillClass: "live" },
       ATRASO: { label: "Atraso / Permuta", badge: "⏳ Atraso/Permuta", pillClass: "warn" },
@@ -728,21 +737,61 @@
       FALTOU: { label: "Faltou", badge: "🚨 Faltou", pillClass: "alert" }
     };
 
-    const TURMAS_PROFESSORES = [
+    const MATERIA_NOMES = {
+      MAT: "Matemática",
+      PORT: "Português",
+      CIE: "Ciências",
+      HIST: "História",
+      GEO: "Geografia",
+      ING: "Inglês",
+      ESP: "Espanhol",
+      FRA: "Francês",
+      "F/E": "Francês/Espanhol",
+      "E/I": "Espanhol/Inglês",
+      "F/I": "Francês/Inglês",
+      ART: "Artes",
+      MUS: "Música",
+      DES: "Desenho",
+      "A/M": "Artes/Música",
+      EFI: "Ed. Física",
+      INFO: "Informática",
+      "C.SOC": "C. Sociais",
+      BIO: "Biologia",
+      FIS: "Física",
+      QUI: "Química",
+      FILO: "Filosofia",
+      SOC: "Sociologia",
+      RED: "Redação",
+      TM: "Técnico",
+      "G.OPER": "Gestão de Operações",
+      MKT: "Marketing",
+      CONT: "Contabilidade",
+      "G.QUAL": "Gestão da Qualidade",
+      "FAOM(1aS)": "FAOM",
+      "GP(1aS)": "Gestão de Pessoas",
+      "EMPR.": "Empreendedorismo",
+      "M.LOG": "Modelos Logísticos",
+      DIREITO: "Direito",
+      PROJ: "Projetos",
+      "G.FIN": "Gestão Financeira",
+      "COM.NEG": "Comunicação Negocial"
+    };
+
+    /* GRADE COMPLETA DAS 47 TURMAS (FUNDAMENTAL, MÉDIO REGULAR E INTEGRADO) */
+    const TURMAS_BASE = [
+      // --- 6º ANO ---
       {
-        turma: "602",
-        sala: "Sala 1 (Bloco A)",
-        professores: {
-          MAT: { nome: "Alexander", materia: "Matemática" },
-          MUS: { nome: "Edu Prestes", materia: "Música" },
-          CIE: { nome: "Cláudia Vargas", materia: "Ciências" },
-          HIST: { nome: "Bruno", materia: "História" },
-          ING: { nome: "Francisco", materia: "Inglês" },
-          PORT: { nome: "Raquel", materia: "Português" },
-          DES: { nome: "Isabel", materia: "Desenho" },
-          ESP: { nome: "Aline", materia: "Espanhol" },
-          ART: { nome: "Gil", materia: "Artes" }
-        },
+        turma: "601", turno: "M",
+        grade: {
+          SEG: { M1:"PORT", M2:"PORT", M3:"PORT", M4:"PORT", M5:"EFI", M6:"EFI", M7:"CIE" },
+          TER: { M1:"DES", M2:"DES", M3:"CIE", M4:"CIE", M5:"HIST", M6:"HIST", M7:"FRA" },
+          QUA: { M1:"PORT", M2:"PORT", M3:"ING", M4:"ING", M5:"MAT", M6:"MAT", M7:"FRA" },
+          QUI: { M1:"INFO", M2:"INFO", M3:"GEO", M4:"GEO", M5:"GEO", M6:"FRA", M7:"ING" },
+          SEX: { M1:"MAT", M2:"MAT", M3:"ART", M4:"ART", M5:"MUS", M6:"MUS", M7:"LIVRE" }
+        }
+      },
+      {
+        turma: "602", turno: "T",
         grade: {
           SEG: { T1:"MAT", T2:"MAT", T3:"MUS", T4:"MUS", T5:"CIE", T6:"CIE", T7:"HIST" },
           TER: { T1:"EFI", T2:"EFI", T3:"HIST", T4:"HIST", T5:"CIE", T6:"DES", T7:"DES" },
@@ -752,21 +801,17 @@
         }
       },
       {
-        turma: "604",
-        sala: "Sala 2 (Bloco A)",
-        professores: {
-          DES: { nome: "Isabel", materia: "Desenho" },
-          HIST: { nome: "Bruno", materia: "História" },
-          MUS: { nome: "Edu Prestes", materia: "Música" },
-          GEO: { nome: "Rafael", materia: "Geografia" },
-          EFI: { nome: "Dora", materia: "Ed. Física" },
-          MAT: { nome: "Alexander", materia: "Matemática" },
-          PORT: { nome: "Amanda Dib", materia: "Português" },
-          ING: { nome: "Francisco", materia: "Inglês" },
-          FRA: { nome: "Aline", materia: "Francês" },
-          CIE: { nome: "Cláudia Vargas", materia: "Ciências" },
-          ART: { nome: "Gil", materia: "Artes" }
-        },
+        turma: "603", turno: "M",
+        grade: {
+          SEG: { M1:"EFI", M2:"EFI", M3:"HIST", M4:"HIST", M5:"PORT", M6:"PORT", M7:"PORT" },
+          TER: { M1:"CIE", M2:"CIE", M3:"PORT", M4:"HIST", M5:"CIE", M6:"DES", M7:"DES" },
+          QUA: { M1:"MAT", M2:"MAT", M3:"INFO", M4:"ESP", M5:"ING", M6:"ING", M7:"PORT" },
+          QUI: { M1:"ART", M2:"ART", M3:"INFO", M4:"INFO", M5:"GEO", M6:"GEO", M7:"GEO" },
+          SEX: { M1:"MUS", M2:"MUS", M3:"MAT", M4:"MAT", M5:"ING", M6:"ESP", M7:"ESP" }
+        }
+      },
+      {
+        turma: "604", turno: "T",
         grade: {
           SEG: { T1:"DES", T2:"DES", T3:"HIST", T4:"HIST", T5:"MUS", T6:"MUS", T7:"ING" },
           TER: { T1:"GEO", T2:"GEO", T3:"EFI", T4:"EFI", T5:"HIST", T6:"ING", T7:"GEO" },
@@ -776,23 +821,7 @@
         }
       },
       {
-        turma: "606",
-        sala: "Sala 3 (Bloco A)",
-        professores: {
-          DES: { nome: "Isabel", materia: "Desenho" },
-          HIST: { nome: "Bruno", materia: "História" },
-          MUS: { nome: "Edu Prestes", materia: "Música" },
-          GEO: { nome: "Rafael", materia: "Geografia" },
-          EFI: { nome: "Dora", materia: "Ed. Física" },
-          MAT: { nome: "Alexander", materia: "Matemática" },
-          PORT: { nome: "Amanda Dib", materia: "Português" },
-          ING: { nome: "Francisco", materia: "Inglês" },
-          FRA: { nome: "Aline", materia: "Francês" },
-          ESP: { nome: "Aline", materia: "Espanhol" },
-          "F/E": { nome: "Aline", materia: "Francês/Espanhol" },
-          CIE: { nome: "Cláudia Vargas", materia: "Ciências" },
-          ART: { nome: "Gil", materia: "Artes" }
-        },
+        turma: "606", turno: "T",
         grade: {
           SEG: { T1:"MUS", T2:"MUS", T3:"MAT", T4:"MAT", T5:"ING", T6:"ING", T7:"CIE" },
           TER: { T1:"CIE", T2:"CIE", T3:"DES", T4:"DES", T5:"GEO", T6:"EFI", T7:"EFI" },
@@ -801,17 +830,20 @@
           SEX: { T1:"ART", T2:"ART", T3:"PORT", T4:"PORT", T5:"ESP", T6:"MAT", T7:"MAT" }
         }
       },
+
+      // --- 7º ANO ---
       {
-        turma: "702",
-        sala: "Sala 4 (Bloco A)",
-        professores: {
-          ING: { nome: "Vitor", materia: "Inglês" },
-          DES: { nome: "Érica", materia: "Desenho" },
-          PORT: { nome: "Thiago", materia: "Português" },
-          CIE: { nome: "Marcos", materia: "Ciências" },
-          GEO: { nome: "Gil", materia: "Geografia" },
-          MAT: { nome: "João Luiz", materia: "Matemática" }
-        },
+        turma: "701", turno: "M",
+        grade: {
+          SEG: { M1:"MUS", M2:"MUS", M3:"ING", M4:"ING", M5:"ING", M6:"PORT", M7:"PORT" },
+          TER: { M1:"DES", M2:"DES", M3:"EFI", M4:"EFI", M5:"HIST", M6:"C.SOC", M7:"C.SOC" },
+          QUA: { M1:"MAT", M2:"MAT", M3:"HIST", M4:"HIST", M5:"PORT", M6:"PORT", M7:"PORT" },
+          QUI: { M1:"CIE", M2:"LIVRE", M3:"FRA", M4:"FRA", M5:"FRA", M6:"CIE", M7:"CIE" },
+          SEX: { M1:"ART", M2:"ART", M3:"GEO", M4:"GEO", M5:"GEO", M6:"MAT", M7:"MAT" }
+        }
+      },
+      {
+        turma: "702", turno: "T",
         grade: {
           SEG: { T1:"LIVRE", T2:"ING", T3:"DES", T4:"DES", T5:"DES", T6:"PORT", T7:"PORT" },
           TER: { T1:"EFI", T2:"EFI", T3:"HIST", T4:"HIST", T5:"CIE", T6:"CIE", T7:"CIE" },
@@ -821,18 +853,17 @@
         }
       },
       {
-        turma: "704",
-        sala: "Sala 5 (Bloco A)",
-        professores: {
-          ING: { nome: "Vitor", materia: "Inglês" },
-          PORT: { nome: "Thiago", materia: "Português" },
-          DES: { nome: "Érica", materia: "Desenho" },
-          CIE: { nome: "Marcos", materia: "Ciências" },
-          HIST: { nome: "Pedro", materia: "História" },
-          GEO: { nome: "Gil", materia: "Geografia" },
-          MAT: { nome: "João Luiz", materia: "Matemática" },
-          ART: { nome: "Gil", materia: "Artes" }
-        },
+        turma: "703", turno: "M",
+        grade: {
+          SEG: { M1:"ESP", M2:"ESP", M3:"MUS", M4:"MUS", M5:"PORT", M6:"PORT", M7:"PORT" },
+          TER: { M1:"EFI", M2:"EFI", M3:"HIST", M4:"HIST", M5:"CIE", M6:"CIE", M7:"HIST" },
+          QUA: { M1:"ING", M2:"ING", M3:"PORT", M4:"PORT", M5:"MAT", M6:"MAT", M7:"ING" },
+          QUI: { M1:"LIVRE", M2:"CIE", M3:"DES", M4:"DES", M5:"GEO", M6:"C.SOC", M7:"C.SOC" },
+          SEX: { M1:"GEO", M2:"GEO", M3:"MAT", M4:"MAT", M5:"ESP", M6:"ART", M7:"ART" }
+        }
+      },
+      {
+        turma: "704", turno: "T",
         grade: {
           SEG: { T1:"ING", T2:"ING", T3:"PORT", T4:"PORT", T5:"ING", T6:"DES", T7:"DES" },
           TER: { T1:"LIVRE", T2:"CIE", T3:"HIST", T4:"HIST", T5:"HIST", T6:"GEO", T7:"GEO" },
@@ -842,20 +873,29 @@
         }
       },
       {
-        turma: "802",
-        sala: "Sala 6 (Bloco A)",
-        professores: {
-          PORT: { nome: "Thiago", materia: "Português" },
-          ART: { nome: "Ingrid", materia: "Artes" },
-          ING: { nome: "Edson", materia: "Inglês" },
-          GEO: { nome: "Ariane/Adriano", materia: "Geografia" },
-          CIE: { nome: "Filipe", materia: "Ciências" },
-          EFI: { nome: "Miguel", materia: "Ed. Física" },
-          MAT: { nome: "Marcela", materia: "Matemática" },
-          ESP: { nome: "Evânia", materia: "Espanhol" },
-          "C.SOC": { nome: "Rodolfo", materia: "C. Sociais" },
-          HIST: { nome: "Guido", materia: "História" }
-        },
+        turma: "705", turno: "T",
+        grade: {
+          SEG: { T1:"ING", T2:"ING", T3:"PORT", T4:"PORT", T5:"MUS", T6:"MUS", T7:"ING" },
+          TER: { T1:"GEO", T2:"GEO", T3:"DES", T4:"DES", T5:"GEO", T6:"HIST", T7:"CIE" },
+          QUA: { T1:"HIST", T2:"HIST", T3:"MAT", T4:"MAT", T5:"F/E", T6:"F/E", T7:"F/E" },
+          QUI: { T1:"EFI", T2:"EFI", T3:"C.SOC", T4:"C.SOC", T5:"ART", T6:"ART", T7:"LIVRE" },
+          SEX: { T1:"MAT", T2:"MAT", T3:"CIE", T4:"CIE", T5:"PORT", T6:"PORT", T7:"PORT" }
+        }
+      },
+
+      // --- 8º ANO ---
+      {
+        turma: "801", turno: "M",
+        grade: {
+          SEG: { M1:"PORT", M2:"PORT", M3:"DES", M4:"DES", M5:"PORT", M6:"CIE", M7:"CIE" },
+          TER: { M1:"HIST", M2:"HIST", M3:"C.SOC", M4:"C.SOC", M5:"HIST", M6:"GEO", M7:"GEO" },
+          QUA: { M1:"MAT", M2:"MAT", M3:"ING", M4:"ING", M5:"ING", M6:"MUS", M7:"MUS" },
+          QUI: { M1:"LIVRE", M2:"CIE", M3:"EFI", M4:"EFI", M5:"GEO", M6:"ART", M7:"ART" },
+          SEX: { M1:"PORT", M2:"PORT", M3:"FRA", M4:"FRA", M5:"MAT", M6:"MAT", M7:"FRA" }
+        }
+      },
+      {
+        turma: "802", turno: "T",
         grade: {
           SEG: { T1:"PORT", T2:"PORT", T3:"ART", T4:"ART", T5:"ING", T6:"ING", T7:"ING" },
           TER: { T1:"GEO", T2:"GEO", T3:"DES", T4:"DES", T5:"HIST", T6:"CIE", T7:"CIE" },
@@ -865,19 +905,17 @@
         }
       },
       {
-        turma: "804",
-        sala: "Sala 7 (Bloco A)",
-        professores: {
-          CIE: { nome: "Bianca", materia: "Ciências" },
-          PORT: { nome: "Gabriela", materia: "Português" },
-          ART: { nome: "Ingrid", materia: "Artes" },
-          GEO: { nome: "Ariane/Adriano", materia: "Geografia" },
-          HIST: { nome: "Guido", materia: "História" },
-          DES: { nome: "Eliane", materia: "Desenho" },
-          MAT: { nome: "Gabriela", materia: "Matemática" },
-          "C.SOC": { nome: "Rodolfo", materia: "C. Sociais" },
-          ING: { nome: "Luciana Sá", materia: "Inglês" }
-        },
+        turma: "803", turno: "M",
+        grade: {
+          SEG: { M1:"DES", M2:"DES", M3:"ART", M4:"ART", M5:"PORT", M6:"MAT", M7:"MAT" },
+          TER: { M1:"C.SOC", M2:"C.SOC", M3:"GEO", M4:"GEO", M5:"GEO", M6:"HIST", M7:"LIVRE" },
+          QUA: { M1:"ESP", M2:"ESP", M3:"MAT", M4:"MAT", M5:"PORT", M6:"PORT", M7:"ING" },
+          QUI: { M1:"EFI", M2:"EFI", M3:"HIST", M4:"HIST", M5:"CIE", M6:"CIE", M7:"CIE" },
+          SEX: { M1:"PORT", M2:"PORT", M3:"MUS", M4:"MUS", M5:"ESP", M6:"ING", M7:"ING" }
+        }
+      },
+      {
+        turma: "804", turno: "T",
         grade: {
           SEG: { T1:"CIE", T2:"CIE", T3:"PORT", T4:"PORT", T5:"PORT", T6:"ART", T7:"ART" },
           TER: { T1:"GEO", T2:"GEO", T3:"CIE", T4:"HIST", T5:"GEO", T6:"DES", T7:"DES" },
@@ -885,10 +923,478 @@
           QUI: { T1:"FRA", T2:"FRA", T3:"C.SOC", T4:"C.SOC", T5:"HIST", T6:"HIST", T7:"LIVRE" },
           SEX: { T1:"ING", T2:"ING", T3:"MUS", T4:"MUS", T5:"ING", T6:"MAT", T7:"MAT" }
         }
+      },
+      {
+        turma: "805", turno: "T",
+        grade: {
+          SEG: { T1:"MAT", T2:"MAT", T3:"PORT", T4:"PORT", T5:"CIE", T6:"DES", T7:"DES" },
+          TER: { T1:"GEO", T2:"GEO", T3:"HIST", T4:"HIST", T5:"C.SOC", T6:"C.SOC", T7:"HIST" },
+          QUA: { T1:"MUS", T2:"MUS", T3:"PORT", T4:"PORT", T5:"F/E", T6:"F/E", T7:"F/E" },
+          QUI: { T1:"ART", T2:"ART", T3:"CIE", T4:"CIE", T5:"EFI", T6:"EFI", T7:"GEO" },
+          SEX: { T1:"ING", T2:"ING", T3:"MAT", T4:"MAT", T5:"ING", T6:"PORT", T7:"LIVRE" }
+        }
+      },
+
+      // --- 9º ANO ---
+      {
+        turma: "901", turno: "M",
+        grade: {
+          SEG: { M1:"PORT", M2:"PORT", M3:"EFI", M4:"EFI", M5:"C.SOC", M6:"C.SOC", M7:"PORT" },
+          TER: { M1:"GEO", M2:"GEO", M3:"DES", M4:"DES", M5:"HIST", M6:"HIST", M7:"HIST" },
+          QUA: { M1:"FRA", M2:"FRA", M3:"MAT", M4:"MAT", M5:"ING", M6:"PORT", M7:"PORT" },
+          QUI: { M1:"ART", M2:"ART", M3:"LIVRE", M4:"CIE", M5:"CIE", M6:"CIE", M7:"GEO" },
+          SEX: { M1:"MAT", M2:"MAT", M3:"MUS", M4:"MUS", M5:"FRA", M6:"ING", M7:"ING" }
+        }
+      },
+      {
+        turma: "902", turno: "T",
+        grade: {
+          SEG: { T1:"EFI", T2:"EFI", T3:"PORT", T4:"PORT", T5:"PORT", T6:"C.SOC", T7:"C.SOC" },
+          TER: { T1:"CIE", T2:"CIE", T3:"HIST", T4:"LIVRE", T5:"ART", T6:"ART", T7:"GEO" },
+          QUA: { T1:"PORT", T2:"PORT", T3:"ING", T4:"ING", T5:"ING", T6:"MAT", T7:"MAT" },
+          QUI: { T1:"MAT", T2:"MAT", T3:"GEO", T4:"GEO", T5:"CIE", T6:"DES", T7:"DES" },
+          SEX: { T1:"HIST", T2:"HIST", T3:"MUS", T4:"MUS", T5:"ESP", T6:"ESP", T7:"ESP" }
+        }
+      },
+      {
+        turma: "903", turno: "M",
+        grade: {
+          SEG: { M1:"C.SOC", M2:"C.SOC", M3:"ESP", M4:"ESP", M5:"EFI", M6:"EFI", M7:"ING" },
+          TER: { M1:"HIST", M2:"HIST", M3:"GEO", M4:"GEO", M5:"DES", M6:"DES", M7:"LIVRE" },
+          QUA: { M1:"PORT", M2:"PORT", M3:"ING", M4:"ING", M5:"ESP", M6:"MAT", M7:"MAT" },
+          QUI: { M1:"CIE", M2:"CIE", M3:"CIE", M4:"GEO", M5:"ART", M6:"ART", M7:"HIST" },
+          SEX: { M1:"MUS", M2:"MUS", M3:"PORT", M4:"PORT", M5:"PORT", M6:"MAT", M7:"MAT" }
+        }
+      },
+      {
+        turma: "904", turno: "T",
+        grade: {
+          SEG: { T1:"PORT", T2:"PORT", T3:"C.SOC", T4:"C.SOC", T5:"ING", T6:"ING", T7:"ING" },
+          TER: { T1:"GEO", T2:"GEO", T3:"DES", T4:"DES", T5:"CIE", T6:"CIE", T7:"CIE" },
+          QUA: { T1:"EFI", T2:"EFI", T3:"MAT", T4:"MAT", T5:"PORT", T6:"PORT", T7:"FRA" },
+          QUI: { T1:"ART", T2:"ART", T3:"MAT", T4:"MAT", T5:"HIST", T6:"HIST", T7:"GEO" },
+          SEX: { T1:"FRA", T2:"FRA", T3:"HIST", T4:"HIST", T5:"MUS", T6:"MUS", T7:"PORT" }
+        }
+      },
+      {
+        turma: "906", turno: "T",
+        grade: {
+          SEG: { T1:"C.SOC", T2:"C.SOC", T3:"EFI", T4:"EFI", T5:"ING", T6:"PORT", T7:"PORT" },
+          TER: { T1:"CIE", T2:"ART", T3:"ART", T4:"HIST", T5:"GEO", T6:"GEO", T7:"LIVRE" },
+          QUA: { T1:"MAT", T2:"MAT", T3:"F/E", T4:"F/E", T5:"F/E", T6:"PORT", T7:"PORT" },
+          QUI: { T1:"CIE", T2:"CIE", T3:"DES", T4:"DES", T5:"MAT", T6:"MAT", T7:"GEO" },
+          SEX: { T1:"MAT", T2:"MAT", T3:"ING", T4:"ING", T5:"PORT", T6:"HIST", T7:"HIST" }
+        }
+      },
+
+      // --- 1ª SÉRIE MÉDIO REGULAR ---
+      {
+        turma: "1101", turno: "M",
+        grade: {
+          SEG: { M1:"MAT", M2:"MAT", M3:"PORT", M4:"PORT", M5:"DES", M6:"DES" },
+          TER: { M1:"GEO", M2:"GEO", M3:"A/M", M4:"A/M", M5:"FIS", M6:"FIS", T1:"BIO", T2:"BIO", T3:"C.SOC", T4:"C.SOC" },
+          QUA: { M1:"MAT", M2:"MAT", M3:"QUI", M4:"QUI", M5:"FILO", M6:"FILO", M7:"PORT" },
+          QUI: { M1:"HIST", M2:"HIST", M3:"EFI", M4:"EFI", M5:"BIO", M6:"BIO", M7:"FIS" },
+          SEX: { M1:"FRA", M2:"FRA", M3:"PORT", M4:"PORT", M5:"FRA", M6:"QUI", M7:"QUI" },
+          SAB: { M1:"GEO", M2:"GEO", M3:"FIS", M4:"FIS", M5:"HIST", M6:"HIST" }
+        }
+      },
+      {
+        turma: "1103", turno: "M",
+        grade: {
+          SEG: { M1:"BIO", M2:"BIO", M3:"EFI", M4:"EFI", M5:"ESP", M6:"ESP" },
+          TER: { M1:"FIS", M2:"FIS", M3:"GEO", M4:"GEO", M5:"PORT", M6:"PORT", M7:"PORT" },
+          QUA: { M1:"QUI", M2:"QUI", M3:"MAT", M4:"MAT", M5:"FILO", M6:"FILO", M7:"ESP" },
+          QUI: { M1:"DES", M2:"DES", M3:"C.SOC", M4:"C.SOC", M5:"FIS", M6:"A/M", M7:"A/M", T1:"HIST", T2:"HIST", T3:"BIO", T4:"BIO" },
+          SEX: { M1:"PORT", M2:"PORT", M3:"QUI", M4:"QUI", M5:"MAT", M6:"MAT" },
+          SAB: { M1:"HIST", M2:"HIST", M3:"GEO", M4:"GEO", M5:"FIS", M6:"FIS" }
+        }
+      },
+      {
+        turma: "1105", turno: "M",
+        grade: {
+          SEG: { M1:"DES", M2:"DES", M3:"MAT", M4:"MAT", M5:"ING", M6:"ING" },
+          TER: { M1:"A/M", M2:"A/M", M3:"PORT", M4:"PORT", M5:"BIO", M6:"BIO", M7:"FIS", T1:"SOC", T2:"SOC", T3:"HIST", T4:"HIST" },
+          QUA: { M1:"EFI", M2:"EFI", M3:"PORT", M4:"PORT", M5:"ING", M6:"QUI", M7:"QUI" },
+          QUI: { M1:"BIO", M2:"BIO", M3:"FIS", M4:"FIS", M5:"GEO", M6:"GEO", M7:"HIST" },
+          SEX: { M1:"QUI", M2:"QUI", M3:"MAT", M4:"MAT", M5:"PORT", M6:"FILO", M7:"FILO" },
+          SAB: { M3:"FIS", M4:"FIS", M5:"GEO", M6:"GEO" }
+        }
+      },
+      {
+        turma: "1107", turno: "M",
+        grade: {
+          SEG: { M1:"PORT", M2:"PORT", M3:"BIO", M4:"BIO", M5:"MAT", M6:"MAT" },
+          TER: { M1:"BIO", M2:"BIO", M3:"SOC", M4:"SOC", M5:"FIS", M6:"GEO", M7:"GEO", T1:"A/M", T2:"A/M", T3:"DES", T4:"DES" },
+          QUA: { M1:"FILO", M2:"FILO", M3:"PORT", M4:"QUI", M5:"QUI", M6:"ING", M7:"ING" },
+          QUI: { M1:"FIS", M2:"FIS", M3:"HIST", M4:"HIST", M5:"EFI", M6:"EFI" },
+          SEX: { M1:"MAT", M2:"MAT", M3:"QUI", M4:"QUI", M5:"ING", M6:"PORT", M7:"PORT" },
+          SAB: { M1:"FIS", M2:"FIS", M3:"HIST", M4:"HIST", M5:"GEO", M6:"GEO" }
+        }
+      },
+      {
+        turma: "2102", turno: "T",
+        grade: {
+          SEG: { T1:"FILO", T2:"FILO", T3:"BIO", T4:"BIO", T5:"MAT", T6:"MAT" },
+          TER: { M3:"FIS", M4:"FIS", M5:"EFI", M6:"EFI", M7:"FIS", T1:"SOC", T2:"SOC", T3:"A/M", T4:"A/M", T5:"GEO", T6:"GEO" },
+          QUA: { T1:"PORT", T2:"PORT", T3:"QUI", T4:"QUI", T5:"PORT", T6:"MAT", T7:"MAT" },
+          QUI: { T1:"HIST", T2:"HIST", T3:"DES", T4:"DES", T5:"BIO", T6:"BIO" },
+          SEX: { T1:"FRA", T2:"FRA", T3:"QUI", T4:"QUI", T5:"FRA", T6:"PORT", T7:"PORT" },
+          SAB: { M6:"FIS", M7:"FIS", T1:"HIST", T2:"HIST", T3:"GEO", T4:"GEO" }
+        }
+      },
+      {
+        turma: "2104", turno: "T",
+        grade: {
+          SEG: { T1:"QUI", T2:"QUI", T3:"DES", T4:"DES", T5:"HIST", T6:"HIST", T7:"QUI" },
+          TER: { T1:"FIS", T2:"FIS", T3:"SOC", T4:"SOC", T5:"GEO", T6:"GEO", T7:"HIST" },
+          QUA: { M3:"EFI", M4:"EFI", M5:"PORT", M6:"PORT", M7:"PORT", T1:"MAT", T2:"MAT", T3:"BIO", T4:"BIO", T5:"ESP", T6:"ESP", T7:"ESP" },
+          QUI: { T1:"A/M", T2:"A/M", T3:"BIO", T4:"BIO", T5:"FIS", T6:"FIS" },
+          SEX: { T1:"PORT", T2:"PORT", T3:"FILO", T4:"FILO", T5:"MAT", T6:"MAT" },
+          SAB: { T1:"QUI", T2:"QUI", T3:"GEO", T4:"GEO" }
+        }
+      },
+      {
+        turma: "2106", turno: "T",
+        grade: {
+          SEG: { M3:"DES", M4:"DES", M5:"ING", M6:"EFI", M7:"EFI", T1:"ING", T2:"ING", T3:"MAT", T4:"MAT", T5:"BIO", T6:"BIO" },
+          TER: { T1:"BIO", T2:"BIO", T3:"GEO", T4:"GEO", T5:"FIS", T6:"FIS" },
+          QUA: { T1:"MAT", T2:"MAT", T3:"QUI", T4:"QUI", T5:"PORT", T6:"PORT", T7:"QUI" },
+          QUI: { T1:"FIS", T2:"FIS", T3:"A/M", T4:"A/M", T5:"HIST", T6:"HIST" },
+          SEX: { T1:"PORT", T2:"PORT", T3:"SOC", T4:"SOC", T5:"PORT", T6:"FILO", T7:"FILO" },
+          SAB: { T1:"HIST", T2:"HIST", T3:"QUI", T4:"QUI", T5:"GEO", T6:"GEO" }
+        }
+      },
+      {
+        turma: "2108", turno: "T",
+        grade: {
+          SEG: { M3:"DES", M4:"DES", M5:"BIO", M6:"BIO", M7:"ESP", T1:"MAT", T2:"MAT", T3:"QUI", T4:"QUI", T5:"PORT", T6:"PORT", T7:"PORT" },
+          TER: { T1:"FIS", T2:"FIS", T3:"GEO", T4:"GEO", T5:"HIST", T6:"HIST" },
+          QUA: { T1:"PORT", T2:"PORT", T3:"ESP", T4:"ESP", T5:"QUI", T6:"EFI", T7:"EFI" },
+          QUI: { T1:"BIO", T2:"BIO", T3:"FIS", T4:"FIS", T5:"A/M", T6:"A/M" },
+          SEX: { T1:"FILO", T2:"FILO", T3:"MAT", T4:"MAT", T5:"SOC", T6:"SOC" },
+          SAB: { M6:"HIST", M7:"HIST", T1:"GEO", T2:"GEO", T5:"QUI", T6:"QUI" }
+        }
+      },
+
+      // --- 2ª SÉRIE MÉDIO REGULAR ---
+      {
+        turma: "1201", turno: "M",
+        grade: {
+          SEG: { M1:"FRA", M2:"FRA", M3:"MAT", M4:"MAT", M6:"PORT", M7:"PORT" },
+          TER: { M1:"HIST", M2:"HIST", M3:"DES", M4:"DES", M5:"BIO", M6:"SOC", M7:"SOC" },
+          QUA: { M1:"QUI", M2:"QUI", M3:"FILO", M4:"FILO", M5:"EFI", M6:"EFI", M7:"FRA" },
+          QUI: { M1:"GEO", M2:"GEO", M3:"FIS", M4:"FIS", M5:"BIO", M6:"BIO" },
+          SEX: { M1:"PORT", M2:"PORT", M3:"FIS", M4:"FIS", M5:"MAT", M6:"MAT", M7:"PORT", T1:"QUI", T2:"QUI" },
+          SAB: { M1:"HIST", M2:"HIST", M3:"BIO", M4:"BIO", M5:"GEO", M6:"GEO" }
+        }
+      },
+      {
+        turma: "1203", turno: "M",
+        grade: {
+          SEG: { M1:"PORT", M2:"PORT", M3:"E/I", M4:"E/I", M5:"PORT", M6:"MAT", M7:"MAT" },
+          TER: { M1:"FIS", M2:"FIS", M3:"HIST", M4:"HIST", M5:"DES", M6:"DES", M7:"BIO" },
+          QUA: { M1:"QUI", M2:"QUI", M3:"MAT", M4:"MAT", M5:"EFI", M6:"EFI", M7:"E/I" },
+          QUI: { M1:"BIO", M2:"BIO", M3:"GEO", M4:"GEO", M5:"FIS", M6:"FIS", T1:"QUI", T2:"QUI" },
+          SEX: { M1:"FILO", M2:"FILO", M3:"SOC", M4:"SOC", M5:"PORT", M6:"PORT" },
+          SAB: { M1:"BIO", M2:"BIO", M3:"GEO", M4:"GEO", M5:"HIST", M6:"HIST" }
+        }
+      },
+      {
+        turma: "1205", turno: "M",
+        grade: {
+          SEG: { M1:"MAT", M2:"MAT", M3:"PORT", M4:"PORT", M5:"QUI", M6:"QUI", M7:"ESP" },
+          TER: { M1:"SOC", M2:"SOC", M3:"BIO", M4:"BIO", M5:"HIST", M6:"HIST", M7:"BIO" },
+          QUA: { M1:"EFI", M2:"EFI", M3:"ESP", M4:"ESP", M5:"MAT", M6:"MAT" },
+          QUI: { M1:"FIS", M2:"FIS", M3:"DES", M4:"DES", M5:"GEO", M6:"GEO", M7:"BIO" },
+          SEX: { M1:"QUI", M2:"QUI", M3:"FILO", M4:"FILO", M5:"FIS", M6:"FIS", T1:"PORT", T2:"PORT", T3:"PORT" },
+          SAB: { M1:"GEO", M2:"GEO", M3:"HIST", M4:"HIST" }
+        }
+      },
+      {
+        turma: "1207", turno: "M",
+        grade: {
+          SEG: { M1:"QUI", M2:"QUI", M3:"MAT", M4:"MAT", M5:"FRA", M6:"FRA", M7:"FRA" },
+          TER: { M1:"DES", M2:"DES", M3:"BIO", M4:"BIO", M6:"HIST", M7:"HIST" },
+          QUA: { M1:"FILO", M2:"FILO", M3:"EFI", M4:"EFI", M5:"MAT", M6:"MAT", M7:"PORT", T1:"PORT", T2:"PORT" },
+          QUI: { M1:"GEO", M2:"GEO", M3:"FIS", M4:"FIS", M5:"QUI", M6:"QUI", M7:"BIO" },
+          SEX: { M1:"FIS", M2:"FIS", M3:"SOC", M4:"SOC", M5:"PORT", M6:"PORT", M7:"PORT" },
+          SAB: { M1:"GEO", M2:"GEO", M3:"HIST", M4:"HIST", M5:"BIO", M6:"BIO" }
+        }
+      },
+      {
+        turma: "2202", turno: "T",
+        grade: {
+          SEG: { T1:"MAT", T2:"MAT", T3:"QUI", T4:"QUI", T5:"PORT", T6:"PORT", T7:"PORT" },
+          TER: { T1:"EFI", T2:"EFI", T3:"GEO", T4:"GEO", T5:"FIS", T6:"FIS" },
+          QUA: { T1:"MAT", T2:"MAT", T3:"FILO", T4:"FILO", T5:"PORT", T6:"FRA", T7:"PORT" },
+          QUI: { T1:"FIS", T2:"FIS", T3:"BIO", T4:"BIO", T5:"HIST", T6:"HIST", T7:"BIO" },
+          SEX: { M6:"FRA", M7:"FRA", T1:"SOC", T2:"SOC", T3:"DES", T4:"DES", T5:"QUI", T6:"QUI" },
+          SAB: { T1:"BIO", T2:"BIO", T3:"HIST", T4:"HIST", T5:"GEO", T6:"GEO" }
+        }
+      },
+      {
+        turma: "2204", turno: "T",
+        grade: {
+          SEG: { T1:"QUI", T2:"QUI", T3:"PORT", T4:"PORT", T5:"ING", T6:"ING" },
+          TER: { T1:"FIS", T2:"FIS", T3:"EFI", T4:"EFI", T5:"BIO", T6:"DES", T7:"DES" },
+          QUA: { T1:"MAT", T2:"MAT", T3:"PORT", T4:"PORT", T5:"ING", T6:"QUI", T7:"QUI" },
+          QUI: { T1:"BIO", T2:"BIO", T3:"GEO", T4:"GEO", T5:"HIST", T6:"HIST" },
+          SEX: { M3:"MAT", M4:"MAT", M5:"SOC", M6:"SOC", T1:"FILO", T2:"FILO", T3:"FIS", T4:"FIS", T5:"PORT" },
+          SAB: { T1:"GEO", T2:"GEO", T3:"HIST", T4:"HIST", T5:"BIO", T6:"BIO" }
+        }
+      },
+      {
+        turma: "2206", turno: "T",
+        grade: {
+          SEG: { T1:"PORT", T2:"PORT", T3:"MAT", T4:"MAT", T5:"QUI", T6:"QUI" },
+          TER: { T1:"GEO", T2:"GEO", T3:"SOC", T4:"SOC", T5:"FIS", T6:"FIS" },
+          QUA: { T1:"EFI", T2:"EFI", T3:"QUI", T4:"QUI", T5:"ESP", T6:"MAT", T7:"MAT" },
+          QUI: { M6:"DES", M7:"DES", T1:"FIS", T2:"FIS", T3:"HIST", T4:"HIST", T5:"BIO", T6:"BIO", T7:"BIO" },
+          SEX: { T1:"ESP", T2:"ESP", T3:"PORT", T4:"PORT", T5:"PORT", T6:"FILO", T7:"FILO" },
+          SAB: { T1:"GEO", T2:"GEO", T3:"BIO", T4:"BIO", T5:"HIST", T6:"HIST" }
+        }
+      },
+
+      // --- 3ª SÉRIE MÉDIO REGULAR ---
+      {
+        turma: "1301", turno: "M",
+        grade: {
+          SEG: { M1:"HIST", M2:"HIST", M3:"MAT", M4:"MAT", M5:"PORT", M6:"PORT", M7:"HIST" },
+          TER: { M1:"GEO", M2:"GEO", M3:"BIO", M4:"BIO", M5:"GEO", M6:"FIS", M7:"FIS" },
+          QUA: { M1:"EFI", M2:"EFI", M3:"PORT", M4:"PORT", M5:"PORT", M6:"QUI", M7:"QUI", T1:"FRA", T2:"FRA" },
+          QUI: { M1:"FIS", M2:"FIS", M3:"BIO", M4:"BIO", M5:"SOC", M6:"SOC" },
+          SEX: { M1:"MAT", M2:"MAT", M3:"QUI", M4:"QUI", M5:"FILO", M6:"FILO" }
+        }
+      },
+      {
+        turma: "1303", turno: "M",
+        grade: {
+          SEG: { M1:"PORT", M2:"PORT", M3:"FILO", M4:"FILO", M5:"GEO", M6:"GEO", M7:"GEO" },
+          TER: { M1:"FIS", M2:"FIS", M3:"HIST", M4:"HIST", M5:"BIO", M6:"BIO", M7:"HIST" },
+          QUA: { M1:"QUI", M2:"QUI", M3:"MAT", M4:"MAT", M5:"EFI", M6:"EFI", M7:"PORT" },
+          QUI: { M1:"BIO", M2:"BIO", M3:"SOC", M4:"SOC", M5:"FIS", M6:"FIS" },
+          SEX: { M1:"MAT", M2:"MAT", M3:"PORT", M4:"PORT", M5:"ING", M6:"ING", M7:"ING", T1:"QUI", T2:"QUI" }
+        }
+      },
+      {
+        turma: "1305", turno: "M",
+        grade: {
+          SEG: { M1:"PORT", M2:"PORT", M3:"EFI", M4:"EFI", M5:"ESP", M6:"QUI", M7:"QUI" },
+          TER: { M1:"BIO", M2:"BIO", M3:"GEO", M4:"GEO", M5:"FIS", M6:"FIS", M7:"GEO" },
+          QUA: { M1:"PORT", M2:"PORT", M3:"QUI", M4:"QUI", M5:"ESP", M6:"ESP", M7:"PORT", T1:"MAT", T2:"MAT" },
+          QUI: { M1:"SOC", M2:"SOC", M3:"FIS", M4:"FIS", M5:"BIO", M6:"BIO" },
+          SEX: { M1:"HIST", M2:"HIST", M3:"MAT", M4:"MAT", M5:"FILO", M6:"FILO", M7:"HIST" }
+        }
+      },
+      {
+        turma: "1307", turno: "M",
+        grade: {
+          SEG: { M1:"QUI", M2:"QUI", M3:"FRA", M4:"FRA", M5:"HIST", M6:"MAT", M7:"MAT" },
+          TER: { M1:"BIO", M2:"BIO", M3:"FIS", M4:"FIS", M5:"EFI", M6:"EFI" },
+          QUA: { M1:"PORT", M2:"PORT", M3:"FILO", M4:"FILO", M5:"FRA", M6:"MAT", M7:"MAT" },
+          QUI: { M1:"GEO", M2:"GEO", M3:"FIS", M4:"FIS", M5:"GEO", M6:"SOC", M7:"SOC", T1:"BIO", T2:"BIO" },
+          SEX: { M1:"PORT", M2:"PORT", M3:"HIST", M4:"HIST", M5:"QUI", M6:"QUI", M7:"PORT" }
+        }
+      },
+      {
+        turma: "1309", turno: "M",
+        grade: {
+          SEG: { M1:"MAT", M2:"MAT", M3:"QUI", M4:"QUI", M5:"PORT", M6:"FILO", M7:"FILO" },
+          TER: { M1:"HIST", M2:"HIST", M3:"BIO", M4:"BIO", M5:"HIST", M6:"SOC", M7:"SOC" },
+          QUA: { M1:"MAT", M2:"MAT", M3:"EFI", M4:"EFI", M5:"PORT", M6:"PORT", M7:"ING" },
+          QUI: { M1:"FIS", M2:"FIS", M3:"GEO", M4:"GEO", M5:"BIO", M6:"BIO", M7:"GEO" },
+          SEX: { M1:"QUI", M2:"QUI", M3:"E/I", M4:"E/I", M5:"PORT", M6:"PORT", M7:"ESP", T1:"FIS", T2:"FIS" }
+        }
+      },
+      {
+        turma: "2302", turno: "T",
+        grade: {
+          SEG: { T1:"F/I", T2:"F/I", T3:"QUI", T4:"QUI", T5:"F/I", T6:"GEO", T7:"GEO" },
+          TER: { T1:"BIO", T2:"BIO", T3:"EFI", T4:"EFI", T5:"FIS", T6:"FIS", T7:"HIST" },
+          QUA: { T1:"MAT", T2:"MAT", T3:"QUI", T4:"QUI", T5:"PORT", T6:"PORT" },
+          QUI: { T1:"SOC", T2:"SOC", T3:"BIO", T4:"BIO", T5:"HIST", T6:"HIST", T7:"GEO" },
+          SEX: { M6:"MAT", M7:"MAT", T1:"FILO", T2:"FILO", T3:"PORT", T4:"PORT", T5:"PORT", T6:"FIS", T7:"FIS" }
+        }
+      },
+
+      // --- MÉDIO INTEGRADO ---
+      {
+        turma: "IM 1209", turno: "M",
+        grade: {
+          SEG: { M1:"MAT", M2:"MAT", M3:"PORT", M4:"PORT", M5:"ING", M6:"ING", M7:"BIO", T1:"TM", T2:"TM", T3:"TM", T4:"TM", T5:"TM", T6:"TM" },
+          TER: { M4:"FIS", M6:"GEO", M7:"GEO", T1:"TM", T2:"TM", T3:"TM", T4:"TM", T5:"TM", T6:"HIST", T7:"HIST" },
+          QUA: { M1:"FILO", M2:"FILO", M3:"MAT", M4:"MAT", M5:"QUI", M6:"QUI", M7:"PORT", T1:"TM", T2:"TM", T3:"TM" },
+          QUI: { M1:"EFI", M2:"EFI", M3:"BIO", M4:"BIO", M5:"FIS", M6:"FIS", M7:"QUI", T1:"HIST", T2:"TM", T3:"TM", T4:"TM", T5:"TM" },
+          SEX: { M1:"SOC", M2:"SOC", M3:"PORT", M4:"PORT", M5:"DES", M6:"DES", M7:"GEO", T1:"TM", T2:"TM", T3:"TM", T4:"TM" }
+        }
+      },
+      {
+        turma: "IM 2112", turno: "T",
+        grade: {
+          SEG: { M5:"ART", M6:"ART", T1:"PORT", T2:"PORT", T3:"MAT", T4:"MAT", T5:"EFI", T6:"EFI" },
+          TER: { M1:"TM", M2:"TM", M3:"TM", M4:"TM", M5:"TM", M6:"TM", M7:"TM", T1:"GEO", T2:"GEO", T3:"HIST", T4:"HIST", T5:"BIO", T6:"SOC", T7:"SOC" },
+          QUA: { M1:"TM", M2:"TM", M3:"TM", M4:"TM", M5:"TM", M6:"TM", M7:"TM", T1:"BIO", T2:"BIO", T3:"QUI", T4:"QUI", T5:"QUI" },
+          QUI: { M1:"TM", M2:"TM", M3:"TM", M4:"TM", M5:"TM", M6:"TM", M7:"TM", T1:"FIS", T2:"FIS", T3:"TM", T4:"TM", T5:"FIS", T6:"DES", T7:"DES" },
+          SEX: { M1:"ING", M2:"ING", M3:"TM", M4:"TM", M5:"TM", M6:"TM", M7:"TM", T1:"MAT", T2:"MAT", T3:"PORT", T4:"PORT", T5:"PORT", T6:"FILO", T7:"FILO" }
+        }
+      },
+      {
+        turma: "AD 2110", turno: "T",
+        grade: {
+          SEG: { M4:"MAT", M5:"MAT", M6:"DES", M7:"DES", T1:"EFI", T2:"EFI", T3:"RED", T4:"RED", T5:"QUI", T6:"QUI", T7:"QUI" },
+          TER: { M1:"A/M", M2:"A/M", T1:"BIO", T2:"BIO", T3:"GEO", T4:"GEO", T6:"GP(1aS)", T7:"GP(1aS)" },
+          QUA: { T3:"PORT", T4:"PORT", T5:"MAT", T6:"MAT", T7:"PORT" },
+          QUI: { M3:"FIS", M4:"FIS", M5:"FIS", T2:"BIO", T3:"INFO", T4:"INFO", T5:"FAOM(1aS)", T6:"FAOM(1aS)", T7:"FAOM(1aS)" },
+          SEX: { M1:"SOC", M2:"SOC", M3:"ING", M4:"ING", M5:"MAT", M6:"MAT", M7:"MAT", T1:"FILO", T2:"FILO", T3:"PORT", T4:"PORT", T5:"HIST", T6:"HIST" }
+        }
+      },
+      {
+        turma: "AD 2208", turno: "T",
+        grade: {
+          SEG: { T1:"PORT", T2:"PORT", T3:"PORT", T5:"MAT", T6:"MAT" },
+          TER: { M3:"GEO", M4:"GEO", M5:"HIST", M7:"FIS", T1:"G.OPER", T2:"G.OPER", T3:"MKT", T4:"MKT", T5:"MKT", T6:"CONT", T7:"CONT" },
+          QUA: { M3:"PORT", M4:"PORT", M5:"FILO", M6:"FILO", T1:"MAT", T2:"MAT", T3:"QUI", T4:"QUI", T5:"QUI", T6:"EFI", T7:"EFI" },
+          QUI: { M1:"FIS", M2:"FIS", M4:"BIO", M5:"BIO", M6:"BIO", M7:"GEO", T1:"G.QUAL", T2:"G.QUAL", T3:"HIST", T4:"HIST", T5:"INFO", T6:"INFO", T7:"INFO" },
+          SEX: { T1:"DES", T2:"DES", T3:"SOC", T4:"SOC", T6:"ING", T7:"ING" }
+        }
+      },
+      {
+        turma: "IM 2306", turno: "T",
+        grade: {
+          SEG: { M5:"TM", M6:"TM", M7:"TM", T1:"GEO", T2:"GEO", T3:"PORT", T4:"PORT", T5:"GEO", T6:"TM", T7:"TM" },
+          TER: { M3:"TM", M5:"TM", M6:"TM", M7:"TM", T1:"BIO", T2:"BIO", T3:"HIST", T4:"HIST", T5:"HIST", T6:"EFI", T7:"EFI" },
+          QUA: { M3:"ING", M4:"ING", M7:"QUI", T2:"PORT", T3:"PORT", T4:"PORT", T5:"MAT", T6:"MAT" },
+          QUI: { M2:"TM", M3:"TM", M4:"TM", M5:"TM", M6:"TM", M7:"TM", T1:"BIO", T3:"QUI", T4:"QUI", T5:"FIS", T6:"FIS", T7:"FIS" },
+          SEX: { M3:"TM", M5:"TM", M6:"TM", M7:"TM", T1:"MAT", T2:"MAT", T3:"SOC", T4:"SOC", T5:"FILO", T6:"FILO" }
+        }
+      },
+      {
+        turma: "AD 1311", turno: "M",
+        grade: {
+          SEG: { M1:"PORT", M2:"GEO", M3:"GEO", M4:"GEO", M5:"HIST", M6:"PORT", M7:"PORT" },
+          TER: { M1:"SOC", M2:"SOC", M3:"MAT", M4:"MAT", M5:"BIO", M6:"BIO", M7:"BIO", T1:"EMPR.", T2:"EMPR.", T3:"M.LOG", T4:"M.LOG", T5:"M.LOG", T6:"DIREITO", T7:"DIREITO" },
+          QUA: { M1:"ING", M2:"ING", M3:"PORT", M4:"QUI", M5:"QUI", M6:"QUI", M7:"PORT" },
+          QUI: { M3:"FIS", M4:"FIS", M5:"EFI", M6:"EFI", M7:"FIS", T1:"PROJ", T2:"PROJ", T3:"G.FIN", T4:"G.FIN", T5:"G.FIN", T6:"COM.NEG", T7:"COM.NEG" },
+          SEX: { M1:"FILO", M2:"FILO", M3:"MAT", M4:"MAT", M5:"HIST", M6:"HIST" }
+        }
       }
     ];
 
+    /* RELAÇÃO BASE DE PROFESSORES POR TURMA E DIA (SINCRONIZADA COM A PLANILHA) */
+    const RELACAO_DOCENTES_BASE = {
+      "602": {
+        ART: { default: "Gil" },
+        CIE: { default: "Cláudia Vargas" },
+        DES: { default: "Isabel" },
+        EFI: { default: "Mariane" },
+        ESP: { default: "Aline" },
+        GEO: { default: "Paulo" },
+        HIST: { default: "Bruno" },
+        ING: { default: "Francisco" },
+        MAT: { default: "Alexander" },
+        MUS: { default: "Edu Prestes" },
+        PORT: { default: "Raquel" }
+      },
+      "604": {
+        ART: { default: "Gil" },
+        CIE: { default: "Cláudia Vargas" },
+        DES: { default: "Érica" },
+        EFI: { default: "Mariane" },
+        FRA: { default: "Aline" },
+        GEO: { default: "Rafael" },
+        HIST: { default: "Bruno" },
+        INFO: { default: "Daniele" },
+        ING: { default: "Francisco" },
+        MAT: { default: "Alexander" },
+        MUS: { default: "Edu Prestes" },
+        PORT: { default: "Amanda Dib" }
+      },
+      "606": {
+        ART: { default: "Gil" },
+        CIE: { default: "Cláudia Vargas" },
+        DES: { default: "Érica" },
+        ESP: { default: "Aline" },
+        FRA: { default: "Aline" },
+        "F/E": { default: "Aline" },
+        GEO: { default: "Rafael" },
+        HIST: { default: "Bruno" },
+        ING: { default: "Francisco" },
+        MAT: { default: "Alexander" },
+        MUS: { default: "Edu Prestes" },
+        PORT: { default: "Amanda Dib" }
+      },
+      "702": {
+        ART: { default: "Gil" },
+        "C.SOC": { default: "José Amaral" },
+        CIE: { default: "Marcos" },
+        DES: { default: "Érica" },
+        EFI: { default: "Marcela" },
+        ESP: { default: "Aline" },
+        GEO: { default: "Gil" },
+        HIST: { default: "Pablo" },
+        ING: { default: "Vitor" },
+        MAT: { default: "João Luiz" },
+        MUS: { default: "Pedro" },
+        PORT: { default: "Thiago" }
+      },
+      "704": {
+        ART: { default: "Gil" },
+        "C.SOC": { default: "José Amaral" },
+        CIE: { default: "Marcos" },
+        DES: { default: "Érica" },
+        EFI: { default: "Marcela" },
+        FRA: { default: "Sérgio Luiz" },
+        GEO: { default: "Gil" },
+        HIST: { default: "Pedro" },
+        ING: { default: "Luciana Câmara" },
+        MAT: { default: "João Luiz" },
+        MUS: { default: "Pedro" },
+        PORT: { default: "Thiago" }
+      },
+      "802": {
+        ART: { default: "Ingrid" },
+        "C.SOC": { default: "Rodolfo" },
+        CIE: { default: "Filipe" },
+        DES: { default: "Eliane" },
+        EFI: { default: "Miguel" },
+        ESP: { default: "Evânia" },
+        GEO: { default: "Ariane e Adriano" },
+        HIST: { default: "Guido" },
+        ING: { default: "Edson" },
+        MAT: { default: "Marcela" },
+        MUS: { default: "Pedro" },
+        PORT: { default: "Thiago" }
+      },
+      "804": {
+        ART: { default: "Ingrid" },
+        "C.SOC": { default: "Rodolfo" },
+        CIE: { default: "Bianca" },
+        DES: { default: "Eliane" },
+        EFI: { default: "Marcel" },
+        FRA: { default: "Sérgio Ricardo" },
+        GEO: { default: "Igor" },
+        HIST: { default: "Guido" },
+        ING: { default: "Luciana Sá" },
+        MAT: { default: "Marcela" },
+        MUS: { default: "Thiago" },
+        PORT: { default: "Gabriela" }
+      },
+      "902": {
+        ART: { default: "Dalila" },
+        "C.SOC": { default: "Liza" },
+        CIE: { default: "Filipe" },
+        DES: { default: "Luciene" },
+        EFI: { default: "Dora" },
+        ESP: { default: "Evânia" }
+      }
+    };
+
+    let RELACAO_DOCENTES_DINAMICA = JSON.parse(localStorage.getItem("seore_relacao_docentes") || "null") || RELACAO_DOCENTES_BASE;
+    let TURMAS_PROFESSORES = [];
+
     let currentMode = "TURMA";
+    let currentShift = "T";
     let currentDay = "SEG";
     let currentTime = "T1";
     let quickFilter = "NONE";
@@ -909,6 +1415,53 @@
       t.innerText = msg;
       t.classList.add("show");
       setTimeout(() => t.classList.remove("show"), 2400);
+    }
+
+    function getDocenteNaAula(turmaObj, dia, sigla) {
+      if (!sigla || sigla === "LIVRE") return "";
+      const rel = (RELACAO_DOCENTES_DINAMICA[turmaObj.turma] || {})[sigla];
+      if (!rel) return "";
+      return (rel[dia] || rel.default || "").trim();
+    }
+
+    function rebuildTurmasEProfessores() {
+      TURMAS_PROFESSORES = TURMAS_BASE.map(t => {
+        const docentesPorDia = { SEG: {}, TER: {}, QUA: {}, QUI: {}, SEX: {}, SAB: {} };
+        const resumoProfessores = [];
+        const relTurma = RELACAO_DOCENTES_DINAMICA[t.turma] || {};
+
+        DIAS_LIST.forEach(dia => {
+          Object.entries(relTurma).forEach(([sigla, mapaDias]) => {
+            const nome = (mapaDias[dia] || mapaDias.default || "").trim();
+            if (nome) docentesPorDia[dia][sigla] = nome;
+          });
+        });
+
+        const vistos = new Map();
+        Object.entries(relTurma).forEach(([sigla, mapaDias]) => {
+          const matNome = MATERIA_NOMES[sigla] || sigla;
+          if (mapaDias.default) {
+            const key = `${mapaDias.default}|${sigla}`;
+            vistos.set(key, { nome: mapaDias.default, sigla, materia: matNome, dias: [] });
+          }
+          DIAS_LIST.forEach(dia => {
+            if (mapaDias[dia]) {
+              const key = `${mapaDias[dia]}|${sigla}`;
+              if (!vistos.has(key)) {
+                vistos.set(key, { nome: mapaDias[dia], sigla, materia: matNome, dias: [dia] });
+              } else {
+                const item = vistos.get(key);
+                if (!item.dias.includes(dia)) item.dias.push(dia);
+              }
+            }
+          });
+        });
+
+        vistos.forEach(v => resumoProfessores.push(v));
+        return { ...t, docentesPorDia, resumoProfessores };
+      });
+
+      buildProfessoresIndex();
     }
 
     /* ==========================================================
@@ -1063,7 +1616,7 @@
     }
 
     function getDiaHojeKey() {
-      const dayMap = ["SEG", "SEG", "TER", "QUA", "QUI", "SEX", "SEG"];
+      const dayMap = ["SEG", "SEG", "TER", "QUA", "QUI", "SEX", "SAB"];
       return dayMap[new Date().getDay()];
     }
 
@@ -1073,7 +1626,8 @@
         "Terça-feira": "TER",
         "Quarta-feira": "QUA",
         "Quinta-feira": "QUI",
-        "Sexta-feira": "SEX"
+        "Sexta-feira": "SEX",
+        "Sábado": "SAB"
       };
       return map[diaSemana] || getDiaHojeKey();
     }
@@ -1083,7 +1637,7 @@
       if (!profObj || !profObj.horarios[diaKey]) return "Sem horários mapeados neste dia";
 
       const porTurma = {};
-      SLOTS.forEach(slot => {
+      ALL_SLOTS.forEach(slot => {
         const aula = profObj.horarios[diaKey][slot];
         if (aula) {
           if (!porTurma[aula.turma]) porTurma[aula.turma] = [];
@@ -1187,34 +1741,38 @@
     function buildProfessoresIndex() {
       const mapa = {};
       const selectTurma = document.getElementById("qlTurmaSelect");
+      const valorAtualSelect = selectTurma.value;
+      selectTurma.innerHTML = `<option value="">-- Selecione a turma --</option>`;
 
       TURMAS_PROFESSORES.forEach(t => {
         const opt = document.createElement("option");
         opt.value = t.turma;
-        opt.textContent = `Turma ${t.turma} — ${t.sala}`;
+        opt.textContent = `Turma ${t.turma}`;
         selectTurma.appendChild(opt);
 
         Object.keys(t.grade).forEach(dia => {
-          SLOTS.forEach(slot => {
+          ALL_SLOTS.forEach(slot => {
             const sigla = t.grade[dia][slot];
-            const infoProf = t.professores[sigla];
-            if (!infoProf) return;
+            const nomeProf = getDocenteNaAula(t, dia, sigla);
+            if (!nomeProf) return;
 
-            const nome = infoProf.nome;
-            if (!mapa[nome]) {
-              mapa[nome] = {
-                nome: nome,
+            const matNome = MATERIA_NOMES[sigla] || sigla;
+            if (!mapa[nomeProf]) {
+              mapa[nomeProf] = {
+                nome: nomeProf,
                 materias: new Set(),
                 turmas: new Set(),
-                horarios: { SEG: {}, TER: {}, QUA: {}, QUI: {}, SEX: {} }
+                horarios: { SEG: {}, TER: {}, QUA: {}, QUI: {}, SEX: {}, SAB: {} }
               };
             }
-            mapa[nome].materias.add(infoProf.materia);
-            mapa[nome].turmas.add(t.turma);
-            mapa[nome].horarios[dia][slot] = { turma: t.turma, sala: t.sala, sigla: sigla, materia: infoProf.materia };
+            mapa[nomeProf].materias.add(matNome);
+            mapa[nomeProf].turmas.add(t.turma);
+            mapa[nomeProf].horarios[dia][slot] = { turma: t.turma, sigla: sigla, materia: matNome };
           });
         });
       });
+
+      if (valorAtualSelect) selectTurma.value = valorAtualSelect;
 
       PROFESSORES_INDEX = Object.values(mapa)
         .map(p => ({ ...p, materias: Array.from(p.materias), turmas: Array.from(p.turmas).sort() }))
@@ -1248,10 +1806,17 @@
           OCORRENCIAS_HOJE = data.statusHoje || {};
           OCORRENCIAS_FUTURAS = data.futuros || [];
           localStorage.setItem("seore_prof_ocorrencias", JSON.stringify(OCORRENCIAS_HOJE));
+
+          if (data.relacaoDocentes && Object.keys(data.relacaoDocentes).length > 0) {
+            RELACAO_DOCENTES_DINAMICA = data.relacaoDocentes;
+            localStorage.setItem("seore_relacao_docentes", JSON.stringify(RELACAO_DOCENTES_DINAMICA));
+            rebuildTurmasEProfessores();
+          }
+
           render();
           renderFuturos();
           renderFaltasPopup();
-          if (manual) showToast("✅ Sincronizado com a equipe!");
+          if (manual) showToast("✅ Sincronizado com a planilha!");
         }
       } catch (err) {
         const cache = localStorage.getItem("seore_prof_ocorrencias");
@@ -1350,13 +1915,19 @@
       if (!turmaObj) return;
 
       const vistos = new Map();
-      Object.entries(turmaObj.professores).forEach(([sigla, info]) => {
+      (turmaObj.resumoProfessores || []).forEach(info => {
         if (!vistos.has(info.nome)) {
           vistos.set(info.nome, { nome: info.nome, materias: [info.materia] });
         } else if (!vistos.get(info.nome).materias.includes(info.materia)) {
           vistos.get(info.nome).materias.push(info.materia);
         }
       });
+
+      if (vistos.size === 0) {
+        profsContainer.innerHTML = `<div style="grid-column:span 2; font-size:0.76rem; color:var(--text-muted); padding:8px; background:var(--bg-surface); border-radius:9px;">Nenhum docente cadastrado para esta turma na planilha ainda.</div>`;
+        stepProf.style.display = "flex";
+        return;
+      }
 
       Array.from(vistos.values())
         .sort((a, b) => a.nome.localeCompare(b.nome))
@@ -1456,18 +2027,37 @@
         }).join("");
     }
 
+    function renderTimePills() {
+      const slots = currentShift === "M" ? SLOTS_M : SLOTS_T;
+      const strip = document.getElementById("timeStripContainer");
+      strip.innerHTML = `<span class="strip-label">Tempo</span>` +
+        slots.map(s => `<button class="pill time-btn ${currentTime === s ? 'active' : ''}" id="time-${s}" onclick="setTime('${s}')">${s}</button>`).join("");
+    }
+
     function autoDetectTime() {
       const now = new Date();
       currentDay = getDiaHojeKey();
 
       const totalMinutes = now.getHours() * 60 + now.getMinutes();
-      if (totalMinutes < 790) currentTime = "T1";
-      else if (totalMinutes < 835) currentTime = "T2";
-      else if (totalMinutes < 880) currentTime = "T3";
-      else if (totalMinutes < 925) currentTime = "T4";
-      else if (totalMinutes < 980) currentTime = "T5";
-      else if (totalMinutes < 1025) currentTime = "T6";
-      else currentTime = "T7";
+      if (totalMinutes < 770) {
+        currentShift = "M";
+        if (totalMinutes < 490) currentTime = "M1";
+        else if (totalMinutes < 535) currentTime = "M2";
+        else if (totalMinutes < 595) currentTime = "M3";
+        else if (totalMinutes < 640) currentTime = "M4";
+        else if (totalMinutes < 685) currentTime = "M5";
+        else if (totalMinutes < 730) currentTime = "M6";
+        else currentTime = "M7";
+      } else {
+        currentShift = "T";
+        if (totalMinutes < 820) currentTime = "T1";
+        else if (totalMinutes < 865) currentTime = "T2";
+        else if (totalMinutes < 925) currentTime = "T3";
+        else if (totalMinutes < 970) currentTime = "T4";
+        else if (totalMinutes < 1015) currentTime = "T5";
+        else if (totalMinutes < 1060) currentTime = "T6";
+        else currentTime = "T7";
+      }
 
       updateControlsUI();
     }
@@ -1476,11 +2066,13 @@
       document.getElementById("mode-TURMA").classList.toggle("active", currentMode === "TURMA");
       document.getElementById("mode-PROF").classList.toggle("active", currentMode === "PROF");
 
+      document.getElementById("shift-M").classList.toggle("active", currentShift === "M");
+      document.getElementById("shift-T").classList.toggle("active", currentShift === "T");
+
       document.querySelectorAll(".day-btn").forEach(b => b.classList.remove("active"));
       document.getElementById(`day-${currentDay}`)?.classList.add("active");
 
-      document.querySelectorAll(".time-btn").forEach(b => b.classList.remove("active"));
-      document.getElementById(`time-${currentTime}`)?.classList.add("active");
+      renderTimePills();
 
       document.getElementById("btnOnlyLive").classList.toggle("active-green", quickFilter === "LIVE");
       document.getElementById("btnOnlyFaltas").classList.toggle("active-red", quickFilter === "FALTAS");
@@ -1488,6 +2080,13 @@
     }
 
     function setMode(m) { currentMode = m; updateControlsUI(); render(); }
+    function setShift(s) {
+      currentShift = s;
+      const num = currentTime.replace(/[MT]/, "") || "1";
+      currentTime = `${s}${num}`;
+      updateControlsUI();
+      render();
+    }
     function setDay(d) { currentDay = d; updateControlsUI(); render(); }
     function setTime(t) { currentTime = t; updateControlsUI(); render(); }
     function toggleQuickFilter(type) {
@@ -1505,6 +2104,11 @@
       document.getElementById("faltasBadgeCount").innerText = totalFaltas;
     }
 
+    function turmaTemAulaNoTurno(t, turno) {
+      const slots = turno === "M" ? SLOTS_M : SLOTS_T;
+      return DIAS_LIST.some(d => slots.some(s => t.grade[d] && t.grade[d][s] && t.grade[d][s] !== "LIVRE"));
+    }
+
     function render() {
       atualizarContadorFaltas();
       if (currentMode === "TURMA") renderTurmas();
@@ -1516,19 +2120,25 @@
       const termo = normalize(document.getElementById("searchInput").value);
       const container = document.getElementById("cardsContainer");
       container.innerHTML = "";
+      const activeSlots = currentShift === "M" ? SLOTS_M : SLOTS_T;
 
       const filtradas = TURMAS_PROFESSORES.filter(t => {
         const siglaAgora = (t.grade[currentDay] || {})[currentTime] || "";
-        const profAgora = t.professores[siglaAgora];
-        const occ = profAgora ? OCORRENCIAS_HOJE[profAgora.nome] : null;
+        const profAgora = getDocenteNaAula(t, currentDay, siglaAgora);
+        const occ = profAgora ? OCORRENCIAS_HOJE[profAgora] : null;
         const temAula = siglaAgora && siglaAgora !== "LIVRE";
 
         if (quickFilter === "LIVE" && !temAula) return false;
         if (quickFilter === "FALTAS" && !isOcorrenciaAtiva(occ)) return false;
+
+        if (!termo && quickFilter === "NONE") {
+          return turmaTemAulaNoTurno(t, currentShift);
+        }
+
         if (!termo) return true;
 
-        const profsStr = Object.values(t.professores).map(p => `${p.nome} ${p.materia}`).join(" ");
-        return normalize(`turma ${t.turma} ${t.sala} ${profsStr}`).includes(termo);
+        const profsStr = (t.resumoProfessores || []).map(p => `${p.nome} ${p.materia} ${p.sigla}`).join(" ");
+        return normalize(`turma ${t.turma} ${profsStr}`).includes(termo);
       });
 
       document.getElementById("resultsCount").innerText = `${filtradas.length} turma(s)`;
@@ -1540,8 +2150,8 @@
 
       filtradas.forEach(t => {
         const siglaAtual = (t.grade[currentDay] || {})[currentTime] || "LIVRE";
-        const profAtual = t.professores[siglaAtual];
-        const occ = profAtual ? OCORRENCIAS_HOJE[profAtual.nome] : null;
+        const profNomeAtual = getDocenteNaAula(t, currentDay, siglaAtual);
+        const occ = profNomeAtual ? OCORRENCIAS_HOJE[profNomeAtual] : null;
         const emAula = siglaAtual && siglaAtual !== "LIVRE";
         const meta = occ ? STATUS_META[occ.status] : null;
 
@@ -1554,15 +2164,17 @@
         let statusHtml = "";
         if (!emAula) {
           statusHtml = `<div class="status-pill idle">🟢 Horário Livre<br><span style="font-size:0.65rem;">Sem aula no ${currentTime}</span></div>`;
-        } else if (profAtual) {
+        } else if (profNomeAtual) {
+          const matNome = MATERIA_NOMES[siglaAtual] || siglaAtual;
           const prefix = occ?.status === "FALTOU" ? "🚨 FALTOU: "
                        : occ?.status === "ATRASO" ? "⏳ ATRASO: "
                        : occ?.status === "FOLGA_TRE" ? "🏖️ FOLGA/TRE: "
                        : "👩‍🏫 ";
           const pillCls = isOcorrenciaAtiva(occ) ? meta.pillClass : "live";
-          statusHtml = `<div class="status-pill ${pillCls}">${prefix}${profAtual.nome}<br><span style="font-size:0.65rem;">${profAtual.materia} (${siglaAtual})</span></div>`;
+          statusHtml = `<div class="status-pill ${pillCls}">${prefix}${profNomeAtual}<br><span style="font-size:0.65rem;">${matNome} (${siglaAtual})</span></div>`;
         } else {
-          statusHtml = `<div class="status-pill live">📘 ${siglaAtual}<br><span style="font-size:0.65rem;">Sem docente fixo</span></div>`;
+          const matNome = MATERIA_NOMES[siglaAtual] || siglaAtual;
+          statusHtml = `<div class="status-pill live">📘 ${matNome} (${siglaAtual})<br><span style="font-size:0.65rem;">Docente pendente na planilha</span></div>`;
         }
 
         const commentHtml = (occ && (occ.comentario || isOcorrenciaAtiva(occ)))
@@ -1572,7 +2184,7 @@
              </div>`
           : "";
 
-        const slotsHtml = SLOTS.map(slot => {
+        const slotsHtml = activeSlots.map(slot => {
           const sig = (t.grade[currentDay] || {})[slot] || "—";
           const isLivre = sig === "LIVRE" || sig === "—";
           const cls = slot === currentTime ? "now" : (!isLivre ? "busy" : "");
@@ -1588,7 +2200,6 @@
           <div class="card-top">
             <div>
               <div class="card-title">Turma ${t.turma}</div>
-              <div class="card-subtitle"><span class="tag-chip blue">📍 ${t.sala}</span></div>
             </div>
             ${statusHtml}
           </div>
@@ -1604,6 +2215,7 @@
       const termo = normalize(document.getElementById("searchInput").value);
       const container = document.getElementById("cardsContainer");
       container.innerHTML = "";
+      const activeSlots = currentShift === "M" ? SLOTS_M : SLOTS_T;
 
       const filtrados = PROFESSORES_INDEX.filter(prof => {
         const aulaAgora = prof.horarios[currentDay][currentTime];
@@ -1613,8 +2225,8 @@
         if (quickFilter === "FALTAS" && !isOcorrenciaAtiva(occ)) return false;
         if (!termo) return true;
 
-        const salasStr = Object.values(prof.horarios).flatMap(d => Object.values(d)).map(a => `${a.sala} ${a.turma} ${a.sigla}`).join(" ");
-        return normalize(`${prof.nome} ${prof.materias.join(" ")} ${prof.turmas.join(" ")} ${salasStr} ${occ?.comentario || ""}`).includes(termo);
+        const aulasStr = Object.values(prof.horarios).flatMap(d => Object.values(d)).map(a => `${a.turma} ${a.sigla} ${a.materia}`).join(" ");
+        return normalize(`${prof.nome} ${prof.materias.join(" ")} ${prof.turmas.join(" ")} ${aulasStr} ${occ?.comentario || ""}`).includes(termo);
       });
 
       filtrados.sort((a, b) => {
@@ -1650,7 +2262,7 @@
           : "";
 
         const statusHtml = aulaAtual
-          ? `<div class="status-pill ${isOcorrenciaAtiva(occ) ? meta.pillClass : 'live'}">📍 ${aulaAtual.sala}<br><span style="font-size:0.65rem;">Turma ${aulaAtual.turma} • ${aulaAtual.sigla}</span></div>`
+          ? `<div class="status-pill ${isOcorrenciaAtiva(occ) ? meta.pillClass : 'live'}">🏫 Turma ${aulaAtual.turma}<br><span style="font-size:0.65rem;">${aulaAtual.materia} (${aulaAtual.sigla})</span></div>`
           : `<div class="status-pill idle">☕ Janela<br><span style="font-size:0.65rem;">Sem aula no ${currentTime}</span></div>`;
 
         const tagsHtml = prof.materias.map(m => `<span class="tag-chip blue">📚 ${m}</span>`).join("") +
@@ -1663,7 +2275,7 @@
              </div>`
           : "";
 
-        const slotsHtml = SLOTS.map(slot => {
+        const slotsHtml = activeSlots.map(slot => {
           const aula = prof.horarios[currentDay][slot];
           const cls = slot === currentTime ? "now" : (aula ? "busy" : "");
           return `
@@ -1743,13 +2355,15 @@
         <div class="drawer-section-title">Grade Semanal do Professor</div>
       `;
 
-      Object.keys(DIAS_LABEL).forEach(dia => {
-        const aulasDia = SLOTS
+      DIAS_LIST.forEach(dia => {
+        const aulasDia = ALL_SLOTS
           .filter(slot => prof.horarios[dia][slot])
           .map(slot => {
             const a = prof.horarios[dia][slot];
-            return `<b>${slot}:</b> Turma ${a.turma} • ${a.sala} (${a.materia})`;
+            return `<b>${slot}:</b> Turma ${a.turma} (${a.materia})`;
           });
+
+        if (dia === "SAB" && aulasDia.length === 0) return;
 
         const block = document.createElement("div");
         block.className = "week-day-block";
@@ -1765,16 +2379,19 @@
 
     function openTurmaDrawer(t) {
       document.getElementById("dwTitle").innerText = `Turma ${t.turma}`;
-      document.getElementById("dwSubtitle").innerText = `${t.sala} • Toque em um professor para registrar aviso`;
+      document.getElementById("dwSubtitle").innerText = `Toque em um professor para registrar aviso`;
 
       const body = document.getElementById("dwBody");
-      const rosterItems = Object.entries(t.professores)
-        .map(([sigla, info]) => {
-          const occ = OCORRENCIAS_HOJE[info.nome];
-          const badge = occ?.status === "FALTOU" ? " 🚨" : occ?.status === "ATRASO" ? " ⏳" : occ?.status === "FOLGA_TRE" ? " 🏖️" : "";
-          return `<div class="roster-item" style="cursor:pointer;" onclick="abrirProfPorNome('${info.nome.replace(/'/g, "\\'")}')"><strong>${info.materia} (${sigla})</strong>${info.nome}${badge}</div>`;
-        })
-        .join("");
+      const lista = t.resumoProfessores || [];
+
+      const rosterItems = lista.length
+        ? lista.map(info => {
+            const occ = OCORRENCIAS_HOJE[info.nome];
+            const badge = occ?.status === "FALTOU" ? " 🚨" : occ?.status === "ATRASO" ? " ⏳" : occ?.status === "FOLGA_TRE" ? " 🏖️" : "";
+            const diasTag = (info.dias && info.dias.length) ? ` (${info.dias.join(", ")})` : "";
+            return `<div class="roster-item" style="cursor:pointer;" onclick="abrirProfPorNome('${info.nome.replace(/'/g, "\\'")}')"><strong>${info.materia} (${info.sigla})</strong>${info.nome}${diasTag}${badge}</div>`;
+          }).join("")
+        : `<div style="grid-column:span 2; font-size:0.76rem; color:var(--text-muted); padding:6px;">Docentes desta turma ainda não preenchidos na planilha.</div>`;
 
       body.innerHTML = `
         <div class="drawer-section-title">Professores da Turma ${t.turma}</div>
@@ -1782,14 +2399,16 @@
         <div class="drawer-section-title">Horário Semanal</div>
       `;
 
-      Object.keys(DIAS_LABEL).forEach(dia => {
-        const aulasDia = SLOTS
+      DIAS_LIST.forEach(dia => {
+        const aulasDia = ALL_SLOTS
           .filter(slot => t.grade[dia] && t.grade[dia][slot] && t.grade[dia][slot] !== "LIVRE")
           .map(slot => {
             const sig = t.grade[dia][slot];
-            const prof = t.professores[sig];
-            return `<b>${slot}:</b> ${sig}${prof ? ` — ${prof.nome}` : ""}`;
+            const nomeProf = getDocenteNaAula(t, dia, sig);
+            return `<b>${slot}:</b> ${sig}${nomeProf ? ` — ${nomeProf}` : ""}`;
           });
+
+        if (dia === "SAB" && aulasDia.length === 0) return;
 
         const block = document.createElement("div");
         block.className = "week-day-block";
@@ -1812,7 +2431,7 @@
     function closeDrawer(e) { if (e.target.id === "drawerOverlay") toggleDrawer(false); }
 
     window.onload = () => {
-      buildProfessoresIndex();
+      rebuildTurmasEProfessores();
       autoDetectTime();
       sincronizarPlanilha(false);
       setInterval(() => sincronizarPlanilha(false), 30000);
