@@ -631,6 +631,15 @@
     const LIBERADAS = ["efi", "ed. fisica", "educacao fisica", "art", "artes", "mus", "musica", "info", "informatica", "tm", "a/m", "artes/musica", "red", "gp(1as)", "faom", "faom(1as)", "g.oper", "g.qual", "mkt", "cont"];
     const IDIOMAS = ["ing", "ingles", "fra", "frances", "esp", "espanhol", "f/e", "e/i", "f/i", "edmar/fr", "ap"];
 
+    const TURNO_ESTENDIDO_MANHA = {
+      SEG: { M1:"TURNO ESTENDIDO", M2:"TURNO ESTENDIDO", M3:"TURNO ESTENDIDO", M4:"TURNO ESTENDIDO", M5:"TURNO ESTENDIDO", M6:"TURNO ESTENDIDO", M7:"TURNO ESTENDIDO" },
+      TER: { M1:"TURNO ESTENDIDO", M2:"TURNO ESTENDIDO", M3:"TURNO ESTENDIDO", M4:"TURNO ESTENDIDO", M5:"TURNO ESTENDIDO", M6:"TURNO ESTENDIDO", M7:"TURNO ESTENDIDO" },
+      QUA: { M1:"TURNO ESTENDIDO", M2:"TURNO ESTENDIDO", M3:"TURNO ESTENDIDO", M4:"TURNO ESTENDIDO", M5:"TURNO ESTENDIDO", M6:"TURNO ESTENDIDO", M7:"TURNO ESTENDIDO" },
+      QUI: { M1:"TURNO ESTENDIDO", M2:"TURNO ESTENDIDO", M3:"TURNO ESTENDIDO", M4:"TURNO ESTENDIDO", M5:"TURNO ESTENDIDO", M6:"TURNO ESTENDIDO", M7:"TURNO ESTENDIDO" },
+      SEX: { M1:"TURNO ESTENDIDO", M2:"TURNO ESTENDIDO", M3:"TURNO ESTENDIDO", M4:"TURNO ESTENDIDO", M5:"TURNO ESTENDIDO", M6:"TURNO ESTENDIDO", M7:"TURNO ESTENDIDO" },
+      SAB: {}
+    };
+
     const TURNO_ESTENDIDO_GRADE = {
       SEG: { T1:"TURNO ESTENDIDO", T2:"TURNO ESTENDIDO", T3:"TURNO ESTENDIDO", T4:"TURNO ESTENDIDO", T5:"TURNO ESTENDIDO", T6:"TURNO ESTENDIDO", T7:"TURNO ESTENDIDO" },
       TER: { T1:"TURNO ESTENDIDO", T2:"TURNO ESTENDIDO", T3:"TURNO ESTENDIDO", T4:"TURNO ESTENDIDO", T5:"TURNO ESTENDIDO", T6:"TURNO ESTENDIDO", T7:"TURNO ESTENDIDO" },
@@ -641,79 +650,182 @@
     };
 
     let CAMPUS_DATA = [
-      // ==================== BLOCO A (FUNDAMENTAL II — TARDE) ====================
+      // ==================== BLOCO A — MANHÃ (SALAS 1 A 12 + SÁBADO LETIVO) ====================
+      { id: "AM1", bloco: "A", nome: "Sala 1", turma: "Turno Estendido (Sáb: 1101)", turmaCode: "", sabTurmaCode: "1101", shift: "MANHA", grade: {
+        ...TURNO_ESTENDIDO_MANHA,
+        SAB: { M1:"GEO", M2:"GEO", M3:"FIS", M4:"FIS", M5:"HIST", M6:"HIST" }
+      }},
+      { id: "AM2", bloco: "A", nome: "Sala 2", turma: "Turno Estendido (Sáb: 1103)", turmaCode: "", sabTurmaCode: "1103", shift: "MANHA", grade: {
+        ...TURNO_ESTENDIDO_MANHA,
+        SAB: { M1:"HIST", M2:"HIST", M3:"GEO", M4:"GEO", M5:"FIS", M6:"FIS" }
+      }},
+      { id: "AM3", bloco: "A", nome: "Sala 3", turma: "Turma 701 (Sáb: 1105)", turmaCode: "701", sabTurmaCode: "1105", shift: "MANHA", grade: {
+        SEG: { M1:"MUS", M2:"MUS", M3:"ING", M4:"ING", M5:"ING", M6:"PORT", M7:"PORT" },
+        TER: { M1:"DES", M2:"DES", M3:"EFI", M4:"EFI", M5:"HIST", M6:"C.SOC", M7:"C.SOC" },
+        QUA: { M1:"MAT", M2:"MAT", M3:"HIST", M4:"HIST", M5:"PORT", M6:"PORT", M7:"PORT" },
+        QUI: { M1:"CIE", M2:"LIVRE", M3:"FRA", M4:"FRA", M5:"FRA", M6:"CIE", M7:"CIE" },
+        SEX: { M1:"ART", M2:"ART", M3:"GEO", M4:"GEO", M5:"GEO", M6:"MAT", M7:"MAT" },
+        SAB: { M3:"FIS", M4:"FIS", M5:"GEO", M6:"GEO" }
+      }},
+      { id: "AM4", bloco: "A", nome: "Sala 4", turma: "Turma 601 (Sáb: 1107)", turmaCode: "601", sabTurmaCode: "1107", shift: "MANHA", grade: {
+        SEG: { M1:"PORT", M2:"PORT", M3:"PORT", M4:"PORT", M5:"EFI", M6:"EFI", M7:"CIE" },
+        TER: { M1:"DES", M2:"DES", M3:"CIE", M4:"CIE", M5:"HIST", M6:"HIST", M7:"FRA" },
+        QUA: { M1:"PORT", M2:"PORT", M3:"ING", M4:"ING", M5:"MAT", M6:"MAT", M7:"FRA" },
+        QUI: { M1:"INFO", M2:"INFO", M3:"GEO", M4:"GEO", M5:"GEO", M6:"FRA", M7:"ING" },
+        SEX: { M1:"MAT", M2:"MAT", M3:"ART", M4:"ART", M5:"MUS", M6:"MUS", M7:"LIVRE" },
+        SAB: { M1:"FIS", M2:"FIS", M3:"HIST", M4:"HIST", M5:"GEO", M6:"GEO" }
+      }},
+      { id: "AM5", bloco: "A", nome: "Sala 5", turma: "Turma 705 (Sáb: 2102)", turmaCode: "705", sabTurmaCode: "2102", shift: "MANHA", grade: {
+        SEG: { M1:"ING", M2:"ING", M3:"PORT", M4:"PORT", M5:"MUS", M6:"MUS", M7:"ING" },
+        TER: { M1:"GEO", M2:"GEO", M3:"DES", M4:"DES", M5:"GEO", M6:"HIST", M7:"CIE" },
+        QUA: { M1:"HIST", M2:"HIST", M3:"MAT", M4:"MAT", M5:"F/E", M6:"F/E", M7:"F/E" },
+        QUI: { M1:"EFI", M2:"EFI", M3:"C.SOC", M4:"C.SOC", M5:"ART", M6:"ART", M7:"LIVRE" },
+        SEX: { M1:"MAT", M2:"MAT", M3:"CIE", M4:"CIE", M5:"PORT", M6:"PORT", M7:"PORT" },
+        SAB: { M6:"FIS", M7:"FIS" }
+      }},
+      { id: "AM6", bloco: "A", nome: "Sala 6", turma: "Turma 801", turmaCode: "801", shift: "MANHA", grade: {
+        SEG: { M1:"PORT", M2:"PORT", M3:"DES", M4:"DES", M5:"PORT", M6:"CIE", M7:"CIE" },
+        TER: { M1:"HIST", M2:"HIST", M3:"C.SOC", M4:"C.SOC", M5:"HIST", M6:"GEO", M7:"GEO" },
+        QUA: { M1:"MAT", M2:"MAT", M3:"ING", M4:"ING", M5:"ING", M6:"MUS", M7:"MUS" },
+        QUI: { M1:"LIVRE", M2:"CIE", M3:"EFI", M4:"EFI", M5:"GEO", M6:"ART", M7:"ART" },
+        SEX: { M1:"PORT", M2:"PORT", M3:"FRA", M4:"FRA", M5:"MAT", M6:"MAT", M7:"FRA" },
+        SAB: {}
+      }},
+      { id: "AM7", bloco: "A", nome: "Sala 7", turma: "Turma 803", turmaCode: "803", shift: "MANHA", grade: {
+        SEG: { M1:"DES", M2:"DES", M3:"ART", M4:"ART", M5:"PORT", M6:"MAT", M7:"MAT" },
+        TER: { M1:"C.SOC", M2:"C.SOC", M3:"GEO", M4:"GEO", M5:"GEO", M6:"HIST", M7:"LIVRE" },
+        QUA: { M1:"ESP", M2:"ESP", M3:"MAT", M4:"MAT", M5:"PORT", M6:"PORT", M7:"ING" },
+        QUI: { M1:"EFI", M2:"EFI", M3:"HIST", M4:"HIST", M5:"CIE", M6:"CIE", M7:"CIE" },
+        SEX: { M1:"PORT", M2:"PORT", M3:"MUS", M4:"MUS", M5:"ESP", M6:"ING", M7:"ING" },
+        SAB: {}
+      }},
+      { id: "AM8", bloco: "A", nome: "Sala 8", turma: "Turma 805 (Sáb: 2108)", turmaCode: "805", sabTurmaCode: "2108", shift: "MANHA", grade: {
+        SEG: { M1:"MAT", M2:"MAT", M3:"PORT", M4:"PORT", M5:"CIE", M6:"DES", M7:"DES" },
+        TER: { M1:"GEO", M2:"GEO", M3:"HIST", M4:"HIST", M5:"C.SOC", M6:"C.SOC", M7:"HIST" },
+        QUA: { M1:"MUS", M2:"MUS", M3:"PORT", M4:"PORT", M5:"F/E", M6:"F/E", M7:"F/E" },
+        QUI: { M1:"ART", M2:"ART", M3:"CIE", M4:"CIE", M5:"EFI", M6:"EFI", M7:"GEO" },
+        SEX: { M1:"ING", M2:"ING", M3:"MAT", M4:"MAT", M5:"ING", M6:"PORT", M7:"LIVRE" },
+        SAB: { M6:"HIST", M7:"HIST" }
+      }},
+      { id: "AM9", bloco: "A", nome: "Sala 9", turma: "Turma 901 (Sáb: 1201)", turmaCode: "901", sabTurmaCode: "1201", shift: "MANHA", grade: {
+        SEG: { M1:"PORT", M2:"PORT", M3:"EFI", M4:"EFI", M5:"C.SOC", M6:"C.SOC", M7:"PORT" },
+        TER: { M1:"GEO", M2:"GEO", M3:"DES", M4:"DES", M5:"HIST", M6:"HIST", M7:"HIST" },
+        QUA: { M1:"FRA", M2:"FRA", M3:"MAT", M4:"MAT", M5:"ING", M6:"PORT", M7:"PORT" },
+        QUI: { M1:"ART", M2:"ART", M3:"CIE", M4:"CIE", M5:"LIVRE", M6:"CIE", M7:"GEO" },
+        SEX: { M1:"MAT", M2:"MAT", M3:"MUS", M4:"MUS", M5:"FRA", M6:"ING", M7:"ING" },
+        SAB: { M1:"HIST", M2:"HIST", M3:"BIO", M4:"BIO", M5:"GEO", M6:"GEO" }
+      }},
+      { id: "AM10", bloco: "A", nome: "Sala 10", turma: "Turma 903 (Sáb: 1203)", turmaCode: "903", sabTurmaCode: "1203", shift: "MANHA", grade: {
+        SEG: { M1:"C.SOC", M2:"C.SOC", M3:"ESP", M4:"ESP", M5:"EFI", M6:"EFI", M7:"ING" },
+        TER: { M1:"HIST", M2:"HIST", M3:"GEO", M4:"GEO", M5:"DES", M6:"DES", M7:"LIVRE" },
+        QUA: { M1:"PORT", M2:"PORT", M3:"ING", M4:"ING", M5:"ESP", M6:"MAT", M7:"MAT" },
+        QUI: { M1:"CIE", M2:"CIE", M3:"CIE", M4:"GEO", M5:"ART", M6:"ART", M7:"HIST" },
+        SEX: { M1:"MUS", M2:"MUS", M3:"PORT", M4:"PORT", M5:"PORT", M6:"MAT", M7:"MAT" },
+        SAB: { M1:"BIO", M2:"BIO", M3:"GEO", M4:"GEO", M5:"HIST", M6:"HIST" }
+      }},
+      { id: "AM11", bloco: "A", nome: "Sala 11", turma: "Turma 603 (Sáb: 1205)", turmaCode: "603", sabTurmaCode: "1205", shift: "MANHA", grade: {
+        SEG: { M1:"EFI", M2:"EFI", M3:"HIST", M4:"HIST", M5:"PORT", M6:"PORT", M7:"PORT" },
+        TER: { M1:"CIE", M2:"CIE", M3:"PORT", M4:"HIST", M5:"CIE", M6:"DES", M7:"DES" },
+        QUA: { M1:"MAT", M2:"MAT", M3:"INFO", M4:"ESP", M5:"ING", M6:"ING", M7:"PORT" },
+        QUI: { M1:"ART", M2:"ART", M3:"INFO", M4:"INFO", M5:"GEO", M6:"GEO", M7:"GEO" },
+        SEX: { M1:"MUS", M2:"MUS", M3:"MAT", M4:"MAT", M5:"ING", M6:"ESP", M7:"ESP" },
+        SAB: { M1:"GEO", M2:"GEO", M3:"HIST", M4:"HIST" }
+      }},
+      { id: "AM12", bloco: "A", nome: "Sala 12", turma: "Turma 703 (Sáb: 1207)", turmaCode: "703", sabTurmaCode: "1207", shift: "MANHA", grade: {
+        SEG: { M1:"ESP", M2:"ESP", M3:"MUS", M4:"MUS", M5:"PORT", M6:"PORT", M7:"PORT" },
+        TER: { M1:"EFI", M2:"EFI", M3:"HIST", M4:"HIST", M5:"CIE", M6:"CIE", M7:"HIST" },
+        QUA: { M1:"ING", M2:"ING", M3:"PORT", M4:"PORT", M5:"MAT", M6:"MAT", M7:"ING" },
+        QUI: { M1:"LIVRE", M2:"CIE", M3:"DES", M4:"DES", M5:"GEO", M6:"C.SOC", M7:"C.SOC" },
+        SEX: { M1:"GEO", M2:"GEO", M3:"MAT", M4:"MAT", M5:"ESP", M6:"ART", M7:"ART" },
+        SAB: { M1:"GEO", M2:"GEO", M3:"HIST", M4:"HIST", M5:"BIO", M6:"BIO" }
+      }},
+
+      // ==================== BLOCO A — TARDE (SALAS 1 A 12 + SÁBADO LETIVO) ====================
       { id: "A1", bloco: "A", nome: "Sala 1", turma: "Turma 602", turmaCode: "602", shift: "TARDE", grade: {
         SEG: { T1:"MAT", T2:"MAT", T3:"MUS", T4:"MUS", T5:"CIE", T6:"CIE", T7:"HIST" },
         TER: { T1:"EFI", T2:"EFI", T3:"HIST", T4:"HIST", T5:"CIE", T6:"DES", T7:"DES" },
         QUA: { T1:"ING", T2:"ING", T3:"PORT", T4:"PORT", T5:"PORT", T6:"ESP", T7:"ESP" },
         QUI: { T1:"INFO", T2:"INFO", T3:"ART", T4:"ART", T5:"GEO", T6:"GEO", T7:"GEO" },
-        SEX: { T1:"PORT", T2:"PORT", T3:"MAT", T4:"MAT", T5:"ING", T6:"ESP", T7:"LIVRE" }
+        SEX: { T1:"PORT", T2:"PORT", T3:"MAT", T4:"MAT", T5:"ING", T6:"ESP", T7:"LIVRE" },
+        SAB: {}
       }},
       { id: "A2", bloco: "A", nome: "Sala 2", turma: "Turma 604", turmaCode: "604", shift: "TARDE", grade: {
         SEG: { T1:"DES", T2:"DES", T3:"HIST", T4:"HIST", T5:"MUS", T6:"MUS", T7:"ING" },
         TER: { T1:"GEO", T2:"GEO", T3:"EFI", T4:"EFI", T5:"HIST", T6:"ING", T7:"GEO" },
         QUA: { T1:"MAT", T2:"MAT", T3:"PORT", T4:"PORT", T5:"ING", T6:"CIE", T7:"FRA" },
         QUI: { T1:"FRA", T2:"FRA", T3:"INFO", T4:"INFO", T5:"CIE", T6:"PORT", T7:"CIE" },
-        SEX: { T1:"MAT", T2:"MAT", T3:"ART", T4:"ART", T5:"PORT", T6:"PORT", T7:"PORT" }
+        SEX: { T1:"MAT", T2:"MAT", T3:"ART", T4:"ART", T5:"PORT", T6:"PORT", T7:"PORT" },
+        SAB: {}
       }},
       { id: "A3", bloco: "A", nome: "Sala 3", turma: "Turma 606", turmaCode: "606", shift: "TARDE", grade: {
         SEG: { T1:"MUS", T2:"MUS", T3:"MAT", T4:"MAT", T5:"ING", T6:"ING", T7:"CIE" },
         TER: { T1:"CIE", T2:"CIE", T3:"DES", T4:"DES", T5:"GEO", T6:"EFI", T7:"EFI" },
         QUA: { T1:"PORT", T2:"PORT", T3:"F/E", T4:"F/E", T5:"PORT", T6:"FRA", T7:"ING" },
         QUI: { T1:"HIST", T2:"HIST", T3:"GEO", T4:"GEO", T5:"INFO", T6:"INFO", T7:"HIST" },
-        SEX: { T1:"ART", T2:"ART", T3:"PORT", T4:"PORT", T5:"ESP", T6:"MAT", T7:"MAT" }
+        SEX: { T1:"ART", T2:"ART", T3:"PORT", T4:"PORT", T5:"ESP", T6:"MAT", T7:"MAT" },
+        SAB: {}
       }},
       { id: "A4", bloco: "A", nome: "Sala 4", turma: "Turma 702", turmaCode: "702", shift: "TARDE", grade: {
         SEG: { T1:"LIVRE", T2:"ING", T3:"DES", T4:"DES", T5:"DES", T6:"PORT", T7:"PORT" },
         TER: { T1:"EFI", T2:"EFI", T3:"HIST", T4:"HIST", T5:"CIE", T6:"CIE", T7:"CIE" },
         QUA: { T1:"MUS", T2:"MUS", T3:"ING", T4:"ING", T5:"ESP", T6:"MAT", T7:"MAT" },
         QUI: { T1:"C.SOC", T2:"C.SOC", T3:"GEO", T4:"GEO", T5:"ART", T6:"ART", T7:"HIST" },
-        SEX: { T1:"ESP", T2:"ESP", T3:"PORT", T4:"PORT", T5:"MAT", T6:"MAT", T7:"GEO" }
+        SEX: { T1:"ESP", T2:"ESP", T3:"PORT", T4:"PORT", T5:"MAT", T6:"MAT", T7:"GEO" },
+        SAB: {}
       }},
-      { id: "A5", bloco: "A", nome: "Sala 5", turma: "Turma 704", turmaCode: "704", shift: "TARDE", grade: {
+      { id: "A5", bloco: "A", nome: "Sala 5", turma: "Turma 704 (Sáb: 2102)", turmaCode: "704", sabTurmaCode: "2102", shift: "TARDE", grade: {
         SEG: { T1:"ING", T2:"ING", T3:"PORT", T4:"PORT", T5:"ING", T6:"DES", T7:"DES" },
         TER: { T1:"LIVRE", T2:"CIE", T3:"HIST", T4:"HIST", T5:"HIST", T6:"GEO", T7:"GEO" },
         QUA: { T1:"MAT", T2:"MAT", T3:"PORT", T4:"PORT", T5:"PORT", T6:"MUS", T7:"MUS" },
         QUI: { T1:"EFI", T2:"EFI", T3:"CIE", T4:"CIE", T5:"FRA", T6:"FRA", T7:"FRA" },
-        SEX: { T1:"MAT", T2:"MAT", T3:"C.SOC", T4:"C.SOC", T5:"GEO", T6:"ART", T7:"ART" }
+        SEX: { T1:"MAT", T2:"MAT", T3:"C.SOC", T4:"C.SOC", T5:"GEO", T6:"ART", T7:"ART" },
+        SAB: { T1:"HIST", T2:"HIST", T3:"GEO", T4:"GEO" }
       }},
-      { id: "A6", bloco: "A", nome: "Sala 6", turma: "Turma 802", turmaCode: "802", shift: "TARDE", grade: {
+      { id: "A6", bloco: "A", nome: "Sala 6", turma: "Turma 802 (Sáb: 2104)", turmaCode: "802", sabTurmaCode: "2104", shift: "TARDE", grade: {
         SEG: { T1:"PORT", T2:"PORT", T3:"ART", T4:"ART", T5:"ING", T6:"ING", T7:"ING" },
         TER: { T1:"GEO", T2:"GEO", T3:"DES", T4:"DES", T5:"HIST", T6:"CIE", T7:"CIE" },
         QUA: { T1:"EFI", T2:"EFI", T3:"MUS", T4:"MUS", T5:"MAT", T6:"MAT", T7:"ESP" },
         QUI: { T1:"C.SOC", T2:"C.SOC", T3:"HIST", T4:"HIST", T5:"GEO", T6:"CIE", T7:"LIVRE" },
-        SEX: { T1:"ESP", T2:"ESP", T3:"MAT", T4:"MAT", T5:"PORT", T6:"PORT", T7:"PORT" }
+        SEX: { T1:"ESP", T2:"ESP", T3:"MAT", T4:"MAT", T5:"PORT", T6:"PORT", T7:"PORT" },
+        SAB: { T1:"QUI", T2:"QUI", T3:"GEO", T4:"GEO" }
       }},
-      { id: "A7", bloco: "A", nome: "Sala 7", turma: "Turma 804", turmaCode: "804", shift: "TARDE", grade: {
+      { id: "A7", bloco: "A", nome: "Sala 7", turma: "Turma 804 (Sáb: 2106)", turmaCode: "804", sabTurmaCode: "2106", shift: "TARDE", grade: {
         SEG: { T1:"CIE", T2:"CIE", T3:"PORT", T4:"PORT", T5:"PORT", T6:"ART", T7:"ART" },
         TER: { T1:"GEO", T2:"GEO", T3:"CIE", T4:"HIST", T5:"GEO", T6:"DES", T7:"DES" },
         QUA: { T1:"MAT", T2:"MAT", T3:"PORT", T4:"PORT", T5:"FRA", T6:"EFI", T7:"EFI" },
         QUI: { T1:"FRA", T2:"FRA", T3:"C.SOC", T4:"C.SOC", T5:"HIST", T6:"HIST", T7:"LIVRE" },
-        SEX: { T1:"ING", T2:"ING", T3:"MUS", T4:"MUS", T5:"ING", T6:"MAT", T7:"MAT" }
+        SEX: { T1:"ING", T2:"ING", T3:"MUS", T4:"MUS", T5:"ING", T6:"MAT", T7:"MAT" },
+        SAB: { T1:"HIST", T2:"HIST", T3:"QUI", T4:"QUI", T5:"GEO", T6:"GEO" }
       }},
-      { id: "A8", bloco: "A", nome: "Sala 8", turma: "Turma 902", turmaCode: "902", shift: "TARDE", grade: {
+      { id: "A8", bloco: "A", nome: "Sala 8", turma: "Turma 902 (Sáb: 2108)", turmaCode: "902", sabTurmaCode: "2108", shift: "TARDE", grade: {
         SEG: { T1:"EFI", T2:"EFI", T3:"PORT", T4:"PORT", T5:"PORT", T6:"C.SOC", T7:"C.SOC" },
         TER: { T1:"CIE", T2:"CIE", T3:"HIST", T4:"LIVRE", T5:"ART", T6:"ART", T7:"GEO" },
         QUA: { T1:"PORT", T2:"PORT", T3:"ING", T4:"ING", T5:"ING", T6:"MAT", T7:"MAT" },
         QUI: { T1:"MAT", T2:"MAT", T3:"GEO", T4:"GEO", T5:"CIE", T6:"DES", T7:"DES" },
-        SEX: { T1:"HIST", T2:"HIST", T3:"MUS", T4:"MUS", T5:"ESP", T6:"ESP", T7:"ESP" }
+        SEX: { T1:"HIST", T2:"HIST", T3:"MUS", T4:"MUS", T5:"ESP", T6:"ESP", T7:"ESP" },
+        SAB: { T1:"GEO", T2:"GEO", T5:"QUI", T6:"QUI" }
       }},
-      { id: "A9", bloco: "A", nome: "Sala 9", turma: "Reserva / Apoio", turmaCode: "", shift: "TARDE", grade: { SEG:{}, TER:{}, QUA:{}, QUI:{}, SEX:{} } },
-      { id: "A10", bloco: "A", nome: "Sala 10", turma: "Turma 904", turmaCode: "904", shift: "TARDE", grade: {
+      { id: "A9", bloco: "A", nome: "Sala 9", turma: "Turma 904 (Sáb: 2202)", turmaCode: "904", sabTurmaCode: "2202", shift: "TARDE", grade: {
         SEG: { T1:"PORT", T2:"PORT", T3:"C.SOC", T4:"C.SOC", T5:"ING", T6:"ING", T7:"ING" },
         TER: { T1:"GEO", T2:"GEO", T3:"DES", T4:"DES", T5:"CIE", T6:"CIE", T7:"CIE" },
         QUA: { T1:"EFI", T2:"EFI", T3:"MAT", T4:"MAT", T5:"PORT", T6:"PORT", T7:"FRA" },
         QUI: { T1:"ART", T2:"ART", T3:"MAT", T4:"MAT", T5:"HIST", T6:"GEO", T7:"LIVRE" },
-        SEX: { T1:"FRA", T2:"FRA", T3:"HIST", T4:"HIST", T5:"MUS", T6:"MUS", T7:"PORT" }
+        SEX: { T1:"FRA", T2:"FRA", T3:"HIST", T4:"HIST", T5:"MUS", T6:"MUS", T7:"PORT" },
+        SAB: { T1:"BIO", T2:"BIO", T3:"HIST", T4:"HIST", T5:"GEO", T6:"GEO" }
       }},
-      { id: "A11", bloco: "A", nome: "Sala 11", turma: "Turma 906", turmaCode: "906", shift: "TARDE", grade: {
+      { id: "A10", bloco: "A", nome: "Sala 10", turma: "Turma 906 (Sáb: 2204)", turmaCode: "906", sabTurmaCode: "2204", shift: "TARDE", grade: {
         SEG: { T1:"C.SOC", T2:"C.SOC", T3:"EFI", T4:"EFI", T5:"ING", T6:"PORT", T7:"PORT" },
         TER: { T1:"CIE", T2:"ART", T3:"ART", T4:"HIST", T5:"GEO", T6:"GEO", T7:"LIVRE" },
         QUA: { T1:"MAT", T2:"MAT", T3:"F/E", T4:"F/E", T5:"F/E", T6:"PORT", T7:"PORT" },
         QUI: { T1:"CIE", T2:"CIE", T3:"DES", T4:"DES", T5:"MAT", T6:"MAT", T7:"GEO" },
-        SEX: { T1:"MAT", T2:"MAT", T3:"ING", T4:"ING", T5:"PORT", T6:"HIST", T7:"HIST" }
+        SEX: { T1:"MAT", T2:"MAT", T3:"ING", T4:"ING", T5:"PORT", T6:"HIST", T7:"HIST" },
+        SAB: { T1:"GEO", T2:"GEO", T3:"HIST", T4:"HIST", T5:"BIO", T6:"BIO" }
       }},
-      { id: "A12", bloco: "A", nome: "Sala 12", turma: "Reserva / Apoio", turmaCode: "", shift: "TARDE", grade: { SEG:{}, TER:{}, QUA:{}, QUI:{}, SEX:{} } },
+      { id: "A11", bloco: "A", nome: "Sala 11", turma: "Turno Estendido (Sáb: 2206)", turmaCode: "", sabTurmaCode: "2206", shift: "TARDE", grade: {
+        ...TURNO_ESTENDIDO_GRADE,
+        SAB: { T1:"GEO", T2:"GEO", T3:"BIO", T4:"BIO", T5:"HIST", T6:"HIST" }
+      }},
+      { id: "A12", bloco: "A", nome: "Sala 12", turma: "Turno Estendido", turmaCode: "", shift: "TARDE", grade: TURNO_ESTENDIDO_GRADE },
 
       // ==================== BLOCO B — MANHÃ (SALAS 1 A 11) ====================
       { id: "BM1", bloco: "B", nome: "Sala 1", turma: "Turma 1101", turmaCode: "1101", shift: "MANHA", grade: {
@@ -722,7 +834,7 @@
         QUA: { M1:"MAT", M2:"MAT", M3:"QUI", M4:"QUI", M5:"FILO", M6:"FILO", M7:"PORT" },
         QUI: { M1:"HIST", M2:"HIST", M3:"EFI", M4:"EFI", M5:"BIO", M6:"BIO", M7:"FIS" },
         SEX: { M1:"FRA", M2:"FRA", M3:"PORT", M4:"PORT", M5:"FRA", M6:"QUI", M7:"QUI" },
-        SAB: { M1:"GEO", M2:"GEO", M3:"FIS", M4:"FIS", M5:"HIST", M6:"HIST" }
+        SAB: {}
       }},
       { id: "BM2", bloco: "B", nome: "Sala 2", turma: "Turma 1103", turmaCode: "1103", shift: "MANHA", grade: {
         SEG: { M1:"BIO", M2:"BIO", M3:"EFI", M4:"EFI", M5:"ESP", M6:"ESP" },
@@ -730,7 +842,7 @@
         QUA: { M1:"QUI", M2:"QUI", M3:"MAT", M4:"MAT", M5:"FILO", M6:"FILO", M7:"ESP" },
         QUI: { M1:"DES", M2:"DES", M3:"C.SOC", M4:"C.SOC", M5:"FIS", M6:"A/M", M7:"A/M" },
         SEX: { M1:"PORT", M2:"PORT", M3:"QUI", M4:"QUI", M5:"MAT", M6:"MAT" },
-        SAB: { M1:"HIST", M2:"HIST", M3:"GEO", M4:"GEO", M5:"FIS", M6:"FIS" }
+        SAB: {}
       }},
       { id: "BM3", bloco: "B", nome: "Sala 3", turma: "Turma 1105", turmaCode: "1105", shift: "MANHA", grade: {
         SEG: { M1:"DES", M2:"DES", M3:"MAT", M4:"MAT", M5:"ING", M6:"ING" },
@@ -738,7 +850,7 @@
         QUA: { M1:"EFI", M2:"EFI", M3:"PORT", M4:"PORT", M5:"ING", M6:"QUI", M7:"QUI" },
         QUI: { M1:"BIO", M2:"BIO", M3:"FIS", M4:"FIS", M5:"GEO", M6:"GEO", M7:"HIST" },
         SEX: { M1:"QUI", M2:"QUI", M3:"MAT", M4:"MAT", M5:"PORT", M6:"FILO", M7:"FILO" },
-        SAB: { M3:"FIS", M4:"FIS", M5:"GEO", M6:"GEO" }
+        SAB: {}
       }},
       { id: "BM4", bloco: "B", nome: "Sala 4", turma: "Turma 1107", turmaCode: "1107", shift: "MANHA", grade: {
         SEG: { M1:"PORT", M2:"PORT", M3:"BIO", M4:"BIO", M5:"MAT", M6:"MAT" },
@@ -746,7 +858,7 @@
         QUA: { M1:"FILO", M2:"FILO", M3:"PORT", M4:"QUI", M5:"QUI", M6:"ING", M7:"ING" },
         QUI: { M1:"FIS", M2:"FIS", M3:"HIST", M4:"HIST", M5:"EFI", M6:"EFI" },
         SEX: { M1:"MAT", M2:"MAT", M3:"QUI", M4:"QUI", M5:"ING", M6:"PORT", M7:"PORT" },
-        SAB: { M1:"FIS", M2:"FIS", M3:"HIST", M4:"HIST", M5:"GEO", M6:"GEO" }
+        SAB: {}
       }},
       { id: "BM5", bloco: "B", nome: "Sala 5", turma: "2ª Música (IM 1209)", turmaCode: "IM 1209", shift: "MANHA", grade: {
         SEG: { M1:"MAT", M2:"MAT", M3:"PORT", M4:"PORT", M5:"ING", M6:"ING", M7:"BIO" },
@@ -770,7 +882,7 @@
         QUA: { M1:"QUI", M2:"QUI", M3:"FILO", M4:"FILO", M5:"EFI", M6:"EFI", M7:"FRA" },
         QUI: { M1:"GEO", M2:"GEO", M3:"FIS", M4:"FIS", M5:"BIO", M6:"BIO" },
         SEX: { M1:"PORT", M2:"PORT", M3:"FIS", M4:"FIS", M5:"MAT", M6:"MAT", M7:"PORT" },
-        SAB: { M1:"HIST", M2:"HIST", M3:"BIO", M4:"BIO", M5:"GEO", M6:"GEO" }
+        SAB: {}
       }},
       { id: "BM8", bloco: "B", nome: "Sala 8", turma: "Turma 1203", turmaCode: "1203", shift: "MANHA", grade: {
         SEG: { M1:"PORT", M2:"PORT", M3:"E/I", M4:"E/I", M5:"PORT", M6:"MAT", M7:"MAT" },
@@ -778,7 +890,7 @@
         QUA: { M1:"QUI", M2:"QUI", M3:"MAT", M4:"MAT", M5:"EFI", M6:"EFI", M7:"E/I" },
         QUI: { M1:"BIO", M2:"BIO", M3:"GEO", M4:"GEO", M5:"FIS", M6:"FIS" },
         SEX: { M1:"FILO", M2:"FILO", M3:"SOC", M4:"SOC", M5:"PORT", M6:"PORT" },
-        SAB: { M1:"BIO", M2:"BIO", M3:"GEO", M4:"GEO", M5:"HIST", M6:"HIST" }
+        SAB: {}
       }},
       { id: "BM9", bloco: "B", nome: "Sala 9", turma: "Turma 1205", turmaCode: "1205", shift: "MANHA", grade: {
         SEG: { M1:"MAT", M2:"MAT", M3:"PORT", M4:"PORT", M5:"QUI", M6:"QUI", M7:"ESP" },
@@ -786,7 +898,7 @@
         QUA: { M1:"EFI", M2:"EFI", M3:"ESP", M4:"ESP", M5:"MAT", M6:"MAT" },
         QUI: { M1:"FIS", M2:"FIS", M3:"DES", M4:"DES", M5:"GEO", M6:"GEO", M7:"BIO" },
         SEX: { M1:"QUI", M2:"QUI", M3:"FILO", M4:"FILO", M5:"FIS", M6:"FIS" },
-        SAB: { M1:"GEO", M2:"GEO", M3:"HIST", M4:"HIST" }
+        SAB: {}
       }},
       { id: "BM10", bloco: "B", nome: "Sala 10", turma: "Turma 1207", turmaCode: "1207", shift: "MANHA", grade: {
         SEG: { M1:"QUI", M2:"QUI", M3:"MAT", M4:"MAT", M5:"FRA", M6:"FRA", M7:"FRA" },
@@ -794,7 +906,7 @@
         QUA: { M1:"FILO", M2:"FILO", M3:"EFI", M4:"EFI", M5:"MAT", M6:"MAT", M7:"PORT" },
         QUI: { M1:"GEO", M2:"GEO", M3:"FIS", M4:"FIS", M5:"QUI", M6:"QUI", M7:"BIO" },
         SEX: { M1:"FIS", M2:"FIS", M3:"SOC", M4:"SOC", M5:"PORT", M6:"PORT", M7:"PORT" },
-        SAB: { M1:"GEO", M2:"GEO", M3:"HIST", M4:"HIST", M5:"BIO", M6:"BIO" }
+        SAB: {}
       }},
       { id: "BM11", bloco: "B", nome: "Sala 11", turma: "2ª ADM (AD 2208)", turmaCode: "AD 2208", shift: "MANHA", grade: {
         SEG: {},
@@ -812,7 +924,7 @@
         QUA: { T1:"PORT", T2:"PORT", T3:"QUI", T4:"QUI", T5:"PORT", T6:"MAT", T7:"MAT" },
         QUI: { T1:"HIST", T2:"HIST", T3:"DES", T4:"DES", T5:"BIO", T6:"BIO", T7:"" },
         SEX: { T1:"FRA", T2:"FRA", T3:"QUI", T4:"QUI", T5:"FRA", T6:"PORT", T7:"PORT" },
-        SAB: { T1:"HIST", T2:"HIST", T3:"GEO", T4:"GEO" }
+        SAB: {}
       }},
       { id: "B2", bloco: "B", nome: "Sala 2", turma: "Turma 2104", turmaCode: "2104", shift: "TARDE", grade: {
         SEG: { T1:"QUI", T2:"QUI", T3:"DES", T4:"DES", T5:"HIST", T6:"HIST", T7:"QUI" },
@@ -820,7 +932,7 @@
         QUA: { T1:"MAT", T2:"MAT", T3:"BIO", T4:"BIO", T5:"ESP", T6:"ESP", T7:"ESP" },
         QUI: { T1:"A/M", T2:"A/M", T3:"BIO", T4:"BIO", T5:"FIS", T6:"FIS", T7:"" },
         SEX: { T1:"PORT", T2:"PORT", T3:"FILO", T4:"FILO", T5:"MAT", T6:"MAT", T7:"" },
-        SAB: { T1:"QUI", T2:"QUI", T3:"GEO", T4:"GEO" }
+        SAB: {}
       }},
       { id: "B3", bloco: "B", nome: "Sala 3", turma: "Turma 2106", turmaCode: "2106", shift: "TARDE", grade: {
         SEG: { T1:"ING", T2:"ING", T3:"MAT", T4:"MAT", T5:"BIO", T6:"BIO" },
@@ -828,7 +940,7 @@
         QUA: { T1:"MAT", T2:"MAT", T3:"QUI", T4:"QUI", T5:"PORT", T6:"PORT", T7:"QUI" },
         QUI: { T1:"FIS", T2:"FIS", T3:"A/M", T4:"A/M", T5:"HIST", T6:"HIST" },
         SEX: { T1:"PORT", T2:"PORT", T3:"SOC", T4:"SOC", T5:"PORT", T6:"FILO", T7:"FILO" },
-        SAB: { T1:"HIST", T2:"HIST", T3:"QUI", T4:"QUI", T5:"GEO", T6:"GEO" }
+        SAB: {}
       }},
       { id: "B4", bloco: "B", nome: "Sala 4", turma: "Turma 2108", turmaCode: "2108", shift: "TARDE", grade: {
         SEG: { T1:"MAT", T2:"MAT", T3:"QUI", T4:"QUI", T5:"PORT", T6:"PORT", T7:"PORT" },
@@ -836,9 +948,9 @@
         QUA: { T1:"PORT", T2:"PORT", T3:"ESP", T4:"ESP", T5:"QUI", T6:"EFI", T7:"EFI" },
         QUI: { T1:"BIO", T2:"BIO", T3:"FIS", T4:"FIS", T5:"A/M", T6:"A/M", T7:"" },
         SEX: { T1:"FILO", T2:"FILO", T3:"MAT", T4:"MAT", T5:"SOC", T6:"SOC", T7:"" },
-        SAB: { T1:"GEO", T2:"GEO", T5:"QUI", T6:"QUI" }
+        SAB: {}
       }},
-      { id: "B5", bloco: "B", nome: "Sala 5", turma: "1ª Música (IM 2112)", turmaCode: "IM 2112", shift: "TARDE", grade: {
+      { id: "B5", bloco: "B", nome: "Sala 5", turma: "1ª Música (IM 1112)", turmaCode: "IM 1112", shift: "TARDE", grade: {
         SEG: { T1:"PORT", T2:"PORT", T3:"MAT", T4:"MAT", T5:"EFI", T6:"EFI", T7:"" },
         TER: { T1:"GEO", T2:"GEO", T3:"HIST", T4:"HIST", T5:"BIO", T6:"SOC", T7:"SOC" },
         QUA: { T1:"BIO", T2:"BIO", T3:"QUI", T4:"QUI", T5:"QUI", T6:"", T7:"" },
@@ -860,7 +972,7 @@
         QUA: { T1:"MAT", T2:"MAT", T3:"FILO", T4:"FILO", T5:"PORT", T6:"FRA", T7:"PORT" },
         QUI: { T1:"FIS", T2:"FIS", T3:"BIO", T4:"BIO", T5:"HIST", T6:"HIST", T7:"BIO" },
         SEX: { T1:"SOC", T2:"SOC", T3:"DES", T4:"DES", T5:"QUI", T6:"QUI", T7:"" },
-        SAB: { T1:"BIO", T2:"BIO", T3:"HIST", T4:"HIST", T5:"GEO", T6:"GEO" }
+        SAB: {}
       }},
       { id: "B8", bloco: "B", nome: "Sala 8", turma: "Turma 2204", turmaCode: "2204", shift: "TARDE", grade: {
         SEG: { T1:"QUI", T2:"QUI", T3:"PORT", T4:"PORT", T5:"ING", T6:"ING", T7:"" },
@@ -868,7 +980,7 @@
         QUA: { T1:"MAT", T2:"MAT", T3:"PORT", T4:"PORT", T5:"ING", T6:"QUI", T7:"QUI" },
         QUI: { T1:"BIO", T2:"BIO", T3:"GEO", T4:"GEO", T5:"HIST", T6:"HIST", T7:"" },
         SEX: { T1:"FILO", T2:"FILO", T3:"FIS", T4:"FIS", T5:"PORT", T6:"", T7:"" },
-        SAB: { T1:"GEO", T2:"GEO", T3:"HIST", T4:"HIST", T5:"BIO", T6:"BIO" }
+        SAB: {}
       }},
       { id: "B9", bloco: "B", nome: "Sala 9", turma: "Turma 2206", turmaCode: "2206", shift: "TARDE", grade: {
         SEG: { T1:"PORT", T2:"PORT", T3:"MAT", T4:"MAT", T5:"QUI", T6:"QUI" },
@@ -876,7 +988,7 @@
         QUA: { T1:"EFI", T2:"EFI", T3:"QUI", T4:"QUI", T5:"ESP", T6:"MAT", T7:"MAT" },
         QUI: { T1:"FIS", T2:"FIS", T3:"HIST", T4:"HIST", T5:"BIO", T6:"BIO", T7:"BIO" },
         SEX: { T1:"ESP", T2:"ESP", T3:"PORT", T4:"PORT", T5:"PORT", T6:"FILO", T7:"FILO" },
-        SAB: { T1:"GEO", T2:"GEO", T3:"BIO", T4:"BIO", T5:"HIST", T6:"HIST" }
+        SAB: {}
       }},
       { id: "B10", bloco: "B", nome: "Sala 10", turma: "Turno Estendido", turmaCode: "", shift: "TARDE", grade: TURNO_ESTENDIDO_GRADE },
       { id: "B11", bloco: "B", nome: "Sala 11", turma: "2ª ADM (AD 2208)", turmaCode: "AD 2208", shift: "TARDE", grade: {
@@ -888,7 +1000,15 @@
         SAB: {}
       }},
 
-      // ==================== BLOCO C — MANHÃ (SALAS 4, 6, 8, 10, 12) ====================
+      // ==================== BLOCO C — MANHÃ (SALAS 2, 4, 6, 8, 10, 12) ====================
+      { id: "CM2", bloco: "C", nome: "Sala 2", turma: "3ª ADM (AD 1311)", turmaCode: "AD 1311", shift: "MANHA", grade: {
+        SEG: { M1:"3ª ADM", M2:"3ª ADM", M3:"3ª ADM", M4:"3ª ADM", M5:"3ª ADM", M6:"3ª ADM", M7:"3ª ADM" },
+        TER: { M1:"3ª ADM", M2:"3ª ADM", M3:"3ª ADM", M4:"3ª ADM", M5:"3ª ADM", M6:"3ª ADM", M7:"3ª ADM" },
+        QUA: { M1:"3ª ADM", M2:"3ª ADM", M3:"3ª ADM", M4:"3ª ADM", M5:"3ª ADM", M6:"3ª ADM", M7:"3ª ADM" },
+        QUI: { M1:"3ª ADM", M2:"3ª ADM", M3:"3ª ADM", M4:"3ª ADM", M5:"3ª ADM", M6:"3ª ADM", M7:"3ª ADM" },
+        SEX: { M1:"3ª ADM", M2:"3ª ADM", M3:"3ª ADM", M4:"3ª ADM", M5:"3ª ADM", M6:"3ª ADM", M7:"3ª ADM" },
+        SAB: {}
+      }},
       { id: "CM4", bloco: "C", nome: "Sala 4", turma: "Turma 1301", turmaCode: "1301", shift: "MANHA", grade: {
         SEG: { M1:"HIST", M2:"HIST", M3:"MAT", M4:"MAT", M5:"PORT", M6:"PORT", M7:"HIST" },
         TER: { M1:"GEO", M2:"GEO", M3:"BIO", M4:"BIO", M5:"GEO", M6:"FIS", M7:"FIS" },
@@ -1085,14 +1205,15 @@
             let roomObj = CAMPUS_DATA.find(r => r.id === roomId);
             if (!roomObj) {
               const blockLetter = roomId.charAt(0);
-              const roomNum = roomId.substring(1);
+              const isManha = roomId.charAt(1) === "M";
+              const roomNum = isManha ? roomId.substring(2) : roomId.substring(1);
               roomObj = {
                 id: roomId,
                 bloco: blockLetter,
                 nome: "Sala " + roomNum,
                 turma: "Bloco " + blockLetter,
                 turmaCode: "",
-                shift: "TARDE",
+                shift: isManha ? "MANHA" : "TARDE",
                 grade: { SEG:{}, TER:{}, QUA:{}, QUI:{}, SEX:{}, SAB:{} }
               };
               CAMPUS_DATA.push(roomObj);
@@ -1100,14 +1221,16 @@
 
             const roomData = data[roomId];
             Object.keys(roomData).forEach(day => {
-              if (!roomObj.grade[day]) roomObj.grade[day] = {};
-              if (typeof roomData[day] === 'object') {
+              const dayKey = day.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").slice(0, 3);
+              if (!roomObj.grade[dayKey]) roomObj.grade[dayKey] = {};
+              if (typeof roomData[day] === 'object' && roomData[day] !== null) {
                 Object.keys(roomData[day]).forEach(slot => {
-                  roomObj.grade[day][slot] = roomData[day][slot];
+                  roomObj.grade[dayKey][slot] = roomData[day][slot];
                 });
               } else {
-                TIMES.TARDE.forEach(slot => {
-                  roomObj.grade[day][slot] = roomData[day];
+                const targetSlots = TIMES[roomObj.shift || "TARDE"];
+                targetSlots.forEach(slot => {
+                  roomObj.grade[dayKey][slot] = roomData[day];
                 });
               }
             });
@@ -1187,7 +1310,8 @@
 
       rooms.forEach(room => {
         const val = (room.grade[currentDay] || {})[currentTimeSlot] || "";
-        const occInfo = getOcorrenciaProfessorNoHorario(room.turmaCode, currentDay, val);
+        const activeTurmaCode = (currentDay === "SAB" && room.sabTurmaCode) ? room.sabTurmaCode : room.turmaCode;
+        const occInfo = getOcorrenciaProfessorNoHorario(activeTurmaCode, currentDay, val);
         const st = calculateStatus(val, occInfo);
 
         if (currentFilter !== "ALL") {
@@ -1231,7 +1355,8 @@
 
     function openDrawer(room) {
       const val = (room.grade[currentDay] || {})[currentTimeSlot] || "";
-      const occInfo = getOcorrenciaProfessorNoHorario(room.turmaCode, currentDay, val);
+      const activeTurmaCode = (currentDay === "SAB" && room.sabTurmaCode) ? room.sabTurmaCode : room.turmaCode;
+      const occInfo = getOcorrenciaProfessorNoHorario(activeTurmaCode, currentDay, val);
       const st = calculateStatus(val, occInfo);
 
       document.getElementById("dw-title").innerText = `${room.nome} (${room.turma})`;
@@ -1243,7 +1368,7 @@
 
       TIMES[currentShift].forEach(t => {
         const slotVal = (room.grade[currentDay] || {})[t] || "";
-        const slotOcc = getOcorrenciaProfessorNoHorario(room.turmaCode, currentDay, slotVal);
+        const slotOcc = getOcorrenciaProfessorNoHorario(activeTurmaCode, currentDay, slotVal);
         const slotSt = calculateStatus(slotVal, slotOcc);
 
         let dotColor = slotSt.code === "free" ? "var(--status-green-dot)"
