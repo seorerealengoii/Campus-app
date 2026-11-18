@@ -400,6 +400,33 @@
     .prof-pick-btn.selected { background: var(--brand-blue-light); border-color: var(--brand-blue); }
     .prof-pick-btn.selected strong { color: var(--brand-blue); }
 
+    /* SELETOR DE TURMAS ESPECÍFICAS DO PROFESSOR */
+    .turmas-scope-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .scope-chip-btn {
+      background: var(--bg-surface);
+      border: 1.5px solid var(--border-color);
+      border-radius: 9px;
+      padding: 7px 10px;
+      font-size: 0.73rem;
+      font-weight: 700;
+      color: var(--text-main);
+      cursor: pointer;
+      transition: all 0.12s;
+    }
+    .scope-chip-btn small {
+      font-weight: 600;
+      opacity: 0.8;
+    }
+    .scope-chip-btn.active {
+      background: var(--brand-blue);
+      border-color: var(--brand-blue);
+      color: #ffffff;
+    }
+
     .status-grid-4 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
     .st-opt-btn {
       padding: 9px 8px; border-radius: 10px;
@@ -484,11 +511,47 @@
       font-weight: 700; cursor: pointer; width: 100%;
     }
 
+    .btn-save-add {
+      background: #0f172a; color: #ffffff; border: none;
+      border-radius: 11px; padding: 11px; font-size: 0.82rem;
+      font-weight: 700; cursor: pointer; width: 100%;
+    }
+
     .btn-save-wpp {
       background: var(--whatsapp-green); color: #ffffff; border: none;
       border-radius: 11px; padding: 12px; font-size: 0.86rem;
       font-weight: 700; cursor: pointer; width: 100%;
       display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+
+    /* LISTA DE REGISTROS ATIVOS DO PROFESSOR NO DRAWER */
+    .existing-occ-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+    .existing-occ-item {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: 9px;
+      padding: 7px 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.74rem;
+    }
+    .btn-del-occ {
+      background: var(--red-bg);
+      color: var(--red-text);
+      border: 1px solid var(--red-border);
+      border-radius: 7px;
+      padding: 4px 8px;
+      font-size: 0.68rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
     }
 
     .future-box {
@@ -656,12 +719,17 @@
             <div class="date-row">
               <button type="button" class="date-mode-btn active" id="qlBtnHoje" onclick="setQlDateMode('HOJE')">📅 Hoje</button>
               <button type="button" class="date-mode-btn" id="qlBtnFuturo" onclick="setQlDateMode('FUTURO')">🗓️ Dia futuro</button>
-              <input type="date" id="qlDateInput" class="clean-input" style="display:none; padding:8px 10px;" />
+              <input type="date" id="qlDateInput" class="clean-input" style="display:none; padding:8px 10px;" onchange="renderQlTurmasScope()" />
             </div>
           </div>
 
           <div>
-            <label class="form-label">4. Situação / Motivo</label>
+            <label class="form-label">4. Turma(s) afetada(s) neste dia</label>
+            <div class="turmas-scope-grid" id="qlTurmasScopeGrid"></div>
+          </div>
+
+          <div>
+            <label class="form-label">5. Situação / Motivo</label>
             <div class="status-grid-4" id="qlStatusGrid">
               <button type="button" class="st-opt-btn selected-FALTOU" data-st="FALTOU" onclick="setQlStatus('FALTOU')">🚨 Faltou</button>
               <button type="button" class="st-opt-btn" data-st="ATRASO" onclick="setQlStatus('ATRASO')">⏳ Atraso / Permuta</button>
@@ -686,7 +754,7 @@
           </div>
 
           <div>
-            <label class="form-label">5. Observação (opcional)</label>
+            <label class="form-label">6. Observação (opcional)</label>
             <div class="quick-chips" style="margin-bottom:6px;">
               <button type="button" class="q-chip" onclick="addQlChip('Turma liberada')">+ Turma liberada</button>
               <button type="button" class="q-chip" onclick="addQlChip('Folga TRE')">+ Folga TRE</button>
@@ -698,8 +766,9 @@
           </div>
 
           <div class="save-actions-col">
-            <button type="button" class="btn-save-occ" onclick="salvarLancamentoRapido(false)">💾 Salvar para Toda a Equipe</button>
-            <button type="button" class="btn-save-wpp" onclick="salvarLancamentoRapido(true)">📲 Salvar e Enviar no WhatsApp</button>
+            <button type="button" class="btn-save-occ" onclick="salvarLancamentoRapido(false, false)">💾 Salvar para Toda a Equipe</button>
+            <button type="button" class="btn-save-add" onclick="salvarLancamentoRapido(false, true)">➕ Salvar e Lançar Outra Ocorrência</button>
+            <button type="button" class="btn-save-wpp" onclick="salvarLancamentoRapido(true, false)">📲 Salvar e Enviar no WhatsApp</button>
           </div>
         </div>
       </div>
@@ -1482,11 +1551,13 @@
     let OCORRENCIAS_FUTURAS = [];
     let statusSelecionadoDrawer = "PRESENTE";
     let subLiberacaoDrawer = "TODA";
+    let turmasSelecionadasDrawer = ["TODAS"];
     let popupAutoOpened = false;
 
     let qlProfSelecionado = "";
     let qlStatusSelecionado = "FALTOU";
     let qlSubLiberacaoSelecionado = "TODA";
+    let qlTurmasSelecionadas = ["TODAS"];
     let qlDateMode = "HOJE";
 
     let authResolveCallback = null;
@@ -1690,11 +1761,177 @@
       }
     }
 
-    /* ========================================================== */
+    /* ==========================================================
+       SUPORTE A MÚLTIPLAS OCORRÊNCIAS E TURMAS ESPECÍFICAS
+       ========================================================== */
+    const STATUS_ATIVOS = ["FALTOU", "ATRASO", "FOLGA_TRE", "LIBERACAO"];
+
+    function isStatusAtivo(st) {
+      return STATUS_ATIVOS.includes(st);
+    }
+
+    function normalizeTurmasList(turmas) {
+      if (!turmas || !Array.isArray(turmas) || turmas.length === 0 || turmas.includes("TODAS")) {
+        return ["TODAS"];
+      }
+      return Array.from(new Set(turmas.map(String)));
+    }
+
+    function formatarScopeLabel(turmas) {
+      const list = normalizeTurmasList(turmas);
+      if (list.includes("TODAS")) return "Todas as turmas";
+      return list.length === 1 ? `Turma ${list[0]}` : `Turmas ${list.join(", ")}`;
+    }
+
+    function parseSingleSegmento(rawSegmento, fallbackStatus, baseMeta) {
+      let texto = (rawSegmento || "").trim();
+      let status = fallbackStatus;
+      let turmas = ["TODAS"];
+
+      // Extrai prefixo de status secundário se vier serializado: [ST:ATRASO]
+      const stMatch = texto.match(/^\[ST:([A-Z_]+)\]\s*/);
+      if (stMatch) {
+        status = stMatch[1];
+        texto = texto.slice(stMatch[0].length).trim();
+      }
+
+      // Extrai tag de turmas: [Turma 602] ou [Turmas 602, 704]
+      const turmaMatch = texto.match(/^\[Turmas?:\s*([^\]]+)\]\s*/i);
+      if (turmaMatch) {
+        const parsed = turmaMatch[1].split(",").map(s => s.trim()).filter(Boolean);
+        if (parsed.length) turmas = parsed;
+        texto = texto.slice(turmaMatch[0].length).trim();
+      }
+
+      return {
+        status: status,
+        turmas: normalizeTurmasList(turmas),
+        comentario: texto,
+        registradoPor: baseMeta.registradoPor || "SEORE",
+        hora: baseMeta.hora || "--:--"
+      };
+    }
+
+    function getItensOcorrencia(occ) {
+      if (!occ) return [];
+      if (Array.isArray(occ.itens) && occ.itens.length > 0) {
+        return occ.itens.map(item => ({
+          status: item.status,
+          turmas: normalizeTurmasList(item.turmas),
+          comentario: item.comentario || "",
+          registradoPor: item.registradoPor || occ.registradoPor || "SEORE",
+          hora: item.hora || occ.hora || "--:--"
+        }));
+      }
+
+      const rawComment = (occ.comentario || "").trim();
+      if (rawComment.includes(" || ")) {
+        return rawComment.split(" || ").map(seg => parseSingleSegmento(seg, occ.status, occ));
+      }
+
+      return [parseSingleSegmento(rawComment, occ.status, occ)];
+    }
+
+    function getItensAtivos(occ) {
+      return getItensOcorrencia(occ).filter(item => isStatusAtivo(item.status));
+    }
 
     function isOcorrenciaAtiva(occ) {
-      return occ && (occ.status === "FALTOU" || occ.status === "ATRASO" || occ.status === "FOLGA_TRE" || occ.status === "LIBERACAO");
+      return getItensAtivos(occ).length > 0;
     }
+
+    function getOcorrenciaParaTurma(occ, turmaCode) {
+      const ativos = getItensAtivos(occ);
+      if (!ativos.length) return null;
+      const especifico = ativos.find(item => !item.turmas.includes("TODAS") && item.turmas.includes(turmaCode));
+      if (especifico) return especifico;
+      return ativos.find(item => item.turmas.includes("TODAS")) || null;
+    }
+
+    function compactarOcorrenciaProfessor(itens) {
+      const validos = itens.filter(it => isStatusAtivo(it.status) || (it.comentario && it.comentario.trim()));
+      if (validos.length === 0) return null;
+
+      const principal = validos[0];
+      const partesSerializadas = validos.map((it, idx) => {
+        const stPrefix = idx > 0 ? `[ST:${it.status}] ` : "";
+        const scopePrefix = !it.turmas.includes("TODAS")
+          ? `[${it.turmas.length === 1 ? "Turma" : "Turmas"}: ${it.turmas.join(", ")}] `
+          : "";
+        return `${stPrefix}${scopePrefix}${it.comentario || ""}`.trim();
+      });
+
+      return {
+        status: principal.status,
+        comentario: partesSerializadas.join(" || "),
+        registradoPor: principal.registradoPor,
+        hora: principal.hora,
+        itens: validos
+      };
+    }
+
+    function getTurmasDoProfessorNoDia(nomeProf, diaKey) {
+      const profObj = PROFESSORES_INDEX.find(p => p.nome === nomeProf);
+      if (!profObj || !profObj.horarios[diaKey]) return [];
+
+      const mapa = {};
+      ALL_SLOTS.forEach(slot => {
+        const aula = profObj.horarios[diaKey][slot];
+        if (aula) {
+          if (!mapa[aula.turma]) {
+            mapa[aula.turma] = { turma: aula.turma, slots: [], materias: new Set() };
+          }
+          mapa[aula.turma].slots.push(slot);
+          mapa[aula.turma].materias.add(aula.materia);
+        }
+      });
+
+      return Object.values(mapa)
+        .map(item => ({
+          turma: item.turma,
+          slots: item.slots,
+          materias: Array.from(item.materias)
+        }))
+        .sort((a, b) => a.turma.localeCompare(b.turma));
+    }
+
+    function renderTurmasScopePills(containerId, nomeProf, diaKey, selectedArr, onToggleFnName) {
+      const box = document.getElementById(containerId);
+      if (!box) return;
+
+      const turmasDia = getTurmasDoProfessorNoDia(nomeProf, diaKey);
+      const isTodas = selectedArr.includes("TODAS");
+
+      let html = `
+        <button type="button" class="scope-chip-btn ${isTodas ? "active" : ""}" onclick="${onToggleFnName}('TODAS')">
+          🌐 Todas as turmas ${turmasDia.length ? `<small>(${turmasDia.map(t => t.turma).join(", ")})</small>` : ""}
+        </button>
+      `;
+
+      turmasDia.forEach(t => {
+        const active = !isTodas && selectedArr.includes(t.turma);
+        html += `
+          <button type="button" class="scope-chip-btn ${active ? "active" : ""}" onclick="${onToggleFnName}('${t.turma}')">
+            🏫 ${t.turma} <small>(${t.slots.join(", ")})</small>
+          </button>
+        `;
+      });
+
+      box.innerHTML = html;
+    }
+
+    function toggleScopeSelection(currentList, valor) {
+      if (valor === "TODAS") return ["TODAS"];
+      let next = currentList.filter(v => v !== "TODAS");
+      if (next.includes(valor)) {
+        next = next.filter(v => v !== valor);
+      } else {
+        next.push(valor);
+      }
+      return next.length === 0 ? ["TODAS"] : next;
+    }
+
+    /* ========================================================== */
 
     function getDiaHojeKey() {
       const dayMap = ["SEG", "SEG", "TER", "QUA", "QUI", "SEX", "SAB"];
@@ -1713,31 +1950,34 @@
       return map[diaSemana] || getDiaHojeKey();
     }
 
-    function getAulasDiaProfessor(nomeProf, diaKey) {
+    function getAulasDiaProfessor(nomeProf, diaKey, filtroTurmas = ["TODAS"]) {
       const profObj = PROFESSORES_INDEX.find(p => p.nome === nomeProf);
       if (!profObj || !profObj.horarios[diaKey]) return "Sem horários mapeados neste dia";
 
+      const scope = normalizeTurmasList(filtroTurmas);
       const porTurma = {};
       ALL_SLOTS.forEach(slot => {
         const aula = profObj.horarios[diaKey][slot];
-        if (aula) {
+        if (aula && (scope.includes("TODAS") || scope.includes(aula.turma))) {
           if (!porTurma[aula.turma]) porTurma[aula.turma] = [];
           porTurma[aula.turma].push(slot);
         }
       });
 
       const partes = Object.entries(porTurma).map(([turma, slots]) => `${turma} (${slots.join(", ")})`);
-      return partes.length ? partes.join(" • ") : "Sem aulas mapeadas neste dia";
+      if (partes.length) return partes.join(" • ");
+      return scope.includes("TODAS") ? "Sem aulas mapeadas neste dia" : scope.join(", ");
     }
 
-    function getAulasHojeProfessor(nomeProf) {
-      return getAulasDiaProfessor(nomeProf, getDiaHojeKey());
+    function getAulasHojeProfessor(nomeProf, filtroTurmas = ["TODAS"]) {
+      return getAulasDiaProfessor(nomeProf, getDiaHojeKey(), filtroTurmas);
     }
 
-    function abrirWhatsAppAviso({ dataAlvo, diaSemana, professor, status, comentario, servidor }) {
+    function abrirWhatsAppAviso({ dataAlvo, diaSemana, professor, status, turmas, comentario, servidor }) {
       const meta = STATUS_META[status] || { label: status };
       const diaKey = diaSemanaToKey(diaSemana);
-      const turmasStr = getAulasDiaProfessor(professor, diaKey);
+      const scope = normalizeTurmasList(turmas);
+      const turmasStr = getAulasDiaProfessor(professor, diaKey, scope);
       const linkGrade = window.location.href.split("#")[0].split("?")[0];
       const obsLinha = comentario ? `*Obs:* ${comentario}\n` : "";
 
@@ -1762,7 +2002,12 @@
     }
 
     function renderFaltasPopup() {
-      const entries = Object.entries(OCORRENCIAS_HOJE).filter(([_, info]) => isOcorrenciaAtiva(info));
+      const listaExpandida = [];
+      Object.entries(OCORRENCIAS_HOJE).forEach(([prof, info]) => {
+        getItensAtivos(info).forEach(item => {
+          listaExpandida.push({ prof, ...item });
+        });
+      });
 
       const bellBtn = document.getElementById("notifBellBtn");
       const badge = document.getElementById("notifBadge");
@@ -1770,12 +2015,12 @@
       const titleEl = document.getElementById("popupTitle");
       const bodyEl = document.getElementById("popupBody");
 
-      if (entries.length > 0) {
+      if (listaExpandida.length > 0) {
         bellBtn.classList.add("has-alerts");
         badge.style.display = "flex";
-        badge.innerText = entries.length;
+        badge.innerText = listaExpandida.length;
         headerBox.classList.remove("clean");
-        titleEl.innerText = `🚨 ${entries.length} Ocorrência(s) Hoje`;
+        titleEl.innerText = `🚨 ${listaExpandida.length} Ocorrência(s) Hoje`;
       } else {
         bellBtn.classList.remove("has-alerts");
         badge.style.display = "none";
@@ -1783,7 +2028,7 @@
         titleEl.innerText = "✅ Equipe Completa Hoje";
       }
 
-      if (entries.length === 0) {
+      if (listaExpandida.length === 0) {
         bodyEl.innerHTML = `<div style="text-align:center; padding:18px 8px; font-size:0.82rem; color:var(--text-muted);">Nenhuma falta, atraso ou Folga/TRE registrada até o momento.</div>`;
         return;
       }
@@ -1795,17 +2040,17 @@
         LIBERACAO: "🚪 Liberou a turma"
       };
 
-      bodyEl.innerHTML = entries.map(([prof, info]) => {
-        const aulasStr = getAulasHojeProfessor(prof);
-        const obsStr = info.comentario ? `💬 ${info.comentario} • ` : "";
+      bodyEl.innerHTML = listaExpandida.map(item => {
+        const aulasStr = getAulasHojeProfessor(item.prof, item.turmas);
+        const obsStr = item.comentario ? `💬 ${item.comentario} • ` : "";
         return `
-          <div class="absent-row st-${info.status}">
+          <div class="absent-row st-${item.status}">
             <div class="absent-row-top">
-              <span class="absent-name">${prof}</span>
-              <span class="absent-pill st-${info.status}">${labelMap[info.status] || info.status}</span>
+              <span class="absent-name">${item.prof}</span>
+              <span class="absent-pill st-${item.status}">${labelMap[item.status] || item.status}</span>
             </div>
             <div class="absent-classes">📚 ${aulasStr}</div>
-            <div class="absent-note">${obsStr}Por ${info.registradoPor || "SEORE"} às ${info.hora || "--:--"}</div>
+            <div class="absent-note">${obsStr}Por ${item.registradoPor || "SEORE"} às ${item.hora || "--:--"}</div>
           </div>
         `;
       }).join("");
@@ -1879,13 +2124,28 @@
       return nomes[dt.getDay()];
     }
 
+    function getDiaKeyFromISO(isoStr) {
+      if (!isoStr || !isoStr.includes("-")) return getDiaHojeKey();
+      const [y, m, d] = isoStr.split("-").map(Number);
+      const dt = new Date(y, m - 1, d);
+      const dayMap = ["SEG", "SEG", "TER", "QUA", "QUI", "SEX", "SAB"];
+      return dayMap[dt.getDay()];
+    }
+
     async function sincronizarPlanilha(manual = false) {
       if (!API_PROF_URL) return;
       try {
         const res = await fetch(`${API_PROF_URL}?t=${Date.now()}`);
         if (res.ok) {
           const data = await res.json();
-          OCORRENCIAS_HOJE = data.statusHoje || {};
+          const recebido = data.statusHoje || {};
+          const normalizado = {};
+          Object.entries(recebido).forEach(([prof, occ]) => {
+            const itens = getItensOcorrencia(occ);
+            const comp = compactarOcorrenciaProfessor(itens);
+            if (comp) normalizado[prof] = comp;
+          });
+          OCORRENCIAS_HOJE = normalizado;
           OCORRENCIAS_FUTURAS = data.futuros || [];
           localStorage.setItem("seore_prof_ocorrencias", JSON.stringify(OCORRENCIAS_HOJE));
 
@@ -1909,27 +2169,74 @@
       }
     }
 
-    async function enviarParaPlanilha({ dataAlvo, diaSemana, professor, status, comentario, enviarWpp = false }) {
+    async function enviarParaPlanilha({ dataAlvo, diaSemana, professor, status, turmas = ["TODAS"], comentario, enviarWpp = false, substituirTudo = false }) {
       const servidor = (localStorage.getItem("nomeServidor") || "SEORE").split(" ")[0];
       const horaAtual = new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
       const hojeBR = getHojeBR();
       const ehHoje = dataAlvo === hojeBR;
+      const scope = normalizeTurmasList(turmas);
+
+      let payloadStatus = status;
+      let payloadComentario = !scope.includes("TODAS")
+        ? `[${scope.length === 1 ? "Turma" : "Turmas"}: ${scope.join(", ")}] ${comentario || ""}`.trim()
+        : (comentario || "");
 
       if (ehHoje) {
-        if (status === "PRESENTE" && !comentario) {
+        if (substituirTudo || (status === "PRESENTE" && scope.includes("TODAS") && !comentario)) {
           delete OCORRENCIAS_HOJE[professor];
+        } else if (status === "PRESENTE" && !scope.includes("TODAS")) {
+          // Remove apenas as ocorrências da(s) turma(s) marcada(s) como Presente
+          const existentes = getItensOcorrencia(OCORRENCIAS_HOJE[professor]);
+          const restantes = [];
+          existentes.forEach(it => {
+            if (it.turmas.includes("TODAS")) {
+              restantes.push(it);
+            } else {
+              const sobraTurmas = it.turmas.filter(t => !scope.includes(t));
+              if (sobraTurmas.length > 0) {
+                restantes.push({ ...it, turmas: sobraTurmas });
+              }
+            }
+          });
+          const comp = compactarOcorrenciaProfessor(restantes);
+          if (comp) {
+            OCORRENCIAS_HOJE[professor] = comp;
+            payloadStatus = comp.status;
+            payloadComentario = comp.comentario;
+          } else {
+            delete OCORRENCIAS_HOJE[professor];
+          }
         } else {
-          OCORRENCIAS_HOJE[professor] = {
+          const existentes = getItensOcorrencia(OCORRENCIAS_HOJE[professor]);
+          const novaChave = `${status}|${scope.slice().sort().join(",")}`;
+          const filtrados = existentes.filter(it => `${it.status}|${it.turmas.slice().sort().join(",")}` !== novaChave);
+          filtrados.push({
             status: status,
-            comentario: comentario,
+            turmas: scope,
+            comentario: comentario || "",
             registradoPor: servidor,
             hora: horaAtual
-          };
+          });
+          const comp = compactarOcorrenciaProfessor(filtrados);
+          if (comp) {
+            OCORRENCIAS_HOJE[professor] = comp;
+            payloadStatus = comp.status;
+            payloadComentario = comp.comentario;
+          }
         }
         localStorage.setItem("seore_prof_ocorrencias", JSON.stringify(OCORRENCIAS_HOJE));
       } else if (status !== "PRESENTE") {
-        OCORRENCIAS_FUTURAS = OCORRENCIAS_FUTURAS.filter(f => !(f.data === dataAlvo && f.professor === professor));
-        OCORRENCIAS_FUTURAS.push({ data: dataAlvo, diaSemana, professor, status, comentario, registradoPor: servidor });
+        const novaChave = `${dataAlvo}|${professor}|${status}|${scope.slice().sort().join(",")}`;
+        OCORRENCIAS_FUTURAS = OCORRENCIAS_FUTURAS.filter(f => `${f.data}|${f.professor}|${f.status}|${normalizeTurmasList(f.turmas).slice().sort().join(",")}` !== novaChave);
+        OCORRENCIAS_FUTURAS.push({
+          data: dataAlvo,
+          diaSemana,
+          professor,
+          status,
+          turmas: scope,
+          comentario: payloadComentario,
+          registradoPor: servidor
+        });
       }
 
       render();
@@ -1938,7 +2245,7 @@
       showToast("💾 Salvando para toda a equipe...");
 
       if (enviarWpp) {
-        abrirWhatsAppAviso({ dataAlvo, diaSemana, professor, status, comentario, servidor });
+        abrirWhatsAppAviso({ dataAlvo, diaSemana, professor, status, turmas: scope, comentario, servidor });
       }
 
       try {
@@ -1949,8 +2256,8 @@
             dataAlvo: dataAlvo,
             diaSemana: diaSemana,
             professor: professor,
-            status: status,
-            comentario: comentario,
+            status: payloadStatus,
+            comentario: payloadComentario,
             registradoPor: servidor
           })
         });
@@ -1968,28 +2275,102 @@
       return `${prefixo} • ${comentarioLivre}`;
     }
 
-    async function salvarOcorrenciaProfessor(nomeProf, enviarWpp = false) {
+    async function salvarOcorrenciaProfessor(nomeProf, enviarWpp = false, manterAberto = false) {
       const comentarioDigitado = document.getElementById("drawerCommentInput").value.trim();
       const comentarioFinal = formatarComentarioComLiberacao(statusSelecionadoDrawer, subLiberacaoDrawer, comentarioDigitado);
+      const scope = normalizeTurmasList(turmasSelecionadasDrawer);
+      const scopeTxt = formatarScopeLabel(scope);
       const stLabel = statusSelecionadoDrawer === "LIBERACAO"
         ? `Liberou (${subLiberacaoDrawer === "PARCIAL" ? "Parcialmente" : "Toda a turma"})`
         : (STATUS_META[statusSelecionadoDrawer] || { label: statusSelecionadoDrawer }).label;
 
-      const autorizado = await confirmarIdentidadeSeguranca(`Prof. ${nomeProf} • ${stLabel}`);
+      const autorizado = await confirmarIdentidadeSeguranca(`Prof. ${nomeProf} • ${stLabel} (${scopeTxt})`);
       if (!autorizado) return;
 
-      toggleDrawer(false);
       await enviarParaPlanilha({
         dataAlvo: getHojeBR(),
         diaSemana: DIAS_LABEL[currentDay],
         professor: nomeProf,
         status: statusSelecionadoDrawer,
+        turmas: scope,
         comentario: comentarioFinal,
         enviarWpp: enviarWpp
       });
+
+      if (manterAberto) {
+        const profObj = PROFESSORES_INDEX.find(p => p.nome === nomeProf);
+        if (profObj) openProfDrawer(profObj);
+      } else {
+        toggleDrawer(false);
+      }
+    }
+
+    async function removerItemOcorrenciaProfessor(nomeProf, indexItem) {
+      const occ = OCORRENCIAS_HOJE[nomeProf];
+      if (!occ) return;
+      const itens = getItensOcorrencia(occ);
+      const alvo = itens[indexItem];
+      if (!alvo) return;
+
+      const meta = STATUS_META[alvo.status] || { label: alvo.status };
+      const autorizado = await confirmarIdentidadeSeguranca(`Remover: ${nomeProf} • ${meta.label} (${formatarScopeLabel(alvo.turmas)})`);
+      if (!autorizado) return;
+
+      const restantes = itens.filter((_, idx) => idx !== indexItem);
+      const comp = compactarOcorrenciaProfessor(restantes);
+
+      if (!comp) {
+        await enviarParaPlanilha({
+          dataAlvo: getHojeBR(),
+          diaSemana: DIAS_LABEL[currentDay],
+          professor: nomeProf,
+          status: "PRESENTE",
+          turmas: ["TODAS"],
+          comentario: "",
+          substituirTudo: true
+        });
+      } else {
+        OCORRENCIAS_HOJE[nomeProf] = comp;
+        localStorage.setItem("seore_prof_ocorrencias", JSON.stringify(OCORRENCIAS_HOJE));
+        render();
+        renderFaltasPopup();
+        const servidor = (localStorage.getItem("nomeServidor") || "SEORE").split(" ")[0];
+        try {
+          await fetch(API_PROF_URL, {
+            method: "POST",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify({
+              dataAlvo: getHojeBR(),
+              diaSemana: DIAS_LABEL[currentDay],
+              professor: nomeProf,
+              status: comp.status,
+              comentario: comp.comentario,
+              registradoPor: servidor
+            })
+          });
+          showToast("✅ Registro removido!");
+        } catch (err) {
+          showToast("⚠️ Removido localmente (erro de rede)");
+        }
+      }
+
+      const profObj = PROFESSORES_INDEX.find(p => p.nome === nomeProf);
+      if (profObj) openProfDrawer(profObj);
     }
 
     /* FUNÇÕES DA ÁREA FINAL: LANÇAMENTO POR TURMA */
+    function renderQlTurmasScope() {
+      if (!qlProfSelecionado) return;
+      const isoDate = document.getElementById("qlDateInput").value;
+      const diaKey = qlDateMode === "FUTURO" && isoDate ? getDiaKeyFromISO(isoDate) : getDiaHojeKey();
+      renderTurmasScopePills("qlTurmasScopeGrid", qlProfSelecionado, diaKey, qlTurmasSelecionadas, "toggleQlTurmaScope");
+    }
+
+    function toggleQlTurmaScope(valor) {
+      qlTurmasSelecionadas = toggleScopeSelection(qlTurmasSelecionadas, valor);
+      renderQlTurmasScope();
+    }
+
     function onSelectTurmaForm() {
       const turmaVal = document.getElementById("qlTurmaSelect").value;
       const stepProf = document.getElementById("qlStepProf");
@@ -1997,6 +2378,7 @@
       const profsContainer = document.getElementById("qlProfsContainer");
 
       qlProfSelecionado = "";
+      qlTurmasSelecionadas = turmaVal ? [turmaVal] : ["TODAS"];
       stepDetails.style.display = "none";
       profsContainer.innerHTML = "";
 
@@ -2034,6 +2416,8 @@
             document.querySelectorAll(".prof-pick-btn").forEach(b => b.classList.remove("selected"));
             btn.classList.add("selected");
             qlProfSelecionado = p.nome;
+            qlTurmasSelecionadas = turmaVal ? [turmaVal] : ["TODAS"];
+            renderQlTurmasScope();
             stepDetails.style.display = "flex";
           };
           profsContainer.appendChild(btn);
@@ -2053,6 +2437,7 @@
         amanha.setDate(amanha.getDate() + 1);
         dateInput.value = amanha.toISOString().split("T")[0];
       }
+      renderQlTurmasScope();
     }
 
     function setQlStatus(st) {
@@ -2076,7 +2461,7 @@
       inp.value = inp.value ? `${inp.value} • ${txt}` : txt;
     }
 
-    async function salvarLancamentoRapido(enviarWpp = false) {
+    async function salvarLancamentoRapido(enviarWpp = false, manterParaOutra = false) {
       const turmaVal = document.getElementById("qlTurmaSelect").value;
       if (!turmaVal || !qlProfSelecionado) {
         showToast("⚠️ Selecione a turma e o professor.");
@@ -2093,11 +2478,13 @@
       const diaSemana = qlDateMode === "FUTURO" ? getDiaSemanaFromISO(isoDate) : DIAS_LABEL[currentDay];
       const comentarioDigitado = document.getElementById("qlCommentInput").value.trim();
       const comentarioFinal = formatarComentarioComLiberacao(qlStatusSelecionado, qlSubLiberacaoSelecionado, comentarioDigitado);
+      const scope = normalizeTurmasList(qlTurmasSelecionadas);
+      const scopeTxt = formatarScopeLabel(scope);
       const stLabel = qlStatusSelecionado === "LIBERACAO"
         ? `Liberou (${qlSubLiberacaoSelecionado === "PARCIAL" ? "Parcialmente" : "Toda a turma"})`
         : (STATUS_META[qlStatusSelecionado] || { label: qlStatusSelecionado }).label;
 
-      const autorizado = await confirmarIdentidadeSeguranca(`Prof. ${qlProfSelecionado} • ${stLabel} (${dataAlvo})`);
+      const autorizado = await confirmarIdentidadeSeguranca(`Prof. ${qlProfSelecionado} • ${stLabel} (${scopeTxt} • ${dataAlvo})`);
       if (!autorizado) return;
 
       await enviarParaPlanilha({
@@ -2105,14 +2492,19 @@
         diaSemana,
         professor: qlProfSelecionado,
         status: qlStatusSelecionado,
+        turmas: scope,
         comentario: comentarioFinal,
         enviarWpp
       });
 
       document.getElementById("qlCommentInput").value = "";
-      document.getElementById("qlTurmaSelect").value = "";
-      onSelectTurmaForm();
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      if (manterParaOutra) {
+        showToast("✅ Salvo! Pode lançar a próxima ocorrência.");
+      } else {
+        document.getElementById("qlTurmaSelect").value = "";
+        onSelectTurmaForm();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
     }
 
     function renderFuturos() {
@@ -2125,8 +2517,10 @@
       box.innerHTML = `<div style="font-weight:800; color:var(--text-main); margin-bottom:6px;">🗓️ Agendamentos Futuros</div>` +
         OCORRENCIAS_FUTURAS.map(f => {
           const meta = STATUS_META[f.status] || { badge: f.status };
+          const scope = normalizeTurmasList(f.turmas);
+          const turmaTag = !scope.includes("TODAS") ? ` • ${formatarScopeLabel(scope)}` : "";
           return `<div class="future-item">
-            <span><b>${f.data}</b> (${f.diaSemana.split("-")[0]}) • ${f.professor}</span>
+            <span><b>${f.data}</b> (${f.diaSemana.split("-")[0]}) • ${f.professor}${turmaTag}</span>
             <span style="font-weight:700; color:var(--brand-blue);">${meta.badge || f.status}</span>
           </div>`;
         }).join("");
@@ -2205,8 +2599,11 @@
     }
 
     function atualizarContadorFaltas() {
-      const totalFaltas = Object.values(OCORRENCIAS_HOJE).filter(o => isOcorrenciaAtiva(o)).length;
-      document.getElementById("faltasBadgeCount").innerText = totalFaltas;
+      let totalAvisos = 0;
+      Object.values(OCORRENCIAS_HOJE).forEach(o => {
+        totalAvisos += getItensAtivos(o).length;
+      });
+      document.getElementById("faltasBadgeCount").innerText = totalAvisos;
     }
 
     function turmaTemAulaNoTurno(t, turno) {
@@ -2230,11 +2627,19 @@
       const filtradas = TURMAS_PROFESSORES.filter(t => {
         const siglaAgora = (t.grade[currentDay] || {})[currentTime] || "";
         const profAgora = getDocenteNaAula(t, currentDay, siglaAgora);
-        const occ = profAgora ? OCORRENCIAS_HOJE[profAgora] : null;
+        const occBruta = profAgora ? OCORRENCIAS_HOJE[profAgora] : null;
+        const occTurmaAgora = occBruta ? getOcorrenciaParaTurma(occBruta, t.turma) : null;
+
+        // Também verifica se algum docente da turma nesta data tem ocorrência específica para esta turma
+        const temAlgumAvisoNaTurma = (t.resumoProfessores || []).some(p => {
+          const o = OCORRENCIAS_HOJE[p.nome];
+          return o && Boolean(getOcorrenciaParaTurma(o, t.turma));
+        });
+
         const temAula = siglaAgora && siglaAgora !== "LIVRE";
 
         if (quickFilter === "LIVE" && !temAula) return false;
-        if (quickFilter === "FALTAS" && !isOcorrenciaAtiva(occ)) return false;
+        if (quickFilter === "FALTAS" && !occTurmaAgora && !temAlgumAvisoNaTurma) return false;
 
         if (!termo && quickFilter === "NONE") {
           return turmaTemAulaNoTurno(t, currentShift);
@@ -2256,11 +2661,12 @@
       filtradas.forEach(t => {
         const siglaAtual = (t.grade[currentDay] || {})[currentTime] || "LIVRE";
         const profNomeAtual = getDocenteNaAula(t, currentDay, siglaAtual);
-        const occ = profNomeAtual ? OCORRENCIAS_HOJE[profNomeAtual] : null;
+        const occBruta = profNomeAtual ? OCORRENCIAS_HOJE[profNomeAtual] : null;
+        const occ = occBruta ? getOcorrenciaParaTurma(occBruta, t.turma) : null;
         const emAula = siglaAtual && siglaAtual !== "LIVRE";
         const meta = occ ? STATUS_META[occ.status] : null;
 
-        const stClass = isOcorrenciaAtiva(occ) ? `is-${occ.status}` : (emAula ? "is-live" : "");
+        const stClass = occ ? `is-${occ.status}` : (emAula ? "is-live" : "");
 
         const card = document.createElement("div");
         card.className = `item-card ${stClass}`;
@@ -2276,14 +2682,14 @@
                        : occ?.status === "FOLGA_TRE" ? "🏖️ FOLGA/TRE: "
                        : occ?.status === "LIBERACAO" ? "🚪 LIBEROU: "
                        : "👩‍🏫 ";
-          const pillCls = isOcorrenciaAtiva(occ) ? meta.pillClass : "live";
+          const pillCls = occ ? meta.pillClass : "live";
           statusHtml = `<div class="status-pill ${pillCls}">${prefix}${profNomeAtual}<br><span style="font-size:0.65rem;">${matNome} (${siglaAtual})</span></div>`;
         } else {
           const matNome = MATERIA_NOMES[siglaAtual] || siglaAtual;
           statusHtml = `<div class="status-pill live">📘 ${matNome} (${siglaAtual})<br><span style="font-size:0.65rem;">Docente pendente na planilha</span></div>`;
         }
 
-        const commentHtml = (occ && (occ.comentario || isOcorrenciaAtiva(occ)))
+        const commentHtml = occ
           ? `<div class="comment-banner">
                <span>💬 ${occ.comentario || meta?.label || "Aviso registrado"}</span>
                <span class="comment-author">${occ.registradoPor} • ${occ.hora}</span>
@@ -2356,30 +2762,38 @@
       filtrados.forEach(prof => {
         const aulaAtual = prof.horarios[currentDay][currentTime];
         const occ = OCORRENCIAS_HOJE[prof.nome];
-        const meta = occ ? STATUS_META[occ.status] : null;
-        const stClass = isOcorrenciaAtiva(occ) ? `is-${occ.status}` : (aulaAtual ? "is-live" : "");
+        const itensAtivos = getItensAtivos(occ);
+        const itemPrincipal = itensAtivos[0] || null;
+        const itemNaAulaAgora = aulaAtual && occ ? getOcorrenciaParaTurma(occ, aulaAtual.turma) : null;
+        const meta = itemPrincipal ? STATUS_META[itemPrincipal.status] : null;
+        const stClass = itemPrincipal ? `is-${itemPrincipal.status}` : (aulaAtual ? "is-live" : "");
 
         const card = document.createElement("div");
         card.className = `item-card ${stClass}`;
         card.onclick = () => openProfDrawer(prof);
 
-        const occBadgeHtml = isOcorrenciaAtiva(occ)
-          ? `<span class="occ-badge occ-${occ.status}">${meta.badge}</span>`
-          : "";
+        const occBadgesHtml = itensAtivos.map(it => {
+          const m = STATUS_META[it.status] || { badge: it.status };
+          const turmaTag = !it.turmas.includes("TODAS") ? ` • ${it.turmas.join(", ")}` : "";
+          return `<span class="occ-badge occ-${it.status}">${m.badge}${turmaTag}</span>`;
+        }).join(" ");
 
+        const statusMetaAgora = itemNaAulaAgora ? STATUS_META[itemNaAulaAgora.status] : null;
         const statusHtml = aulaAtual
-          ? `<div class="status-pill ${isOcorrenciaAtiva(occ) ? meta.pillClass : 'live'}">🏫 Turma ${aulaAtual.turma}<br><span style="font-size:0.65rem;">${aulaAtual.materia} (${aulaAtual.sigla})</span></div>`
+          ? `<div class="status-pill ${statusMetaAgora ? statusMetaAgora.pillClass : 'live'}">🏫 Turma ${aulaAtual.turma}<br><span style="font-size:0.65rem;">${aulaAtual.materia} (${aulaAtual.sigla})</span></div>`
           : `<div class="status-pill idle">☕ Janela<br><span style="font-size:0.65rem;">Sem aula no ${currentTime}</span></div>`;
 
         const tagsHtml = prof.materias.map(m => `<span class="tag-chip blue">📚 ${m}</span>`).join("") +
                          `<span class="tag-chip">Turmas: ${prof.turmas.join(", ")}</span>`;
 
-        const commentHtml = (occ && (occ.comentario || isOcorrenciaAtiva(occ)))
-          ? `<div class="comment-banner">
-               <span>💬 ${occ.comentario || meta?.label || "Aviso registrado"}</span>
-               <span class="comment-author">${occ.registradoPor} • ${occ.hora}</span>
-             </div>`
-          : "";
+        const commentHtml = itensAtivos.map(it => {
+          const m = STATUS_META[it.status] || { label: it.status };
+          const scopePrefix = !it.turmas.includes("TODAS") ? `[${formatarScopeLabel(it.turmas)}] ` : "";
+          return `<div class="comment-banner">
+               <span>💬 ${scopePrefix}${it.comentario || m.label || "Aviso registrado"}</span>
+               <span class="comment-author">${it.registradoPor} • ${it.hora}</span>
+             </div>`;
+        }).join("");
 
         const slotsHtml = activeSlots.map(slot => {
           const aula = prof.horarios[currentDay][slot];
@@ -2397,7 +2811,7 @@
             <div>
               <div class="card-title-row">
                 <span class="card-title">${prof.nome}</span>
-                ${occBadgeHtml}
+                ${occBadgesHtml}
               </div>
               <div class="card-subtitle">${tagsHtml}</div>
             </div>
@@ -2427,23 +2841,23 @@
       });
     }
 
+    function toggleDrawerTurmaScope(valor) {
+      turmasSelecionadasDrawer = toggleScopeSelection(turmasSelecionadasDrawer, valor);
+      const nomeProf = document.getElementById("dwTitle").innerText;
+      renderTurmasScopePills("drawerTurmasScopeGrid", nomeProf, currentDay, turmasSelecionadasDrawer, "toggleDrawerTurmaScope");
+    }
+
     function adicionarTextoRapido(texto) {
       const input = document.getElementById("drawerCommentInput");
       input.value = input.value ? `${input.value} • ${texto}` : texto;
     }
 
-    function openProfDrawer(prof) {
-      const occAtual = OCORRENCIAS_HOJE[prof.nome] || { status: "PRESENTE", comentario: "" };
-      statusSelecionadoDrawer = occAtual.status;
-      subLiberacaoDrawer = (occAtual.comentario || "").includes("Parcialmente") ? "PARCIAL" : "TODA";
-
-      let comentarioLimpoDrawer = occAtual.comentario || "";
-      Object.values(SUB_LIBERACAO_TEXT).forEach(prefixo => {
-        if (comentarioLimpoDrawer === prefixo) comentarioLimpoDrawer = "";
-        else if (comentarioLimpoDrawer.startsWith(`${prefixo} • `)) {
-          comentarioLimpoDrawer = comentarioLimpoDrawer.slice(prefixo.length + 3);
-        }
-      });
+    function openProfDrawer(prof, turmaPreSelecionada = null) {
+      const occAtual = OCORRENCIAS_HOJE[prof.nome] || null;
+      const itensAtivos = getItensAtivos(occAtual);
+      statusSelecionadoDrawer = "FALTOU";
+      subLiberacaoDrawer = "TODA";
+      turmasSelecionadasDrawer = turmaPreSelecionada ? [turmaPreSelecionada] : ["TODAS"];
 
       document.getElementById("dwTitle").innerText = prof.nome;
       document.getElementById("dwSubtitle").innerText = `${prof.materias.join(", ")} • Turmas: ${prof.turmas.join(", ")}`;
@@ -2451,26 +2865,47 @@
       const body = document.getElementById("dwBody");
       const escapedNome = prof.nome.replace(/'/g, "\\'");
 
+      const registrosAtuaisHtml = itensAtivos.length > 0
+        ? `<div class="existing-occ-list">
+            <div style="font-size:0.68rem; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Registros ativos hoje (${itensAtivos.length})</div>
+            ${itensAtivos.map((it, idx) => {
+              const m = STATUS_META[it.status] || { badge: it.status };
+              const scopeTxt = formatarScopeLabel(it.turmas);
+              return `<div class="existing-occ-item">
+                <span><b>${m.badge}</b> • ${scopeTxt}${it.comentario ? `<br><small style="color:var(--text-muted);">${it.comentario}</small>` : ""}</span>
+                <button type="button" class="btn-del-occ" onclick="removerItemOcorrenciaProfessor('${escapedNome}', ${idx})">🗑️ Remover</button>
+              </div>`;
+            }).join("")}
+          </div>`
+        : "";
+
       body.innerHTML = `
         <div class="drawer-section-title">Status Hoje (Visível para toda a equipe)</div>
         <div class="occ-panel">
+          ${registrosAtuaisHtml}
+
+          <div>
+            <div style="font-size:0.68rem; font-weight:800; color:var(--text-muted); text-transform:uppercase; margin-bottom:5px;">Turma(s) afetada(s) (${DIAS_LABEL[currentDay]})</div>
+            <div class="turmas-scope-grid" id="drawerTurmasScopeGrid"></div>
+          </div>
+
           <div>
             <div class="status-grid-4" id="drawerStatusGrid">
-              <button type="button" class="st-opt-btn ${occAtual.status === 'PRESENTE' ? 'selected-PRESENTE' : ''}" data-st="PRESENTE" onclick="selecionarStatusDrawer('PRESENTE')">✅ Presente</button>
-              <button type="button" class="st-opt-btn ${occAtual.status === 'ATRASO' ? 'selected-ATRASO' : ''}" data-st="ATRASO" onclick="selecionarStatusDrawer('ATRASO')">⏳ Atraso / Permuta</button>
-              <button type="button" class="st-opt-btn ${occAtual.status === 'FOLGA_TRE' ? 'selected-FOLGA_TRE' : ''}" data-st="FOLGA_TRE" onclick="selecionarStatusDrawer('FOLGA_TRE')">🏖️ Folga / TRE</button>
-              <button type="button" class="st-opt-btn ${occAtual.status === 'FALTOU' ? 'selected-FALTOU' : ''}" data-st="FALTOU" onclick="selecionarStatusDrawer('FALTOU')">🚨 Faltou</button>
-              <button type="button" class="st-opt-btn span-2 ${occAtual.status === 'LIBERACAO' ? 'selected-LIBERACAO' : ''}" data-st="LIBERACAO" onclick="selecionarStatusDrawer('LIBERACAO')">🚪 Liberou a turma</button>
+              <button type="button" class="st-opt-btn" data-st="PRESENTE" onclick="selecionarStatusDrawer('PRESENTE')">✅ Presente</button>
+              <button type="button" class="st-opt-btn" data-st="ATRASO" onclick="selecionarStatusDrawer('ATRASO')">⏳ Atraso / Permuta</button>
+              <button type="button" class="st-opt-btn" data-st="FOLGA_TRE" onclick="selecionarStatusDrawer('FOLGA_TRE')">🏖️ Folga / TRE</button>
+              <button type="button" class="st-opt-btn selected-FALTOU" data-st="FALTOU" onclick="selecionarStatusDrawer('FALTOU')">🚨 Faltou</button>
+              <button type="button" class="st-opt-btn span-2" data-st="LIBERACAO" onclick="selecionarStatusDrawer('LIBERACAO')">🚪 Liberou a turma</button>
             </div>
 
-            <div class="sub-lib-box" id="drawerSubLiberacaoBox" style="display:${occAtual.status === 'LIBERACAO' ? 'flex' : 'none'};">
+            <div class="sub-lib-box" id="drawerSubLiberacaoBox" style="display:none;">
               <div class="sub-lib-title">Como foi a liberação da turma?</div>
               <div class="sub-lib-grid">
-                <button type="button" class="sub-lib-btn ${subLiberacaoDrawer === 'TODA' ? 'active' : ''}" data-sub="TODA" onclick="selecionarSubLiberacaoDrawer('TODA')">
+                <button type="button" class="sub-lib-btn active" data-sub="TODA" onclick="selecionarSubLiberacaoDrawer('TODA')">
                   🚪 Toda a turma
                   <span>Turma totalmente liberada</span>
                 </button>
-                <button type="button" class="sub-lib-btn ${subLiberacaoDrawer === 'PARCIAL' ? 'active' : ''}" data-sub="PARCIAL" onclick="selecionarSubLiberacaoDrawer('PARCIAL')">
+                <button type="button" class="sub-lib-btn" data-sub="PARCIAL" onclick="selecionarSubLiberacaoDrawer('PARCIAL')">
                   👥 Parcialmente
                   <span>Prof. com parte da turma e liberou o restante</span>
                 </button>
@@ -2486,15 +2921,18 @@
             <button type="button" class="q-chip" onclick="adicionarTextoRapido('Chega no próximo tempo')">+ Chega próx. tempo</button>
           </div>
 
-          <input type="text" id="drawerCommentInput" class="clean-input" placeholder="Adicionar comentário (opcional)..." value="${comentarioLimpoDrawer}" />
+          <input type="text" id="drawerCommentInput" class="clean-input" placeholder="Adicionar comentário (opcional)..." value="" />
           <div class="save-actions-col">
-            <button type="button" class="btn-save-occ" onclick="salvarOcorrenciaProfessor('${escapedNome}', false)">💾 Salvar para Todos</button>
-            <button type="button" class="btn-save-wpp" onclick="salvarOcorrenciaProfessor('${escapedNome}', true)">📲 Salvar e Enviar no WhatsApp</button>
+            <button type="button" class="btn-save-occ" onclick="salvarOcorrenciaProfessor('${escapedNome}', false, false)">💾 Salvar para Todos</button>
+            <button type="button" class="btn-save-add" onclick="salvarOcorrenciaProfessor('${escapedNome}', false, true)">➕ Salvar e Adicionar Outra</button>
+            <button type="button" class="btn-save-wpp" onclick="salvarOcorrenciaProfessor('${escapedNome}', true, false)">📲 Salvar e Enviar no WhatsApp</button>
           </div>
         </div>
 
         <div class="drawer-section-title">Grade Semanal do Professor</div>
       `;
+
+      renderTurmasScopePills("drawerTurmasScopeGrid", prof.nome, currentDay, turmasSelecionadasDrawer, "toggleDrawerTurmaScope");
 
       DIAS_LIST.forEach(dia => {
         const aulasDia = ALL_SLOTS
@@ -2527,10 +2965,11 @@
 
       const rosterItems = lista.length
         ? lista.map(info => {
-            const occ = OCORRENCIAS_HOJE[info.nome];
+            const occBruta = OCORRENCIAS_HOJE[info.nome];
+            const occ = occBruta ? getOcorrenciaParaTurma(occBruta, t.turma) : null;
             const badge = occ?.status === "FALTOU" ? " 🚨" : occ?.status === "ATRASO" ? " ⏳" : occ?.status === "FOLGA_TRE" ? " 🏖️" : occ?.status === "LIBERACAO" ? " 🚪" : "";
             const diasTag = (info.dias && info.dias.length) ? ` (${info.dias.join(", ")})` : "";
-            return `<div class="roster-item" style="cursor:pointer;" onclick="abrirProfPorNome('${info.nome.replace(/'/g, "\\'")}')"><strong>${info.materia} (${info.sigla})</strong>${info.nome}${diasTag}${badge}</div>`;
+            return `<div class="roster-item" style="cursor:pointer;" onclick="abrirProfPorNome('${info.nome.replace(/'/g, "\\'")}', '${t.turma}')"><strong>${info.materia} (${info.sigla})</strong>${info.nome}${diasTag}${badge}</div>`;
           }).join("")
         : `<div style="grid-column:span 2; font-size:0.76rem; color:var(--text-muted); padding:6px;">Docentes desta turma ainda não preenchidos na planilha.</div>`;
 
@@ -2563,9 +3002,9 @@
       toggleDrawer(true);
     }
 
-    function abrirProfPorNome(nome) {
+    function abrirProfPorNome(nome, turmaPreSelecionada = null) {
       const profObj = PROFESSORES_INDEX.find(p => p.nome === nome);
-      if (profObj) openProfDrawer(profObj);
+      if (profObj) openProfDrawer(profObj, turmaPreSelecionada);
     }
 
     function toggleDrawer(open) { document.getElementById("drawerOverlay").classList.toggle("open", open); }
