@@ -805,24 +805,28 @@
         SEX: { T1:"HIST", T2:"HIST", T3:"MUS", T4:"MUS", T5:"ESP", T6:"ESP", T7:"ESP" },
         SAB: { T1:"GEO", T2:"GEO", T5:"QUI", T6:"QUI" }
       }},
-      { id: "A9", bloco: "A", nome: "Sala 9", turma: "Turma 904 (Sáb: 2202)", turmaCode: "904", sabTurmaCode: "2202", shift: "TARDE", grade: {
+      { id: "A9", bloco: "A", nome: "Sala 9", turma: "Turno Estendido / Livre (Sáb: 2202)", turmaCode: "", sabTurmaCode: "2202", shift: "TARDE", grade: {
+        SEG: {},
+        TER: {},
+        QUA: {},
+        QUI: {},
+        SEX: {},
+        SAB: { T1:"BIO", T2:"BIO", T3:"HIST", T4:"HIST", T5:"GEO", T6:"GEO" }
+      }},
+      { id: "A10", bloco: "A", nome: "Sala 10", turma: "Turma 904 (Sáb: 2204)", turmaCode: "904", sabTurmaCode: "2204", shift: "TARDE", grade: {
         SEG: { T1:"PORT", T2:"PORT", T3:"C.SOC", T4:"C.SOC", T5:"ING", T6:"ING", T7:"ING" },
         TER: { T1:"GEO", T2:"GEO", T3:"DES", T4:"DES", T5:"CIE", T6:"CIE", T7:"CIE" },
         QUA: { T1:"EFI", T2:"EFI", T3:"MAT", T4:"MAT", T5:"PORT", T6:"PORT", T7:"FRA" },
         QUI: { T1:"ART", T2:"ART", T3:"MAT", T4:"MAT", T5:"HIST", T6:"GEO", T7:"LIVRE" },
         SEX: { T1:"FRA", T2:"FRA", T3:"HIST", T4:"HIST", T5:"MUS", T6:"MUS", T7:"PORT" },
-        SAB: { T1:"BIO", T2:"BIO", T3:"HIST", T4:"HIST", T5:"GEO", T6:"GEO" }
+        SAB: { T1:"GEO", T2:"GEO", T3:"HIST", T4:"HIST", T5:"BIO", T6:"BIO" }
       }},
-      { id: "A10", bloco: "A", nome: "Sala 10", turma: "Turma 906 (Sáb: 2204)", turmaCode: "906", sabTurmaCode: "2204", shift: "TARDE", grade: {
+      { id: "A11", bloco: "A", nome: "Sala 11", turma: "Turma 906 (Sáb: 2206)", turmaCode: "906", sabTurmaCode: "2206", shift: "TARDE", grade: {
         SEG: { T1:"C.SOC", T2:"C.SOC", T3:"EFI", T4:"EFI", T5:"ING", T6:"PORT", T7:"PORT" },
         TER: { T1:"CIE", T2:"ART", T3:"ART", T4:"HIST", T5:"GEO", T6:"GEO", T7:"LIVRE" },
         QUA: { T1:"MAT", T2:"MAT", T3:"F/E", T4:"F/E", T5:"F/E", T6:"PORT", T7:"PORT" },
         QUI: { T1:"CIE", T2:"CIE", T3:"DES", T4:"DES", T5:"MAT", T6:"MAT", T7:"GEO" },
         SEX: { T1:"MAT", T2:"MAT", T3:"ING", T4:"ING", T5:"PORT", T6:"HIST", T7:"HIST" },
-        SAB: { T1:"GEO", T2:"GEO", T3:"HIST", T4:"HIST", T5:"BIO", T6:"BIO" }
-      }},
-      { id: "A11", bloco: "A", nome: "Sala 11", turma: "Turno Estendido (Sáb: 2206)", turmaCode: "", sabTurmaCode: "2206", shift: "TARDE", grade: {
-        ...TURNO_ESTENDIDO_GRADE,
         SAB: { T1:"GEO", T2:"GEO", T3:"BIO", T4:"BIO", T5:"HIST", T6:"HIST" }
       }},
       { id: "A12", bloco: "A", nome: "Sala 12", turma: "Turno Estendido", turmaCode: "", shift: "TARDE", grade: TURNO_ESTENDIDO_GRADE },
@@ -962,7 +966,7 @@
         SEG: { T1:"EFI", T2:"EFI", T3:"RED", T4:"RED", T5:"QUI", T6:"QUI", T7:"QUI" },
         TER: { T1:"BIO", T2:"BIO", T3:"GEO", T4:"GEO", T5:"", T6:"GP(1aS)", T7:"GP(1aS)" },
         QUA: { T1:"", T2:"", T3:"PORT", T4:"PORT", T5:"MAT", T6:"MAT", T7:"PORT" },
-        QUI: { T1:"", T2:"BIO", T3:"INFO", T4:"INFO", T5:"FAOM", T6:"FAOM", T7:"FAOM" },
+        QUI: { T1:"", T2:"BIO", T3:"INFO", T4:"INFO", T5:"FAOM(1aS)", T6:"FAOM(1aS)", T7:"FAOM(1aS)" },
         SEX: { T1:"FILO", T2:"FILO", T3:"PORT", T4:"PORT", T5:"HIST", T6:"HIST", T7:"" },
         SAB: {}
       }},
@@ -1002,11 +1006,11 @@
 
       // ==================== BLOCO C — MANHÃ (SALAS 2, 4, 6, 8, 10, 12) ====================
       { id: "CM2", bloco: "C", nome: "Sala 2", turma: "3ª ADM (AD 1311)", turmaCode: "AD 1311", shift: "MANHA", grade: {
-        SEG: { M1:"3ª ADM", M2:"3ª ADM", M3:"3ª ADM", M4:"3ª ADM", M5:"3ª ADM", M6:"3ª ADM", M7:"3ª ADM" },
-        TER: { M1:"3ª ADM", M2:"3ª ADM", M3:"3ª ADM", M4:"3ª ADM", M5:"3ª ADM", M6:"3ª ADM", M7:"3ª ADM" },
-        QUA: { M1:"3ª ADM", M2:"3ª ADM", M3:"3ª ADM", M4:"3ª ADM", M5:"3ª ADM", M6:"3ª ADM", M7:"3ª ADM" },
-        QUI: { M1:"3ª ADM", M2:"3ª ADM", M3:"3ª ADM", M4:"3ª ADM", M5:"3ª ADM", M6:"3ª ADM", M7:"3ª ADM" },
-        SEX: { M1:"3ª ADM", M2:"3ª ADM", M3:"3ª ADM", M4:"3ª ADM", M5:"3ª ADM", M6:"3ª ADM", M7:"3ª ADM" },
+        SEG: { M1:"PORT", M2:"PORT", M3:"GEO", M4:"GEO", M5:"GEO", M6:"HIST", M7:"PORT" },
+        TER: { M1:"SOC", M2:"SOC", M3:"MAT", M4:"MAT", M5:"BIO", M6:"BIO", M7:"BIO" },
+        QUA: { M1:"ING", M2:"ING", M3:"PORT", M4:"QUI", M5:"QUI", M6:"QUI", M7:"PORT" },
+        QUI: { M1:"FIS", M2:"FIS", M3:"EFI", M4:"EFI", M5:"", M6:"", M7:"FIS" },
+        SEX: { M1:"FILO", M2:"FILO", M3:"MAT", M4:"MAT", M5:"HIST", M6:"HIST", M7:"" },
         SAB: {}
       }},
       { id: "CM4", bloco: "C", nome: "Sala 4", turma: "Turma 1301", turmaCode: "1301", shift: "MANHA", grade: {
