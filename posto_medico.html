@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Posto Médico — Conferência de Autorizações SEORE</title>
+  <style>
+    :root {
+      --bg: #f1f5f9;
+      --card: #ffffff;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --muted: #64748b;
+      --blue: #0284c7;
+      --amber: #f59e0b;
+      --green: #16a34a;
+      --purple: #7e22ce;
+      --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      padding: 18px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 780px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    header {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .title-group h1 { font-size: 1.15rem; font-weight: 800; color: #dc2626; }
+    .title-group p { font-size: 0.78rem; color: var(--muted); font-weight: 600; margin-top: 2px; }
+
+    .live-pill {
+      background: #dcfce7; color: #166534; border: 1px solid #86efac;
+      padding: 6px 12px; border-radius: 999px; font-size: 0.75rem; font-weight: 800;
+    }
+
+    .search-bar {
+      width: 100%; padding: 13px 16px; border-radius: 14px;
+      border: 1.5px solid var(--border); background: var(--card);
+      font-size: 0.92rem; font-weight: 600; outline: none;
+    }
+    .search-bar:focus { border-color: var(--blue); }
+
+    .grid-cards { display: flex; flex-direction: column; gap: 10px; }
+
+    .patient-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-left: 6px solid var(--amber);
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+    }
+    .patient-card.st-EM_ATENDIMENTO { border-left-color: var(--blue); }
+    .patient-card.st-LIBERADO_SALA { border-left-color: var(--green); opacity: 0.85; }
+    .patient-card.st-LIBERADO_CASA { border-left-color: var(--purple); opacity: 0.85; }
+
+    .p-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+    .p-name { font-size: 1.05rem; font-weight: 800; }
+    .p-turma {
+      display: inline-block; margin-left: 6px; background: #e0f2fe; color: var(--blue);
+      padding: 2px 9px; border-radius: 7px; font-size: 0.78rem; font-weight: 800;
+    }
+    .p-auth { font-size: 0.78rem; color: var(--muted); margin-top: 3px; }
+    .p-motivo {
+      background: var(--bg); padding: 9px 12px; border-radius: 10px;
+      font-size: 0.84rem; font-weight: 600;
+    }
+
+    .status-tag {
+      font-size: 0.72rem; font-weight: 800; padding: 5px 10px; border-radius: 8px;
+      background: #fef3c7; color: #92400e; white-space: nowrap;
+    }
+    .st-EM_ATENDIMENTO .status-tag { background: #e0f2fe; color: var(--blue); }
+    .st-LIBERADO_SALA .status-tag { background: #dcfce7; color: #166534; }
+    .st-LIBERADO_CASA .status-tag { background: #f3e8ff; color: var(--purple); }
+
+    .actions-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      padding-top: 4px;
+    }
+
+    .obs-input {
+      flex: 1; min-width: 180px; padding: 9px 11px; border-radius: 9px;
+      border: 1px solid var(--border); font-size: 0.8rem; outline: none;
+    }
+
+    .btn-act {
+      border: none; border-radius: 9px; padding: 9px 13px;
+      font-size: 0.78rem; font-weight: 800; color: #fff; cursor: pointer;
+    }
+    .btn-chegou { background: var(--blue); }
+    .btn-sala { background: var(--green); }
+    .btn-casa { background: var(--purple); }
+
+    .empty {
+      background: var(--card); border: 1px dashed var(--border);
+      border-radius: 16px; padding: 32px; text-align: center;
+      color: var(--muted); font-size: 0.9rem; font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="title-group">
+        <h1>🏥 Posto Médico — Autorizações SEORE</h1>
+        <p id="dataHojeLabel">Conferência de alunos autorizados a sair de sala</p>
+      </div>
+      <div class="live-pill">🟢 Sincronizado ao vivo</div>
+    </header>
+
+    <input type="text" id="buscaAluno" class="search-bar" placeholder="🔍 Digite o nome do aluno ou turma para verificar autorização..." oninput="renderizar()" />
+
+    <div class="grid-cards" id="listaPosto">
+      <div class="empty">Carregando autorizações do dia...</div>
+    </div>
+  </div>
+
+  <script>
+    const API_POSTO_URL = "https://script.google.com/macros/s/AKfycbyzvuBIlDgUQQ2Cx811OVb3xNU9idvUPSUIcu40ANdXyAqjoaKs7Bs_kc5fUUDWG3ZY/exec";
+    let REGISTROS = [];
+
+    const LABELS = {
+      ENCAMINHADO: "🟡 Aguardando Chegada",
+      EM_ATENDIMENTO: "🔵 Em Atendimento",
+      LIBERADO_SALA: "🟢 Retornou à Sala",
+      LIBERADO_CASA: "🏠 Liberado p/ Casa"
+    };
+
+    async function buscarDados() {
+      try {
+        const res = await fetch(`${API_POSTO_URL}?t=${Date.now()}`);
+        const data = await res.json();
+        REGISTROS = data.registros || [];
+        renderizar();
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    async function mudarStatus(id, novoStatus) {
+      const obsEl = document.getElementById(`obs-${id}`);
+      const obsPosto = obsEl ? obsEl.value.trim() : "";
+
+      await fetch(API_POSTO_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({
+          action: "atualizar_status",
+          id: id,
+          status: novoStatus,
+          obsPosto: obsPosto
+        })
+      });
+
+      await buscarDados();
+    }
+
+    function renderizar() {
+      const termo = document.getElementById("buscaAluno").value.toLowerCase().trim();
+      const box = document.getElementById("listaPosto");
+
+      const filtrados = REGISTROS.filter(r =>
+        `${r.aluno} ${r.turma} ${r.motivo}`.toLowerCase().includes(termo)
+      );
+
+      if (filtrados.length === 0) {
+        box.innerHTML = `<div class="empty">Nenhum aluno autorizado encontrado para esta busca hoje.</div>`;
+        return;
+      }
+
+      box.innerHTML = filtrados.map(r => {
+        const tempos = [];
+        if (r.horaChegada) tempos.push(`Chegou às ${r.horaChegada}`);
+        if (r.horaAlta) tempos.push(`Alta às ${r.horaAlta}`);
+        const temposStr = tempos.length ? ` • ${tempos.join(" | ")}` : "";
+
+        return `
+          <div class="patient-card st-${r.status}">
+            <div class="p-header">
+              <div>
+                <div>
+                  <span class="p-name">${r.aluno}</span>
+                  <span class="p-turma">Turma ${r.turma}</span>
+                </div>
+                <div class="p-auth">✅ Autorizado pelo SEORE (${r.autorizadoPor}) às <b>${r.horaSaida}</b>${temposStr}</div>
+              </div>
+              <span class="status-tag">${LABELS[r.status] || r.status}</span>
+            </div>
+
+            <div class="p-motivo">📋 <b>Motivo informado:</b> ${r.motivo}</div>
+
+            <div class="actions-row">
+              <input type="text" id="obs-${r.id}" class="obs-input" placeholder="Observação do Posto (opcional)..." value="${r.obsPosto || ""}" />
+              ${r.status === "ENCAMINHADO" ? `<button class="btn-act btn-chegou" onclick="mudarStatus('${r.id}', 'EM_ATENDIMENTO')">🩺 Confirmar Chegada</button>` : ""}
+              <button class="btn-act btn-sala" onclick="mudarStatus('${r.id}', 'LIBERADO_SALA')">🏫 Alta (Volta p/ Sala)</button>
+              <button class="btn-act btn-casa" onclick="mudarStatus('${r.id}', 'LIBERADO_CASA')">🏠 Liberar p/ Responsável</button>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    window.onload = () => {
+      document.getElementById("dataHojeLabel").innerText = `Autorizações válidas para hoje (${new Date().toLocaleDateString("pt-BR")})`;
+      buscarDados();
+      setInterval(buscarDados, 15000);
+    };
+  </script>
+</body>
+</html>
